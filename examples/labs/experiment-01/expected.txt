@@ -1,0 +1,8 @@
+a b | and or not nand nor xor xnor | result
+----+--------------------------------+-------
+ 0 0 |  0   0   1    1    1   0    1 | pass
+ 0 1 |  0   1   1    1    0   1    0 | pass
+ 1 0 |  0   1   0    1    0   1    0 | pass
+ 1 1 |  1   1   0    0    0   0    1 | pass
+checked 4 input combinations, mismatches = 0
+tb.v:50: $finish called at 4000 (1ps)

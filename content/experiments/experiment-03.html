@@ -1,0 +1,304 @@
+<section class="lesson-section">
+  <h2 id="aim">Aim and scope</h2>
+  <p class="lesson-lead">Implement a half subtractor and a full subtractor in Verilog-2001, then verify every difference and borrow output for all input combinations.</p>
+  <p>Subtraction is not merely addition with a different operator at the gate level. A subtractor needs a borrow path, and the direction of that borrow is the detail most often written backwards. This experiment isolates the borrow logic: the half subtractor subtracts two bits, the full subtractor also subtracts an incoming borrow and produces an outgoing borrow for the next more significant stage.</p>
+  <p>Both modules are combinational and use continuous assignments. The testbench computes the signed arithmetic difference independently and checks the two outputs against it, so a reversed borrow equation fails immediately.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="objectives">Learning objectives</h2>
+  <ul class="objective-list">
+    <li>Derive the difference and borrow equations of a half subtractor.</li>
+    <li>Explain why the borrow is <code>~x &amp; y</code> and not <code>x &amp; ~y</code>.</li>
+    <li>Build a full subtractor from two half subtractors and an OR gate.</li>
+    <li>Distinguish the incoming borrow <code>bin</code> from the outgoing borrow.</li>
+    <li>Verify all 4 half-subtractor and all 8 full-subtractor input combinations.</li>
+    <li>Interpret a negative arithmetic result alongside its two's-complement difference bit.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="tools">Required tools and files</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Experiment 03 bench inventory</caption>
+      <thead><tr><th scope="col">Item</th><th scope="col">Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Icarus Verilog 13.0</td><td>Compiles and runs both subtractor modules and the testbench in Verilog-2001 mode.</td></tr>
+        <tr><td><code>design.v</code></td><td>Contains <code>half_subtractor</code> and <code>full_subtractor</code>.</td></tr>
+        <tr><td><code>tb.v</code></td><td>Applies 12 vectors and compares outputs with a signed arithmetic model.</td></tr>
+        <tr><td>Terminal</td><td>Runs the two commands from the directory containing the sources.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>No gate-level library or external package is required. The design is portable Verilog-2001.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="theory">Theory and working principle</h2>
+  <p>Subtracting one bit from another gives a difference bit and a borrow bit. The four cases are:</p>
+  <ul>
+    <li><code>0 − 0 = 0</code> with no borrow.</li>
+    <li><code>1 − 0 = 1</code> with no borrow.</li>
+    <li><code>1 − 1 = 0</code> with no borrow.</li>
+    <li><code>0 − 1</code> cannot be represented in one unsigned bit, so the result is 1 with a borrow of 1. Read as a two-bit value, the answer is <code>10</code>, which is 2; in signed arithmetic the difference is −1.</li>
+  </ul>
+  <p>The difference column is 1 when the inputs differ, so <code>diff = x ^ y</code>. The borrow column is 1 only in the last case, where <code>x</code> is 0 and <code>y</code> is 1, so <code>borrow = ~x &amp; y</code>. The negation applies to <code>x</code> alone; parentheses are unnecessary here because unary NOT binds tighter than AND.</p>
+  <p>A full subtractor computes <code>x − y − bin</code>. It can be decomposed into two half subtractions: first <code>x − y</code> produces an intermediate difference <code>d</code> and borrow <code>b1</code>; then <code>d − bin</code> produces the final difference and borrow <code>b2</code>. The stage borrows out if either half subtraction borrowed, so <code>borrow = b1 | b2</code>. The final difference is <code>diff = d ^ bin</code>.</p>
+  <p>This decomposition is exactly what the design writes out: <code>d = x ^ y</code>, <code>b1 = ~x &amp; y</code>, <code>b2 = ~d &amp; bin</code>, <code>diff = d ^ bin</code> and <code>borrow = b1 | b2</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="diagram">Logic diagram</h2>
+  <p>The half subtractor is drawn with its two gates, including the inversion bubble on the <code>x</code> input of the borrow AND gate. The full subtractor is drawn as two half-subtractor blocks and a borrow OR, which is the decomposition used by the equations.</p>
+
+  <figure class="lab-figure">
+    <div class="lab-figure__scroll" tabindex="0" role="group" aria-label="Logic diagram of the half subtractor and full subtractor. The figure scrolls horizontally on narrow screens.">
+      <svg class="lab-svg" viewBox="0 0 1000 300" role="img" aria-labelledby="fig-sub-title fig-sub-desc">
+        <title id="fig-sub-title">Half subtractor and full subtractor logic diagram</title>
+        <desc id="fig-sub-desc">The half subtractor uses an XOR gate for the difference and an AND gate with an inverted x input for the borrow. The full subtractor connects two half subtractors and ORs their borrow outputs.</desc>
+        <defs>
+          <g id="fs-xor"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 Q18 0 32 16 Q18 32 0 32 Q8 16 0 0 Z"/><path style="fill:none;stroke:var(--text-soft);stroke-width:1.5" d="M-7 0 Q1 16 -7 32"/></g>
+          <g id="fs-and"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 H14 A16 16 0 0 1 14 32 H0 Z"/></g>
+        </defs>
+
+        <text class="lab-svg__label" x="24" y="26">HALF SUBTRACTOR</text>
+        <text class="lab-svg__note" x="24" y="272">diff = x ^ y     borrow = ~x &amp; y</text>
+
+        <text class="lab-svg__value" x="24" y="68">x</text>
+        <text class="lab-svg__value" x="24" y="84">y</text>
+        <path class="lab-svg__wire" d="M36 64 H140 M36 80 H140"/>
+        <use href="#fs-xor" x="140" y="56"/>
+        <use href="#fs-and" x="140" y="136"/>
+        <circle class="lab-svg__dot" cx="78" cy="64" r="3"/>
+        <path class="lab-svg__wire" d="M78 64 V144 H132"/>
+        <circle class="lab-svg__bubble" cx="136" cy="144" r="3.4"/>
+        <circle class="lab-svg__dot" cx="106" cy="80" r="3"/>
+        <path class="lab-svg__wire" d="M106 80 V160 H140"/>
+        <path class="lab-svg__wire" d="M172 72 H216"/>
+        <path class="lab-svg__wire" d="M172 152 H216"/>
+        <text class="lab-svg__value" x="224" y="76">diff</text>
+        <text class="lab-svg__value" x="224" y="156">borrow</text>
+
+        <path class="lab-svg__wire" d="M400 20 V270"/>
+
+        <text class="lab-svg__label" x="432" y="26">FULL SUBTRACTOR</text>
+        <text class="lab-svg__note" x="432" y="272">d = x ^ y     b1 = ~x &amp; y     b2 = ~d &amp; bin     borrow = b1 | b2</text>
+
+        <text class="lab-svg__value" x="432" y="84">x</text>
+        <text class="lab-svg__value" x="432" y="114">y</text>
+        <path class="lab-svg__wire" d="M444 80 H490 M444 110 H490"/>
+        <rect class="lab-svg__block" x="490" y="55" width="110" height="72" rx="5"/>
+        <text x="545" y="84" text-anchor="middle">HS1</text>
+        <text class="lab-svg__note" x="545" y="104" text-anchor="middle">x − y</text>
+        <path class="lab-svg__wire" d="M600 80 H640 V180 H672"/>
+        <text class="lab-svg__value" x="610" y="74">d</text>
+        <path class="lab-svg__wire" d="M600 110 H800 V170 H850"/>
+        <text class="lab-svg__value" x="612" y="120">b1</text>
+
+        <text class="lab-svg__value" x="432" y="212">bin</text>
+        <path class="lab-svg__wire" d="M468 208 H672"/>
+        <rect class="lab-svg__block" x="672" y="145" width="110" height="72" rx="5"/>
+        <text x="727" y="174" text-anchor="middle">HS2</text>
+        <text class="lab-svg__note" x="727" y="194" text-anchor="middle">d − bin</text>
+        <path class="lab-svg__wire" d="M782 180 H810"/>
+        <text class="lab-svg__value" x="818" y="184">diff</text>
+        <path class="lab-svg__wire" d="M782 208 H806 V190 H850"/>
+        <text class="lab-svg__value" x="790" y="220">b2</text>
+
+        <rect class="lab-svg__block" x="850" y="145" width="58" height="60" rx="5"/>
+        <text x="879" y="180" text-anchor="middle">OR</text>
+        <path class="lab-svg__wire" d="M908 175 H930"/>
+        <text class="lab-svg__value" x="938" y="179">borrow</text>
+      </svg>
+    </div>
+    <figcaption><strong>Figure 1.</strong> The bubble before the borrow AND gate is the <code>~x</code> in <code>~x &amp; y</code>. In the full subtractor, <code>b1</code> and <code>b2</code> are the borrows from the two half subtractions, and the OR produces the outgoing borrow.</figcaption>
+  </figure>
+</section>
+
+<section class="lesson-section">
+  <h2 id="truth-table">Truth tables</h2>
+  <h3>Half subtractor</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Half subtractor: all four input combinations</caption>
+      <thead><tr><th scope="col">x</th><th scope="col">y</th><th scope="col">diff</th><th scope="col">borrow</th><th scope="col">x − y</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>1</td><td>−1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Full subtractor</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Full subtractor: all eight input combinations</caption>
+      <thead><tr><th scope="col">x</th><th scope="col">y</th><th scope="col">bin</th><th scope="col">diff</th><th scope="col">borrow</th><th scope="col">x − y − bin</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>−1</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>−1</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>−2</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>−1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The last column is a signed arithmetic value, not a Verilog output. A negative value always corresponds to <code>borrow = 1</code>. For example, <code>0 − 1 − 1 = −2</code>, encoded by <code>diff = 0</code> and <code>borrow = 1</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="equations">Boolean equations</h2>
+  <h3>Half subtractor</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Difference</span><code>diff = x ^ y</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Borrow</span><code>borrow = ~x &amp; y</code></div>
+  </div>
+  <h3>Full subtractor</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">First difference</span><code>d = x ^ y</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">First borrow</span><code>b1 = ~x &amp; y</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Second borrow</span><code>b2 = ~d &amp; bin</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Difference</span><code>diff = d ^ bin</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Borrow</span><code>borrow = b1 | b2</code></div>
+  </div>
+  <p>Expanding the full subtractor gives <code>diff = x ^ y ^ bin</code> and <code>borrow = (~x &amp; y) | (~(x ^ y) &amp; bin)</code>. The expanded borrow is 1 when <code>y &gt; x</code>, or when <code>y = x</code> and <code>bin = 1</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="design">Verilog design code</h2>
+  <p>The intermediate wires in <code>full_subtractor</code> are named after the two half-subtractor stages. That naming is what lets the diagram and the code be read side by side.</p>
+  {{CODE:examples/labs/experiment-03/design.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="testbench">Testbench</h2>
+  <p>The testbench computes <code>x − y</code> and <code>x − y − bin</code> as signed integers. It then compares the actual outputs against the borrow and the low bit of that signed value. The comparison is independent of the design equations.</p>
+  {{CODE:examples/labs/experiment-03/tb.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="explanation">Line-by-line explanation</h2>
+  <h3>Design</h3>
+  <ul>
+    <li><code>half_subtractor</code> declares <code>x</code>, <code>y</code>, <code>diff</code> and <code>borrow</code>. Both outputs are wires driven continuously.</li>
+    <li><code>assign diff = x ^ y;</code> makes the difference 1 when the operands differ.</li>
+    <li><code>assign borrow = ~x &amp; y;</code> asserts borrow only for <code>x = 0, y = 1</code>. The NOT applies to <code>x</code> before the AND.</li>
+    <li><code>full_subtractor</code> declares the incoming borrow <code>bin</code> and three internal wires.</li>
+    <li><code>assign d = x ^ y;</code> and <code>assign b1 = ~x &amp; y;</code> are the first half subtraction.</li>
+    <li><code>assign b2 = ~d &amp; bin;</code> is the borrow produced when the incoming borrow is larger than the intermediate difference.</li>
+    <li><code>assign diff = d ^ bin;</code> subtracts the incoming borrow from <code>d</code>.</li>
+    <li><code>assign borrow = b1 | b2;</code> combines the two borrow sources. This is the OR block in the diagram.</li>
+  </ul>
+  <h3>Testbench</h3>
+  <ul>
+    <li><code>expected_value</code> is an integer, so a negative difference is retained rather than wrapped into an unsigned bit.</li>
+    <li><code>expected_value = hs_x; expected_value = expected_value - hs_y;</code> performs the subtraction in two statements. Splitting the expression avoids one-bit expression truncation before the value reaches the integer.</li>
+    <li><code>expected_borrow = (expected_value &lt; 0);</code> derives the borrow from the arithmetic sign.</li>
+    <li><code>{expected_borrow[0], expected_value[0]}</code> builds the two-bit expected result. For −1, <code>expected_value[0]</code> is 1 and the borrow is 1, giving <code>11</code>.</li>
+    <li><code>if ({hs_borrow, hs_diff} !== ...)</code> compares the concatenated outputs in one operation.</li>
+    <li>The full-subtractor loop uses three statements for the same reason and covers 000 through 111.</li>
+    <li><code>$display</code> prints the signed arithmetic value, so a row such as <code>0 1 1</code> shows −2 next to <code>diff = 0, borrow = 1</code>.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="commands">Compilation and simulation commands</h2>
+  {{COMMANDS:experiment-03}}
+  <p>Compile before simulating. If <code>iverilog</code> reports an undeclared identifier, check that every internal wire is declared; <code>`default_nettype none</code> turns a missing declaration into an error.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">Actual simulator output</h2>
+  <p>The transcript below is the exact output captured from Icarus Verilog 13.0 after the testbench was compiled in Verilog-2001 mode.</p>
+  {{OUTPUT:examples/labs/experiment-03/expected.txt}}
+  <p>Rows with a negative arithmetic value always show <code>borrow = 1</code>. Note the <code>0 0 1</code> row: the difference is 1, the borrow is 1, and the arithmetic value is −1.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="waveform">Waveform and timing</h2>
+  <p>The circuit is combinational, so there is no clock edge to align with. Each vector is held for 1 ns: the half subtractor occupies 0–4 ns and the full subtractor occupies 4–12 ns. The simulator's finish message at 12,000 ps means 12 ns.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Stimulus order</caption>
+      <thead><tr><th scope="col">Interval</th><th scope="col">Circuit</th><th scope="col">Vectors</th><th scope="col">Checked outputs</th></tr></thead>
+      <tbody>
+        <tr><td>0–4 ns</td><td>Half subtractor</td><td>00, 01, 10, 11</td><td>diff, borrow</td></tr>
+        <tr><td>4–12 ns</td><td>Full subtractor</td><td>000 through 111</td><td>diff, borrow</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A waveform would show <code>borrow</code> rising whenever the arithmetic result goes negative. Because the model is zero-delay, the output changes in the same time step as the input; the <code>#1</code> gives the testbench a stable point at which to sample.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="result">Result</h2>
+  <div class="lab-result">
+    <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+    <div>
+      <h3>Both subtractors matched the signed arithmetic model.</h3>
+      <p>All <strong>12 input combinations</strong> — 4 half-subtractor and 8 full-subtractor vectors — produced <strong>0 mismatches</strong>. Every borrow bit agrees with the sign of the difference, and every difference bit agrees with the low bit of the result.</p>
+    </div>
+  </div>
+  <p>This exhausts the input space of both circuits. It verifies the borrow direction as well as the difference, which is the part a casual reading of the code often gets wrong.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes and troubleshooting</h2>
+  <div class="concept-grid">
+    <article class="concept-card">
+      <h3>Reversing the borrow</h3>
+      <p><code>borrow = x &amp; ~y</code> asserts borrow when <code>x = 1, y = 0</code>, the opposite of the required case. The correct half-subtractor borrow is <code>~x &amp; y</code>.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Dropping the second borrow</h3>
+      <p>A full subtractor that uses only <code>b1</code> fails whenever <code>bin</code> causes the borrow. Both <code>b1</code> and <code>b2</code> must reach the OR.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Confusing <code>bin</code> with <code>borrow</code></h3>
+      <p><code>bin</code> is an input from the less significant stage; <code>borrow</code> is this stage's output. Wiring them to the same name silently breaks a multi-bit subtractor.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Subtracting in one-bit expressions</h3>
+      <p><code>x - y</code> with one-bit operands wraps before it reaches an integer. Subtract step by step into an integer when computing an expected value.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Using OR instead of XOR for the difference</h3>
+      <p>OR is 1 for <code>1 − 1</code>, but the difference is 0 there. Difference is XOR.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Assuming borrow means a negative number</h3>
+      <p>Borrow is a positional signal. In a wider subtractor the final borrow can indicate underflow, but an intermediate borrow is normal and is resolved by the next stage.</p>
+    </article>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 id="viva">Viva questions</h2>
+  <ol class="lab-viva">
+    <li>Why is the borrow of a half subtractor <code>~x &amp; y</code> rather than <code>x &amp; ~y</code>?</li>
+    <li>How many half subtractors are used inside a full subtractor, and what does each one compute?</li>
+    <li>What are <code>diff</code> and <code>borrow</code> for <code>x = 0, y = 1, bin = 1</code>?</li>
+    <li>How can a full adder be converted into a full subtractor?</li>
+    <li>What does a borrow of 1 mean at the most significant stage of a multi-bit subtractor?</li>
+    <li>Why does the testbench keep the expected value as a signed integer?</li>
+    <li>Is the difference output affected by the order of <code>x</code> and <code>y</code>? Is the borrow?</li>
+  </ol>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Half subtractor: <code>diff = x ^ y</code>, <code>borrow = ~x &amp; y</code>.</li>
+    <li>Full subtractor: <code>diff = x ^ y ^ bin</code>, with borrow from either half subtraction.</li>
+    <li>Two half subtractors plus an OR make a full subtractor.</li>
+    <li>The direction of the borrow inequality is the critical detail: borrow when <code>y &gt; x</code>.</li>
+    <li>Four and eight vectors exhaust the two-input and three-input truth tables.</li>
+    <li>A negative signed result always pairs with an outgoing borrow of 1.</li>
+  </ul>
+</section>

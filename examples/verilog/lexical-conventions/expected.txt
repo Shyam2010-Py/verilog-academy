@@ -1,0 +1,11 @@
+binary 8'b1010_1010  : 10101010 (aa)
+hex    8'hA5         : 10100101 (165)
+decimal 8'd165       : a5
+4'd18 truncated      : 0010 (2)
+signed 8'shFB        : -5
+unsized -5           : -5
+replication {4{2'b10}}: 10101010
+concatenation {a,b}  : 11001010
+legal_name_1=1 value=a VALUE=5
+value and VALUE are different identifiers
+example.v:26: $finish called at 0 (1ps)

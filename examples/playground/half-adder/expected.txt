@@ -1,0 +1,9 @@
+Half adder truth table
+a b | sum carry | a+b
+----+-----------+----
+0 0 |  0    0   |  0
+0 1 |  1    0   |  1
+1 0 |  1    0   |  1
+1 1 |  0    1   |  2
+PASS: 4/4 rows match
+tb.v:34: $finish called at 4000 (1ps)

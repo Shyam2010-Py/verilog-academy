@@ -1,0 +1,137 @@
+<section class="lesson-section">
+  <h2 id="why-udp">When the built-in primitives are not enough</h2>
+  <p class="lesson-lead">Verilog's gate primitives cover AND, OR, XOR and their complements, plus tri-state buffers. A user-defined primitive (UDP) lets you add a gate whose behaviour is given directly as a truth table, without writing a module or an expression. It is the lowest-level way to describe a component in the language.</p>
+  <p>UDPs exist for two reasons. First, some components are naturally tabular — a multiplexer, a latch, a custom cell from a library — and a table is clearer than an equation. Second, a technology library may need to describe a cell exactly as the vendor specifies it, including its behaviour on unknown inputs. For everyday RTL, UDPs are unnecessary; for cell modelling and teaching, they are the cleanest possible description.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="syntax">Primitive syntax</h2>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">UDP skeleton</span></div>
+    <div class="code-block__body"><pre><code>primitive name (out, in1, in2);
+    output out;
+    input  in1, in2;
+    table
+        // in1 in2 : out
+           0   0  : 0;
+           0   1  : 1;
+    endtable
+endprimitive</code></pre></div>
+  </div>
+  <ul>
+    <li>The <strong>output comes first</strong> in the port list, as with gate primitives.</li>
+    <li>A UDP has exactly one output. That is a language restriction, not a style choice.</li>
+    <li>The body is a <code>table</code>, with one row per input combination. Every column before the colon is an input; the column after the colon is the output.</li>
+    <li>The table must be complete for the input combinations the designer cares about. A missing row produces <code>x</code>, which is the language's way of saying "not specified".</li>
+    <li>UDPs contain no expressions, no assignments and no timing controls. The table <em>is</em> the behaviour.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="symbols">Table symbols</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Symbols used in UDP tables</caption>
+      <thead><tr><th scope="col">Symbol</th><th scope="col">Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>0</code>, <code>1</code>, <code>x</code></td><td>A specific logic value.</td></tr>
+        <tr><td><code>?</code></td><td>Don't care: matches 0, 1, x or z.</td></tr>
+        <tr><td><code>b</code></td><td>Either 0 or 1, but not x or z.</td></tr>
+        <tr><td><code>-</code></td><td>No change: the output keeps its previous value. Sequential UDPs only.</td></tr>
+        <tr><td><code>(01)</code></td><td>A rising edge on that input.</td></tr>
+        <tr><td><code>(10)</code></td><td>A falling edge.</td></tr>
+        <tr><td><code>(??)</code></td><td>Any change on that input.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The distinction between a combinational UDP and a sequential UDP is the presence of the <code>reg</code> declaration and the extra state column. A sequential UDP row has the form <code>inputs : current_state : next_state</code>; a combinational UDP row has the form <code>inputs : output</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">A multiplexer and a transparent latch</h2>
+  <p>The example defines two primitives. <code>mux2_udp</code> is combinational and selects between two data inputs. <code>dlatch_udp</code> is a level-sensitive sequential primitive: a transparent D latch that follows the data while the enable is high and holds the last value while it is low.</p>
+
+  {{CODE:examples/verilog/udp/design.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>primitive mux2_udp (out, sel, a, b);</code> declares a primitive with one output and three inputs. The order matters: the first port is always the output.</li>
+    <li><code>0 0 ? : 0;</code> means "when <code>sel</code> is 0, <code>a</code> is 0 and <code>b</code> is anything, the output is 0". The <code>?</code> in the <code>b</code> column is what makes this a multiplexer rather than a full truth table.</li>
+    <li><code>1 ? 0 : 0;</code> is the mirror case: <code>sel</code> is 1 and <code>b</code> is 0, regardless of <code>a</code>.</li>
+    <li>The four rows together cover all eight input combinations. There is no default row, because every combination is specified.</li>
+    <li><code>primitive dlatch_udp (q, en, d);</code> declares the sequential primitive. <code>output q; reg q;</code> is required: the output must be a variable because it stores a value.</li>
+    <li><code>1 0 : ? : 0;</code> means "enable high, data 0, whatever the current state, next state is 0". The latch is transparent.</li>
+    <li><code>0 ? : ? : -;</code> means "enable low, any data, any current state, next state is the current state". The <code>-</code> is the hold.</li>
+    <li>The current-state column contains <code>?</code> in every row, meaning the next state does not depend on it. That is correct for a transparent latch: when enabled it follows the data, and when disabled it holds, so the current state never changes the decision.</li>
+  </ul>
+
+  {{CODE:examples/verilog/udp/tb.v}}
+
+  <p>The testbench instantiates both primitives and drives them through the eight multiplexer combinations and the three latch states.</p>
+
+  {{COMMANDS:udp}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/udp/expected.txt}}
+
+  <p>The multiplexer rows follow the definition: with <code>sel = 0</code> the output equals <code>a</code>, and with <code>sel = 1</code> it equals <code>b</code>. Because <code>a</code> and <code>b</code> are complementary in some rows and equal in others, the table checks every path through the primitive, not just the easy ones.</p>
+  <p>The latch rows show the three states of a transparent latch:</p>
+  <ul>
+    <li><code>en=1 d=1 -&gt; q=1</code>: enabled, so the output follows the data.</li>
+    <li><code>en=0 d=0 -&gt; q=1 (held)</code>: disabled, so the new data is ignored and the previous value is held. The <code>-</code> row did its job.</li>
+    <li><code>en=1 d=0 -&gt; q=0</code>: enabled again, so the output follows the new data.</li>
+  </ul>
+  <p>This is the same behaviour as the incomplete <code>always @*</code> block from the previous topic, but here it is intentional and expressed as a table.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="edge">Edge-sensitive primitives</h2>
+  <p>A D flip-flop needs a row that fires only on a clock edge. The first column then contains an edge symbol instead of a level:</p>
+
+  {{SNIPPET:content/snippets/dff_udp.v}}
+
+  <p>Read the rows as conditions on the clock. <code>(01)</code> is a rising edge; the data column selects the next state. <code>(?0)</code> is a falling edge, and <code>(??)</code> is any other change; both hold the output with <code>-</code>. Together the four rows describe a positive-edge-triggered D flip-flop.</p>
+  <div class="lesson-note">
+    <strong>Simulator limitation, stated honestly</strong>
+    <p>The installed simulator, Icarus Verilog 13.0, compiles an edge-sensitive UDP but does not evaluate its edge rows: the output remains <code>x</code> under every language-generation flag we tried. That is why this file is presented as a language reference and is not part of the verified example set. The level-sensitive latch above is simulated and its output is real.</p>
+  </div>
+  <p>The syntax is still worth learning, because vendor cell libraries use edge-sensitive UDPs for exactly this purpose. Do not conclude from one simulator's limitation that the construct is invalid; check the tool's documentation before relying on it.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="limits">Limits of user-defined primitives</h2>
+  <ul>
+    <li>One output per primitive, and the output must be first in the port list.</li>
+    <li>No timing controls, no expressions and no module instances inside the table.</li>
+    <li>A table row covers one combination (or one edge), so a wide primitive needs many rows. A 4:1 multiplexer with three data bits would need many pages.</li>
+    <li>Some synthesis tools support only combinational UDPs, or none at all. UDPs are primarily a simulation and library-modelling feature.</li>
+    <li>The table is not checked against your intent. A typo in a row produces a primitive that simulates exactly as written and is wrong.</li>
+  </ul>
+  <p>For design work, a module with an <code>assign</code> or a <code>case</code> statement is usually the better choice: it is readable, parameterisable and portable. Reach for a UDP when the tabular form is the clearest possible statement of the behaviour, or when a library demands it.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Putting the output last.</strong> As with gate primitives, the output is the first port. A reversed list compiles into a primitive with the wrong direction.</li>
+    <li><strong>Forgetting <code>reg</code> on a sequential output.</strong> A sequential UDP stores state, so its output must be a variable.</li>
+    <li><strong>Leaving table rows out.</strong> Unspecified combinations produce <code>x</code>, which may look like a simulator bug.</li>
+    <li><strong>Using <code>-</code> in a combinational UDP.</strong> The hold symbol is only meaningful when the primitive has state.</li>
+    <li><strong>Assuming <code>?</code> means "don't care about the output".</strong> It is a wildcard on an input or on the current state; the output column still has to say what happens.</li>
+    <li><strong>Writing a large function as a UDP table.</strong> The table grows exponentially with input width; use a module instead.</li>
+    <li><strong>Assuming every simulator handles edge-sensitive UDPs.</strong> Verify with your tool before depending on one.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>A UDP defines a primitive by a truth table, with the output first and exactly one output.</li>
+    <li>Combinational rows are <code>inputs : output</code>; sequential rows add a current-state column and use <code>-</code> to hold.</li>
+    <li>A sequential UDP's output must be declared <code>reg</code>.</li>
+    <li><code>?</code> is a don't-care, <code>b</code> is 0 or 1 only, and <code>(01)</code>/<code>(10)</code> are edges.</li>
+    <li>UDPs are for tabular cells and library models; modules are better for general design work.</li>
+  </ul>
+</section>

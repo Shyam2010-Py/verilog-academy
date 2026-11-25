@@ -1,0 +1,304 @@
+<section class="lesson-section">
+  <h2 id="aim">Aim and scope</h2>
+  <p class="lesson-lead">Implement the seven basic logic gates — AND, OR, NOT, NAND, NOR, XOR and XNOR — as a single combinational Verilog-2001 module, then prove every output against an independent truth table.</p>
+  <p>The experiment deliberately keeps all seven gates in one module. Each output is driven by its own continuous assignment, so the design is a direct textual description of the Boolean equations. There is no clock, no state and no test-only logic inside <code>design.v</code>: the same module could be synthesised as seven parallel gates.</p>
+  <p>Two files form the bench record. <code>design.v</code> contains the gate module. <code>tb.v</code> applies all four input vectors, compares the seven outputs with hard-coded expected values, counts mismatches and prints a table. The transcript you will see later is the actual output of that testbench.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="objectives">Learning objectives</h2>
+  <ul class="objective-list">
+    <li>Write a continuous assignment for each of the seven basic gates using Verilog-2001 operators.</li>
+    <li>Distinguish the unary NOT operator <code>~</code> from the binary reduction operators that combine two operands.</li>
+    <li>Predict all seven outputs for each of the four combinations of <code>a</code> and <code>b</code>.</li>
+    <li>Explain why the module outputs are declared as <code>wire</code> rather than <code>reg</code>.</li>
+    <li>Compile and run the design in Verilog-2001 mode, then read the transcript as evidence rather than decoration.</li>
+    <li>Recognise the difference between a zero-delay simulation result and a real gate propagation delay.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="tools">Required tools and files</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Experiment 01 bench inventory</caption>
+      <thead><tr><th scope="col">Item</th><th scope="col">Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Icarus Verilog 13.0</td><td><code>iverilog</code> compiles the design and testbench; <code>vvp</code> runs the simulation image.</td></tr>
+        <tr><td><code>design.v</code></td><td>The <code>basic_gates</code> module under test.</td></tr>
+        <tr><td><code>tb.v</code></td><td>The self-checking testbench that drives all four input vectors.</td></tr>
+        <tr><td>Terminal</td><td>Runs the two commands shown in the compilation section, from the directory containing both files.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>No waveform viewer is required. The testbench prints a text table, which is enough to compare the circuit against the truth table. <code>-g2001</code> is used so that the source is checked against the Verilog-2001 language rather than a later mode.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="theory">Theory and working principle</h2>
+  <p>A basic gate is a combinational primitive: its output depends only on the present values of its inputs. The seven gates in this experiment fall into three groups.</p>
+  <ul>
+    <li><strong>AND and OR</strong> require both inputs. AND is 1 only when every input is 1; OR is 1 when at least one input is 1.</li>
+    <li><strong>NOT</strong> is unary. It needs only <code>a</code>, and its output is the complement of that single input.</li>
+    <li><strong>NAND, NOR and XNOR</strong> are the complemented forms of AND, OR and XOR. They are written as a negation around the base operation.</li>
+  </ul>
+  <p>XOR is 1 when the inputs differ. XNOR is its complement, so it is 1 when the inputs are equal. In Verilog-2001 the operators are <code>&amp;</code> (AND), <code>|</code> (OR), <code>~</code> (NOT), <code>^</code> (XOR) and <code>~^</code> or <code>^~</code> (XNOR). NAND and NOR are written by negating the parenthesised result: <code>~(a &amp; b)</code> and <code>~(a | b)</code>.</p>
+  <p>Every output is a <code>wire</code> because a continuous assignment drives it. The simulator evaluates the right-hand side whenever an input changes and schedules the new value on the wire. In this zero-delay model the update is immediate in simulation time; a physical gate would add propagation delay, which is a separate topic.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="diagram">Logic diagram</h2>
+  <p>The diagram shows the seven gate symbols with the same port names used by the Verilog module. Each gate sees the shared inputs <code>a</code> and <code>b</code>; the NOT gate uses only <code>a</code>. The output names match the continuous assignments exactly.</p>
+
+  <figure class="lab-figure">
+    <div class="lab-figure__scroll" tabindex="0" role="group" aria-label="Diagram of the seven basic gates. The figure scrolls horizontally on narrow screens.">
+      <svg class="lab-svg" viewBox="0 0 520 330" role="img" aria-labelledby="fig-gates-title fig-gates-desc">
+        <title id="fig-gates-title">Seven basic gate symbols with inputs and outputs</title>
+        <desc id="fig-gates-desc">AND, OR, NOT, NAND, NOR, XOR and XNOR gates share inputs a and b and produce outputs named y_and, y_or, y_not, y_nand, y_nor, y_xor and y_xnor.</desc>
+        <defs>
+          <g id="gate-and"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 H14 A16 16 0 0 1 14 32 H0 Z"/></g>
+          <g id="gate-or"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 Q18 0 30 16 Q18 32 0 32 Q8 16 0 0 Z"/></g>
+          <g id="gate-xor"><use href="#gate-or"/><path style="fill:none;stroke:var(--text-soft);stroke-width:1.5" d="M-7 0 Q1 16 -7 32"/></g>
+          <g id="gate-not"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 L26 16 L0 32 Z"/></g>
+        </defs>
+
+        <g transform="translate(0,16)">
+          <text x="10" y="21">AND&#160;&#160;y_and = a &amp; b</text>
+          <text x="252" y="12" text-anchor="end">a</text><text x="252" y="28" text-anchor="end">b</text>
+          <path class="lab-svg__wire" d="M260 8 H290 M260 24 H290"/>
+          <use href="#gate-and" x="290" y="0"/>
+          <path class="lab-svg__wire" d="M320 16 H352"/>
+          <text class="lab-svg__value" x="360" y="20">y_and</text>
+        </g>
+
+        <g transform="translate(0,60)">
+          <text x="10" y="21">OR&#160;&#160;&#160;y_or = a | b</text>
+          <text x="252" y="12" text-anchor="end">a</text><text x="252" y="28" text-anchor="end">b</text>
+          <path class="lab-svg__wire" d="M260 8 H290 M260 24 H290"/>
+          <use href="#gate-or" x="290" y="0"/>
+          <path class="lab-svg__wire" d="M320 16 H352"/>
+          <text class="lab-svg__value" x="360" y="20">y_or</text>
+        </g>
+
+        <g transform="translate(0,104)">
+          <text x="10" y="21">NOT&#160;&#160;y_not = ~a</text>
+          <text x="252" y="20" text-anchor="end">a</text>
+          <path class="lab-svg__wire" d="M260 16 H290"/>
+          <use href="#gate-not" x="290" y="0"/>
+          <path class="lab-svg__wire" d="M316 16 H352"/>
+          <text class="lab-svg__value" x="360" y="20">y_not</text>
+        </g>
+
+        <g transform="translate(0,148)">
+          <text x="10" y="21">NAND&#160;y_nand = ~(a &amp; b)</text>
+          <text x="252" y="12" text-anchor="end">a</text><text x="252" y="28" text-anchor="end">b</text>
+          <path class="lab-svg__wire" d="M260 8 H290 M260 24 H290"/>
+          <use href="#gate-and" x="290" y="0"/>
+          <circle class="lab-svg__bubble" cx="324" cy="16" r="3.4"/>
+          <path class="lab-svg__wire" d="M328 16 H352"/>
+          <text class="lab-svg__value" x="360" y="20">y_nand</text>
+        </g>
+
+        <g transform="translate(0,192)">
+          <text x="10" y="21">NOR&#160;&#160;y_nor = ~(a | b)</text>
+          <text x="252" y="12" text-anchor="end">a</text><text x="252" y="28" text-anchor="end">b</text>
+          <path class="lab-svg__wire" d="M260 8 H290 M260 24 H290"/>
+          <use href="#gate-or" x="290" y="0"/>
+          <circle class="lab-svg__bubble" cx="324" cy="16" r="3.4"/>
+          <path class="lab-svg__wire" d="M328 16 H352"/>
+          <text class="lab-svg__value" x="360" y="20">y_nor</text>
+        </g>
+
+        <g transform="translate(0,236)">
+          <text x="10" y="21">XOR&#160;&#160;y_xor = a ^ b</text>
+          <text x="252" y="12" text-anchor="end">a</text><text x="252" y="28" text-anchor="end">b</text>
+          <path class="lab-svg__wire" d="M260 8 H290 M260 24 H290"/>
+          <use href="#gate-xor" x="290" y="0"/>
+          <path class="lab-svg__wire" d="M320 16 H352"/>
+          <text class="lab-svg__value" x="360" y="20">y_xor</text>
+        </g>
+
+        <g transform="translate(0,280)">
+          <text x="10" y="21">XNOR&#160;y_xnor = ~(a ^ b)</text>
+          <text x="252" y="12" text-anchor="end">a</text><text x="252" y="28" text-anchor="end">b</text>
+          <path class="lab-svg__wire" d="M260 8 H290 M260 24 H290"/>
+          <use href="#gate-xor" x="290" y="0"/>
+          <circle class="lab-svg__bubble" cx="324" cy="16" r="3.4"/>
+          <path class="lab-svg__wire" d="M328 16 H352"/>
+          <text class="lab-svg__value" x="360" y="20">y_xnor</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption><strong>Figure 1.</strong> The seven gates and the exact output names used in <code>design.v</code>. NOT is the only unary gate; every other symbol combines <code>a</code> and <code>b</code>.</figcaption>
+  </figure>
+</section>
+
+<section class="lesson-section">
+  <h2 id="truth-table">Truth table</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>All four input combinations for the seven gates</caption>
+      <thead>
+        <tr><th scope="col">a</th><th scope="col">b</th><th scope="col">AND</th><th scope="col">OR</th><th scope="col">NOT a</th><th scope="col">NAND</th><th scope="col">NOR</th><th scope="col">XOR</th><th scope="col">XNOR</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Read the table by columns, not by memorising gate names. The NAND column is exactly the AND column inverted; NOR is OR inverted; XNOR is XOR inverted. The NOT column depends only on <code>a</code>, which is why it repeats in pairs down the rows.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="equations">Boolean equations</h2>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">AND</span><code>y_and = a &amp; b</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">OR</span><code>y_or = a | b</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">NOT</span><code>y_not = ~a</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">NAND</span><code>y_nand = ~(a &amp; b)</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">NOR</span><code>y_nor = ~(a | b)</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">XOR</span><code>y_xor = a ^ b</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">XNOR</span><code>y_xnor = ~(a ^ b)</code></div>
+  </div>
+  <p>The parentheses around the NAND, NOR and XNOR expressions are essential. <code>~a &amp; b</code> means “NOT a, then AND with b”, which is a different function from <code>~(a &amp; b)</code>. The testbench would expose that mistake immediately on the <code>a=0, b=1</code> row.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="design">Verilog design code</h2>
+  <p>The design is a complete module, not a fragment. <code>`default_nettype none</code> forces every net to be declared explicitly; <code>`default_nettype wire</code> restores the default at the end of the file so that other files compiled afterwards are unaffected.</p>
+  {{CODE:examples/labs/experiment-01/design.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="testbench">Testbench</h2>
+  <p>These are the testbench sources exactly as compiled. The expected values are written as seven-bit constants, independent of the design equations, so the comparison checks the implementation rather than repeating it.</p>
+  {{CODE:examples/labs/experiment-01/tb.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="explanation">Line-by-line explanation</h2>
+  <h3>Design file</h3>
+  <ul>
+    <li><code>`default_nettype none</code> makes an undeclared net an error. This is a deliberate safety rule: a misspelled wire should fail compilation, not silently become a one-bit net.</li>
+    <li><code>module basic_gates (...)</code> declares two scalar inputs and seven scalar outputs. The port order is part of the documentation; the testbench uses named association.</li>
+    <li><code>output wire</code> is correct because each output is driven by a continuous assignment. A <code>reg</code> cannot be driven by <code>assign</code>.</li>
+    <li><code>assign y_and = a &amp; b;</code> is a continuous assignment. It is not executed once; it remains active for the whole simulation.</li>
+    <li><code>~(a &amp; b)</code> negates the complete AND result. In a vector context <code>~</code> is bitwise, but here every value is one bit, so the distinction does not change the result.</li>
+    <li><code>`default_nettype wire</code> restores the standard default after the module.</li>
+  </ul>
+  <h3>Testbench</h3>
+  <ul>
+    <li><code>reg a; reg b;</code> are testbench variables because the initial block assigns them procedurally. The design's inputs are wires from the module's point of view, but a procedural driver needs a variable.</li>
+    <li><code>wire y_and ...</code> receive the design outputs. They are not assigned by the testbench.</li>
+    <li><code>basic_gates dut (...)</code> instantiates the design with named port connections. Named association avoids a silent port-order mistake.</li>
+    <li><code>for (i = 0; i &lt; 4; i = i + 1)</code> walks the four input vectors. <code>{a, b} = i[1:0]</code> maps 0 to <code>00</code>, 1 to <code>01</code>, 2 to <code>10</code> and 3 to <code>11</code>.</li>
+    <li><code>#1</code> advances simulation time by 1 ns and lets the continuous assignments settle before the outputs are read.</li>
+    <li><code>actual = {y_and, ...}</code> packs the seven outputs into one vector so a single comparison covers the whole row.</li>
+    <li><code>case ({a, b})</code> supplies the expected seven-bit pattern for that row. The constants were derived from the truth table, not from the design.</li>
+    <li><code>!==</code> is a four-state inequality. It treats <code>x</code> and <code>z</code> as mismatches, which is what a verification check should do. The ordinary <code>!=</code> could hide an unknown value.</li>
+    <li><code>errors</code> counts failures. <code>$display</code> prints one row and <code>$finish</code> ends the simulation.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="commands">Compilation and simulation commands</h2>
+  <p>Run these from the directory that contains <code>design.v</code> and <code>tb.v</code>. The first command compiles both files into an Icarus simulation image; the second executes it.</p>
+  {{COMMANDS:experiment-01}}
+  <p><code>-g2001</code> selects Verilog-2001. The output file name is arbitrary; <code>experiment-01.out</code> is used here so it is obvious which experiment produced it. A compilation error must be fixed before the simulation is meaningful.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">Actual simulator output</h2>
+  <p>This is the captured transcript from Icarus Verilog 13.0. It has not been retyped or trimmed. The final line is added by the simulator when <code>$finish</code> executes.</p>
+  {{OUTPUT:examples/labs/experiment-01/expected.txt}}
+  <p>The transcript reports <code>mismatches = 0</code> immediately before the finish line. The <code>pass</code> column confirms each vector individually, so a single failing row would be visible rather than hidden behind a summary.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="waveform">Waveform and timing</h2>
+  <p>This circuit has no clock. A waveform would show <code>a</code> and <code>b</code> changing at the stimulus times and the outputs following after the simulator's zero-delay update. In the testbench each vector is held for 1 ns: vector <code>00</code> at 0 ns, <code>01</code> at 1 ns, <code>10</code> at 2 ns and <code>11</code> at 3 ns.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Stimulus sequence and the outputs it should produce</caption>
+      <thead><tr><th scope="col">Time</th><th scope="col">a b</th><th scope="col">AND</th><th scope="col">OR</th><th scope="col">NOT</th><th scope="col">XOR</th><th scope="col">XNOR</th></tr></thead>
+      <tbody>
+        <tr><td>0 ns</td><td>0 0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1 ns</td><td>0 1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+        <tr><td>2 ns</td><td>1 0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>3 ns</td><td>1 1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The simulator line <code>$finish called at 4000 (1ps)</code> can look like 4,000 ns. It is not. With <code>`timescale 1ns / 1ps</code>, <code>%0t</code> in Icarus reports the simulation time in the precision unit, so 4000 ps is 4 ns. Four 1 ns vectors therefore end at 4 ns.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="result">Result</h2>
+  <div class="lab-result">
+    <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+    <div>
+      <h3>All seven gates matched the truth table.</h3>
+      <p>The testbench applied <strong>4 input combinations</strong> and reported <strong>0 mismatches</strong>. Every row of the captured transcript reads <code>pass</code>, and the seven outputs match the Boolean equations and the diagram.</p>
+    </div>
+  </div>
+  <p>This is a complete verification of a combinational circuit with two inputs, because four vectors exhaust the input space. There is no untested input value and no clock cycle to miss.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes and troubleshooting</h2>
+  <div class="concept-grid">
+    <article class="concept-card">
+      <h3>Writing <code>~a &amp; b</code> for NAND</h3>
+      <p>Operator precedence applies NOT to <code>a</code> only. Use <code>~(a &amp; b)</code>. The same warning applies to NOR and XNOR.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Using <code>||</code> or <code>&amp;&amp;</code></h3>
+      <p>These are logical operators that produce a single true/false result. For gate-level bit operations use <code>|</code> and <code>&amp;</code>.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Assigning a <code>reg</code> continuously</h3>
+      <p><code>reg</code> cannot be the target of <code>assign</code>. The outputs are <code>wire</code> because they are driven continuously.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Forgetting the settling delay</h3>
+      <p>Reading outputs in the same simulation delta as the input change can show the old value. A small <code>#1</code> after the stimulus avoids that race.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Comparing with <code>!=</code></h3>
+      <p>An unknown output can compare as equal under some four-state rules. <code>!==</code> makes <code>x</code> and <code>z</code> explicit failures.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Expecting real gate delay</h3>
+      <p>Continuous assignments have no built-in propagation delay. A zero-delay result proves logic, not timing. Gate delays are modelled separately with <code>#</code> delays.</p>
+    </article>
+  </div>
+  <p>If compilation fails, read the first error rather than the last. A missing semicolon or an undeclared net caused by <code>`default_nettype none</code> often produces a cascade of later messages.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="viva">Viva questions</h2>
+  <ol class="lab-viva">
+    <li>Why are the outputs declared as <code>wire</code> and not <code>reg</code>?</li>
+    <li>What is the difference between <code>&amp;</code> and <code>&amp;&amp;</code>? Give a case where they differ.</li>
+    <li>Which gates are called universal gates, and why?</li>
+    <li>How would you build an XOR gate using only NAND gates?</li>
+    <li>What does a simulator value of <code>x</code> mean, and why does the testbench use <code>!==</code>?</li>
+    <li>Why does the transcript finish at 4 ns rather than 4,000 ns?</li>
+    <li>Does a zero-delay simulation prove that the physical circuit will meet timing?</li>
+  </ol>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>AND is 1 only for <code>11</code>; OR is 0 only for <code>00</code>; XOR is 1 when the inputs differ.</li>
+    <li>NAND, NOR and XNOR are the complements of AND, OR and XOR, not different input combinations.</li>
+    <li>Parentheses decide the meaning of a complemented compound expression.</li>
+    <li>Continuous assignments drive <code>wire</code>; procedural blocks drive <code>reg</code>.</li>
+    <li>Four vectors exhaust a two-input combinational truth table.</li>
+    <li><code>!==</code> is the correct comparison for a self-checking testbench.</li>
+  </ul>
+</section>

@@ -1,0 +1,9 @@
+operation        | sum  cout zero ovf | lt eq gt
+-----------------+-------------------+---------
+5 + 3            | 1000   0    0    1  |  0  0  1
+7 + 1 (overflow) | 1000   0    0    1  |  0  0  1
+4 - 2            | 0010   1    0    0  |  0  0  1
+0 - 1            | 1111   0    0    0  |  1  0  0
+-8 - 1 (overflow)| 0111   1    0    1  |  0  0  1
+signed compare a=1000 (-8) b=0001 (1) -> lt=1 eq=0 gt=0
+tb.v:50: $finish called at 6000 (1ps)

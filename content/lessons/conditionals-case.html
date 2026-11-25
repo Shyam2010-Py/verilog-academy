@@ -1,0 +1,119 @@
+<section class="lesson-section">
+  <h2 id="decisions">Decision logic is where behaviour becomes hardware</h2>
+  <p class="lesson-lead">Most behavioural Verilog is decision logic: choose an output based on inputs. Verilog offers two constructs for it, <code>if</code>/<code>else</code> and <code>case</code>, plus two wildcard variants, <code>casez</code> and <code>casex</code>. They look interchangeable and are not. Each encodes a different priority structure, and each has a characteristic failure mode.</p>
+  <p>The example writes the same priority encoder three ways — <code>if</code>/<code>else</code>, <code>casez</code>, and an intentionally incomplete block that infers a latch — and proves that the first two agree on all sixteen inputs.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="if">if/else: a priority chain</h2>
+  <p>An <code>if</code>/<code>else if</code> chain tests conditions in order and executes the first true branch. In hardware it becomes a chain of multiplexers with the first condition at the highest priority. That is the natural description of a priority encoder, where the highest-numbered request wins.</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Priority by ordering</span></div>
+    <div class="code-block__body"><pre><code>if      (req[3]) code = 3;
+else if (req[2]) code = 2;
+else if (req[1]) code = 1;
+else if (req[0]) code = 0;</code></pre></div>
+  </div>
+  <p>Order is meaning. Swap two branches and the priority changes, silently. This is why a priority chain should be arranged in a deliberate order and commented, not left in whatever order the conditions were typed.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="case">case, casez, casex</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Comparison of the case family</caption>
+      <thead><tr><th scope="col">Form</th><th scope="col">Matching rule</th><th scope="col">Use</th></tr></thead>
+      <tbody>
+        <tr><td><code>case</code></td><td>Exact four-state match. <code>x</code> matches only <code>x</code>, <code>z</code> only <code>z</code>.</td><td>Instruction decode, state machines with fully specified encodings.</td></tr>
+        <tr><td><code>casez</code></td><td><code>z</code> and <code>?</code> in either the expression or an item are don't-cares.</td><td>Priority decoding, opcode matching with ignored bits.</td></tr>
+        <tr><td><code>casex</code></td><td><code>x</code>, <code>z</code> and <code>?</code> are all don't-cares.</td><td>Rarely. It hides unknown values that should have been caught.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><code>casez</code> is the useful wildcard form. <code>casex</code> is dangerous in verification because an <code>x</code> on an input — which usually means something is wrong — is treated as a match instead of a red flag. Many coding standards ban <code>casex</code> outright.</p>
+  <p>All three evaluate the items in order and execute the first match. So <code>casez</code> is also a priority structure: the first pattern that matches wins. In the example, <code>4'b1???</code> is placed before <code>4'b01??</code> precisely so that bit 3 dominates.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="latch">Incomplete assignment infers a latch</h2>
+  <p>A combinational <code>always @*</code> block must assign every output on every path. If some path leaves an output unassigned, the only way the circuit can reproduce the simulation's "keep the old value" behaviour is to store it. Synthesis therefore inserts a latch:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Latch inferred</span></div>
+    <div class="code-block__body"><pre><code>always @* begin
+    if (en)
+        q = d;      // when en = 0, q keeps its previous value
+end</code></pre></div>
+  </div>
+  <p>Latches are not automatically wrong — a transparent latch is a legitimate element — but an <em>unintended</em> latch is a bug. It is level-sensitive, it complicates timing analysis, and it usually means the designer forgot an <code>else</code>. The example includes this block deliberately so the behaviour can be observed rather than described.</p>
+  <p>The standard fix is a default assignment before the conditional structure, or a complete <code>else</code> and a <code>default</code>. Assigning a default at the top of the block guarantees that every output has a value on every path, which removes the storage requirement.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Two encoders and one deliberate latch</h2>
+  <p>The design contains a priority encoder written with <code>if</code>/<code>else</code>, the same encoder written with <code>casez</code>, and a latch-inferring block.</p>
+
+  {{CODE:examples/verilog/conditionals-case/example.v}}
+
+  <h3>Line by line: the <code>if</code>/<code>else</code> encoder</h3>
+  <ul>
+    <li><code>valid = 1'b1;</code> is the default. It is overwritten in the final <code>else</code> when no request is present. Setting a default first is the habit that prevents latches.</li>
+    <li><code>if (req[3]) code = 2'd3;</code> gives bit 3 the highest priority. Every later test only runs if this one failed.</li>
+    <li>The final <code>else</code> handles <code>req == 0000</code>, setting <code>code</code> to 0 and <code>valid</code> to 0. That is the only case in which <code>valid</code> is 0.</li>
+  </ul>
+
+  <h3>Line by line: the <code>casez</code> encoder</h3>
+  <ul>
+    <li><code>valid = |req;</code> uses a reduction OR, so <code>valid</code> needs no branch logic at all.</li>
+    <li><code>4'b1???</code> matches any pattern whose top bit is 1. Because it is first, it wins over every lower request.</li>
+    <li><code>4'b01??</code>, <code>4'b001?</code> and <code>4'b0001</code> form the descending priority chain. The patterns are mutually exclusive in their leading-1 position, so the first-match rule is unambiguous.</li>
+    <li><code>default: code = 2'd0;</code> covers <code>0000</code>. Without it, <code>code</code> would be unassigned for that pattern and synthesis would infer a latch.</li>
+  </ul>
+
+  {{CODE:examples/verilog/conditionals-case/tb.v}}
+
+  <p>The testbench walks all sixteen request patterns, compares the two encoders with case inequality, counts mismatches, and then exercises the latch block through enable, hold and transparent states.</p>
+
+  {{COMMANDS:conditionals-case}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/conditionals-case/expected.txt}}
+
+  <p>The first sixteen rows are the truth table. The <code>if</code> and <code>casez</code> columns agree on every pattern, which is what the <code>mismatches: 0</code> line confirms. The code follows the highest set bit: <code>0001</code> gives 0, <code>0010</code> gives 1, <code>0100</code> gives 2, <code>1000</code> gives 3, and mixed patterns such as <code>1010</code> give 3 because bit 3 wins.</p>
+  <p>The last three lines show the latch:</p>
+  <ul>
+    <li><code>en=1 d=1 -&gt; q=1</code>: the latch is transparent and follows the data.</li>
+    <li><code>en=0 d=0 -&gt; q=1 (held)</code>: the enable is low, so the output ignores the new data and holds the previous value. This is storage, created by an incomplete assignment.</li>
+    <li><code>en=1 d=0 -&gt; q=0</code>: the latch reopens and follows the data again.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="pragmas">Pragmas and SystemVerilog</h2>
+  <p>You may see <code>// synopsys full_case</code> or <code>// synopsys parallel_case</code> in older code. These are comments interpreted by some synthesis tools, not part of Verilog-2001. <code>full_case</code> tells the tool that all cases are covered, so it need not infer a latch; <code>parallel_case</code> tells it that the items are mutually exclusive, so it need not build a priority chain. Both can change behaviour when the assumption is false, and both are unnecessary if the Verilog is written completely and unambiguously.</p>
+  <p>SystemVerilog adds <code>unique</code>, <code>priority</code> and <code>inside</code>, which express these intents as language features with simulation checks. They are not available in Verilog-2001 and are outside this course's toolchain. In Verilog-2001, the safe approach is: assign defaults, cover every branch, and test overlapping patterns.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Forgetting the default assignment.</strong> One unassigned path is enough to infer a latch. Assign a default at the top of every combinational block.</li>
+    <li><strong>Relying on <code>case</code> order without saying so.</strong> <code>case</code> is a priority structure. If the items overlap, the first match wins, and a reader may assume otherwise.</li>
+    <li><strong>Using <code>casex</code> on data that can be <code>x</code>.</strong> An unknown input silently matches a wildcard instead of failing loudly.</li>
+    <li><strong>Assuming <code>casez</code> ignores <code>x</code>.</strong> It does not; only <code>z</code> and <code>?</code> are wildcards. An <code>x</code> in the expression does not match a <code>?</code> item.</li>
+    <li><strong>Writing overlapping <code>casez</code> items in the wrong order.</strong> The wildcard patterns must be ordered from most specific priority to least, or the wrong branch wins.</li>
+    <li><strong>Using <code>full_case</code> to silence a latch warning.</strong> The latch was telling you the truth: a path was unassigned.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li><code>if</code>/<code>else</code> and <code>case</code> both build priority structures; the first true or first matching item wins.</li>
+    <li><code>casez</code> treats <code>z</code> and <code>?</code> as don't-cares; <code>casex</code> also treats <code>x</code>, which hides errors.</li>
+    <li>Every output must be assigned on every path of a combinational block, or synthesis infers a latch.</li>
+    <li>A default assignment at the top of the block is the simplest defence against latches.</li>
+    <li><code>full_case</code> and <code>parallel_case</code> are tool pragmas, not Verilog-2001 features.</li>
+  </ul>
+</section>

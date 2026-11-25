@@ -1,0 +1,675 @@
+{
+  "version": 1,
+  "storageKey": "va.quizzes",
+  "categories": [
+    {
+      "id": "theory",
+      "title": "EC-405 Theory",
+      "short": "Theory",
+      "kicker": "Units 1–3",
+      "description": "Language rules, gate and dataflow modelling, behavioural blocks and the design flow behind the first three EC-405 units.",
+      "icon": "book",
+      "questions": [
+        {
+          "id": "theory-01",
+          "type": "Multiple choice",
+          "prompt": "What is the primary purpose of a hardware description language such as Verilog?",
+          "options": [
+            "To describe digital hardware so it can be simulated and, for a synthesizable subset, implemented in hardware",
+            "To style web pages and control browser layouts",
+            "To replace the operating system on a personal computer",
+            "To measure analogue voltages with a multimeter"
+          ],
+          "answer": 0,
+          "explanation": "Verilog describes the structure and behaviour of digital circuits. Simulation checks the description, and synthesis tools can map a synthesizable subset onto real hardware."
+        },
+        {
+          "id": "theory-02",
+          "type": "Verilog syntax",
+          "prompt": "Which declaration creates a single-bit net that is suitable for a continuous `assign` statement?",
+          "options": [
+            "`wire y;`",
+            "`reg y;`",
+            "`integer y;`",
+            "`parameter y = 1;`"
+          ],
+          "answer": 0,
+          "explanation": "`wire` declares a net driven continuously by a primitive, an instance output or an `assign`. A `reg` is assigned procedurally inside an `always` or `initial` block."
+        },
+        {
+          "id": "theory-03",
+          "type": "Code output",
+          "prompt": "What does this complete program print?",
+          "code": "module m;\n  wire y;\n  assign y = 1'b1 & 1'b0;\n  initial $display(\"%b\", y);\nendmodule",
+          "options": [
+            "`0`",
+            "`1`",
+            "`x`",
+            "`z`"
+          ],
+          "answer": 0,
+          "explanation": "Bitwise AND gives 1 only when both bits are 1. Here one input is 0, so `y` is 0 and `$display` prints `0`."
+        },
+        {
+          "id": "theory-04",
+          "type": "Truth-table interpretation",
+          "prompt": "Which gate has this truth table?",
+          "table": {
+            "caption": "Two-input truth table",
+            "headers": ["a", "b", "y"],
+            "rows": [
+              ["0", "0", "0"],
+              ["0", "1", "1"],
+              ["1", "0", "1"],
+              ["1", "1", "0"]
+            ]
+          },
+          "options": [
+            "AND",
+            "OR",
+            "XOR",
+            "XNOR"
+          ],
+          "answer": 2,
+          "explanation": "The output is 1 when the inputs differ and 0 when they match. That is exclusive-OR, written `a ^ b` in Verilog."
+        },
+        {
+          "id": "theory-05",
+          "type": "Boolean expression",
+          "prompt": "Which Verilog expression means “`a` AND NOT `b`”?",
+          "options": [
+            "`a & ~b`",
+            "`a | ~b`",
+            "`~a & b`",
+            "`a ^ b`"
+          ],
+          "answer": 0,
+          "explanation": "`&` is bitwise AND and `~` is bitwise NOT, so `a & ~b` is high only when `a` is 1 and `b` is 0."
+        },
+        {
+          "id": "theory-06",
+          "type": "Code output",
+          "prompt": "What is the value of `y` after this assignment?",
+          "code": "wire [3:0] y;\nassign y = 4'b1010 & 4'b1100;",
+          "options": [
+            "`4'b1000`",
+            "`4'b1110`",
+            "`4'b0010`",
+            "`4'b0000`"
+          ],
+          "answer": 0,
+          "explanation": "AND is applied bit by bit: 1010 & 1100 = 1000. The leftmost bit is 1 only because both operands have a 1 there."
+        },
+        {
+          "id": "theory-07",
+          "type": "Identify the error",
+          "prompt": "Why will this module fail to compile?",
+          "code": "module bad(input wire a, output wire y);\n  assign y = a\nendmodule",
+          "options": [
+            "The `assign` statement is missing its terminating semicolon",
+            "`input wire a` is not legal Verilog",
+            "The module must be called `bad_module`",
+            "`endmodule` must be written as `end module`"
+          ],
+          "answer": 0,
+          "explanation": "Every assignment statement ends with a semicolon. The missing `;` after `assign y = a` is a syntax error, so compilation stops before simulation."
+        },
+        {
+          "id": "theory-08",
+          "type": "Multiple choice",
+          "prompt": "Which construct is a continuous assignment?",
+          "options": [
+            "`assign y = a & b;`",
+            "`always @(posedge clk) y <= d;`",
+            "`initial y = 1'b0;`",
+            "`task drive;`"
+          ],
+          "answer": 0,
+          "explanation": "`assign` creates a continuous dataflow assignment. It re-evaluates whenever a signal on the right-hand side changes, without waiting for a clock or an initial block."
+        },
+        {
+          "id": "theory-09",
+          "type": "Verilog syntax",
+          "prompt": "In the gate primitive `and g1(y, a, b);`, which signal is the output?",
+          "options": [
+            "`y`",
+            "`a`",
+            "`b`",
+            "`g1`"
+          ],
+          "answer": 0,
+          "explanation": "A gate primitive lists the output first, followed by its inputs. Here `y` is the output and `a`, `b` are the inputs; `g1` is the instance name."
+        },
+        {
+          "id": "theory-10",
+          "type": "Multiple choice",
+          "prompt": "Why are nonblocking assignments (`<=`) normally used in an edge-triggered `always` block?",
+          "options": [
+            "They schedule updates at the end of the time step, which models several flip-flops updating together",
+            "They execute faster than any other assignment",
+            "They automatically add a clock divider",
+            "They prevent the block from being simulated"
+          ],
+          "answer": 0,
+          "explanation": "Nonblocking assignments evaluate their right-hand sides first and update at the end of the time step. This avoids order-dependent cascades and models synchronous registers correctly."
+        },
+        {
+          "id": "theory-11",
+          "type": "Code output",
+          "prompt": "After this combinational block runs, what is `y`?",
+          "code": "always @(*) begin\n  y = a;\n  y = b;\nend",
+          "options": [
+            "`a`",
+            "`b`",
+            "`a & b`",
+            "It keeps its previous value"
+          ],
+          "answer": 1,
+          "explanation": "Blocking assignments execute in order. The first statement assigns `a`, then the second overwrites it with `b`, so the final value is `b`."
+        },
+        {
+          "id": "theory-12",
+          "type": "Practical viva",
+          "prompt": "Why is a testbench normally not synthesized into hardware?",
+          "options": [
+            "It generates stimulus and checks outputs; it is simulation-only code, not a hardware description",
+            "It contains too many comments for a synthesizer",
+            "It always uses nonblocking assignments",
+            "It has no module declaration"
+          ],
+          "answer": 0,
+          "explanation": "A testbench drives the design, observes results and reports pass or fail. It has no physical input/output ports and is not intended to become a circuit."
+        }
+      ]
+    },
+    {
+      "id": "laboratory",
+      "title": "EC-410 Laboratory",
+      "short": "Laboratory",
+      "kicker": "Experiments 1–6",
+      "description": "Gates, adders, subtractors, a four-bit parallel adder, multiplexers and demultiplexers — the six experiments in the current laboratory.",
+      "icon": "flask",
+      "questions": [
+        {
+          "id": "lab-01",
+          "type": "Multiple choice",
+          "prompt": "Which gate produces a 1 only when both of its inputs are 1?",
+          "options": [
+            "AND",
+            "OR",
+            "XOR",
+            "NAND"
+          ],
+          "answer": 0,
+          "explanation": "The AND gate is the product term: `y = a & b`. Its output is 1 for the single input combination 11 and 0 for the other three rows."
+        },
+        {
+          "id": "lab-02",
+          "type": "Boolean expression",
+          "prompt": "Which pair of expressions describes the sum and carry of a half adder?",
+          "options": [
+            "`S = a ^ b`, `C = a & b`",
+            "`S = a & b`, `C = a ^ b`",
+            "`S = a | b`, `C = ~a & b`",
+            "`S = ~(a ^ b)`, `C = a | b`"
+          ],
+          "answer": 0,
+          "explanation": "The sum bit is 1 when exactly one input is 1, which is XOR. The carry is 1 only when both inputs are 1, which is AND."
+        },
+        {
+          "id": "lab-03",
+          "type": "Truth-table interpretation",
+          "prompt": "This table shows the carry output of a full adder. Which expression matches it?",
+          "table": {
+            "caption": "Full-adder carry",
+            "headers": ["a", "b", "cin", "cout"],
+            "rows": [
+              ["0", "0", "0", "0"],
+              ["0", "0", "1", "0"],
+              ["0", "1", "0", "0"],
+              ["0", "1", "1", "1"],
+              ["1", "0", "0", "0"],
+              ["1", "0", "1", "1"],
+              ["1", "1", "0", "1"],
+              ["1", "1", "1", "1"]
+            ]
+          },
+          "options": [
+            "`cout = (a & b) | (a & cin) | (b & cin)`",
+            "`cout = a ^ b ^ cin`",
+            "`cout = ~a & ~b & ~cin`",
+            "`cout = a | b | cin`"
+          ],
+          "answer": 0,
+          "explanation": "The carry is the majority function: it is 1 when at least two of the three inputs are 1. The three product terms cover every such pair."
+        },
+        {
+          "id": "lab-04",
+          "type": "Multiple choice",
+          "prompt": "In a four-bit ripple-carry adder, what does the final carry-out indicate?",
+          "options": [
+            "The unsigned sum needed a fifth bit because it exceeded 15",
+            "The sum is always negative",
+            "The clock has stopped",
+            "The least-significant bit is zero"
+          ],
+          "answer": 0,
+          "explanation": "Four sum bits represent 0–15. A final carry of 1 means the true sum is 16 or more, so the unsigned result has overflowed the four-bit field."
+        },
+        {
+          "id": "lab-05",
+          "type": "Multiple choice",
+          "prompt": "How many select lines does a 4:1 multiplexer require?",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "answer": 1,
+          "explanation": "Four data inputs need four distinct addresses, and two select bits provide 2² = 4 combinations: 00, 01, 10 and 11."
+        },
+        {
+          "id": "lab-06",
+          "type": "Multiple choice",
+          "prompt": "How many outputs does a 1:4 demultiplexer have, and how many are high at once?",
+          "options": [
+            "2 outputs, both high",
+            "4 outputs, all high",
+            "4 outputs, exactly one high",
+            "8 outputs, exactly one high"
+          ],
+          "answer": 2,
+          "explanation": "A 1:4 demultiplexer routes one data input to one of four outputs. The selected output follows the data input; the other three remain low."
+        },
+        {
+          "id": "lab-07",
+          "type": "Multiple choice",
+          "prompt": "How many select lines does an 8:1 multiplexer require?",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "8"
+          ],
+          "answer": 1,
+          "explanation": "Three select bits give 2³ = 8 addresses, enough to choose one of the eight data inputs."
+        },
+        {
+          "id": "lab-08",
+          "type": "Code output",
+          "prompt": "What is the five-bit value of `s`?",
+          "code": "wire [3:0] a = 4'b0110;\nwire [3:0] b = 4'b0011;\nwire [4:0] s = a + b;",
+          "options": [
+            "`5'b01001`",
+            "`5'b01000`",
+            "`5'b11001`",
+            "`5'b00101`"
+          ],
+          "answer": 0,
+          "explanation": "0110 is 6 and 0011 is 3, so the sum is 9. In five bits, 9 is `01001`; the extra bit preserves the carry."
+        },
+        {
+          "id": "lab-09",
+          "type": "Identify the error",
+          "prompt": "The design declares an output named `cout`, but the testbench uses this instance. What is wrong?",
+          "code": "full_adder uut (\n  .a(a), .b(b),\n  .sum(sum), .carry(carry)\n);",
+          "options": [
+            "The named port `.carry` does not exist in the design; it should be `.cout`",
+            "Named port connections are illegal in Verilog-2001",
+            "The instance name `uut` is reserved",
+            "A testbench cannot instantiate a module"
+          ],
+          "answer": 0,
+          "explanation": "Named connections must match the design’s port names exactly. A misspelled or nonexistent port is an elaboration error, even though the syntax looks valid."
+        },
+        {
+          "id": "lab-10",
+          "type": "Practical viva",
+          "prompt": "Why does a self-checking testbench print a PASS or FAIL summary?",
+          "options": [
+            "It compares observed outputs with expected values so the result is visible without manual waveform inspection",
+            "It makes the simulation run faster",
+            "It replaces the need for a design module",
+            "It automatically installs Icarus Verilog"
+          ],
+          "answer": 0,
+          "explanation": "The testbench applies known inputs, checks the outputs and counts mismatches. A final `PASS: n/n` line gives a clear, repeatable result for the experiment."
+        },
+        {
+          "id": "lab-11",
+          "type": "Truth-table interpretation",
+          "prompt": "For a half subtractor, what are the difference and borrow when `a = 0` and `b = 1`?",
+          "options": [
+            "Difference 0, borrow 0",
+            "Difference 1, borrow 1",
+            "Difference 1, borrow 0",
+            "Difference 0, borrow 1"
+          ],
+          "answer": 1,
+          "explanation": "0 − 1 cannot be done in one bit without borrowing. The difference is 1 and a borrow of 1 is taken from the next column, matching `D = a ^ b` and `Bout = ~a & b`."
+        },
+        {
+          "id": "lab-12",
+          "type": "Multiple choice",
+          "prompt": "A 1:8 demultiplexer has `Din = 1` and select `101`. Which output is high?",
+          "options": [
+            "Y3",
+            "Y5",
+            "Y6",
+            "Y7"
+          ],
+          "answer": 1,
+          "explanation": "The select value 101 is binary 5, so output Y5 is selected. It follows the data input and becomes 1; all other outputs remain 0."
+        }
+      ]
+    },
+    {
+      "id": "circuit-lab",
+      "title": "Circuit Lab",
+      "short": "Circuit Lab",
+      "kicker": "18 demonstrations",
+      "description": "Ideal logic levels, Boolean identities, routing blocks and the clocked D flip-flop from the interactive demonstrations.",
+      "icon": "circuit",
+      "questions": [
+        {
+          "id": "circuit-01",
+          "type": "Multiple choice",
+          "prompt": "When is the output of a two-input NAND gate equal to 0?",
+          "options": [
+            "Only when both inputs are 1",
+            "Only when both inputs are 0",
+            "Whenever either input is 1",
+            "Whenever the inputs differ"
+          ],
+          "answer": 0,
+          "explanation": "NAND is NOT-AND. The AND term is 1 only for 11, so the NAND output is 0 only for that row and 1 for the other three."
+        },
+        {
+          "id": "circuit-02",
+          "type": "Multiple choice",
+          "prompt": "What condition makes the output of an XOR gate equal to 1?",
+          "options": [
+            "The two inputs differ",
+            "Both inputs are 1",
+            "Both inputs are 0",
+            "The first input is 1 and the second is 0 only"
+          ],
+          "answer": 0,
+          "explanation": "XOR is the difference detector. It outputs 1 for 01 and 10, and 0 for 00 and 11."
+        },
+        {
+          "id": "circuit-03",
+          "type": "Boolean expression",
+          "prompt": "Which expression is the XNOR function?",
+          "options": [
+            "`~(a ^ b)`",
+            "`a ^ b`",
+            "`a & b`",
+            "`a | b`"
+          ],
+          "answer": 0,
+          "explanation": "XNOR is the complement of XOR, so it is 1 when the inputs match. Verilog also provides the `~^` operator for this function."
+        },
+        {
+          "id": "circuit-04",
+          "type": "Truth-table interpretation",
+          "prompt": "For a half subtractor, which input row produces a borrow output of 1?",
+          "options": [
+            "`a = 0, b = 0`",
+            "`a = 0, b = 1`",
+            "`a = 1, b = 0`",
+            "`a = 1, b = 1`"
+          ],
+          "answer": 1,
+          "explanation": "A borrow is needed only when subtracting 1 from 0. The borrow expression is `Bout = ~a & b`, which is 1 for the row 01."
+        },
+        {
+          "id": "circuit-05",
+          "type": "Multiple choice",
+          "prompt": "In a 2-to-4 decoder with an active-high enable, what happens when `EN = 0`?",
+          "options": [
+            "All four outputs are forced low",
+            "All four outputs are forced high",
+            "Output Y0 is high and the others are low",
+            "The selected output oscillates"
+          ],
+          "answer": 0,
+          "explanation": "The enable gates every output. With `EN = 0`, no output can be selected, so all four outputs remain 0 regardless of the select inputs."
+        },
+        {
+          "id": "circuit-06",
+          "type": "Multiple choice",
+          "prompt": "In the 4-to-2 priority encoder, which request wins when several inputs are high?",
+          "options": [
+            "The highest-numbered request, R3",
+            "The lowest-numbered request, R0",
+            "The request that arrived first in time",
+            "All requests are encoded at once"
+          ],
+          "answer": 0,
+          "explanation": "Priority runs from R3 down to R0. The highest active request determines the encoded output, and the valid output shows that at least one request is present."
+        },
+        {
+          "id": "circuit-07",
+          "type": "Multiple choice",
+          "prompt": "How many outputs of a 4-bit magnitude comparator are high at the same time?",
+          "options": [
+            "Exactly one of GT, EQ or LT",
+            "All three",
+            "Exactly two",
+            "None; the outputs are analogue"
+          ],
+          "answer": 0,
+          "explanation": "For any pair of unsigned four-bit values, exactly one relation holds: greater than, equal to, or less than. The comparator asserts the matching output only."
+        },
+        {
+          "id": "circuit-08",
+          "type": "Code output",
+          "prompt": "The D flip-flop has an asynchronous active-high reset. If `RST = 1`, what is `Q` after the reset is applied?",
+          "options": [
+            "`Q = 0` immediately, independent of the clock",
+            "`Q = 1` immediately",
+            "`Q` waits for the next rising edge",
+            "`Q` becomes high-impedance"
+          ],
+          "answer": 0,
+          "explanation": "Asynchronous reset acts without waiting for a clock edge. Asserting `RST` clears the stored value, so `Q` becomes 0 and `Q̄` becomes 1."
+        },
+        {
+          "id": "circuit-09",
+          "type": "Truth-table interpretation",
+          "prompt": "How many rows are needed for an exhaustive truth table of a 4:1 multiplexer with four data inputs and two select inputs?",
+          "options": [
+            "8",
+            "16",
+            "32",
+            "64"
+          ],
+          "answer": 3,
+          "explanation": "Six independent binary inputs (D0–D3 plus S1 and S0) produce 2⁶ = 64 combinations. The table must cover every select and data pattern."
+        },
+        {
+          "id": "circuit-10",
+          "type": "Boolean expression",
+          "prompt": "What function does `Y = (A & S) | (B & ~S)` implement?",
+          "options": [
+            "A 2:1 multiplexer choosing between A and B",
+            "A 2-input AND gate",
+            "A 2-input XOR gate",
+            "A 1:2 demultiplexer"
+          ],
+          "answer": 0,
+          "explanation": "When `S = 1`, the first term passes A and the second is 0. When `S = 0`, the second term passes B. That is a 2:1 multiplexer."
+        },
+        {
+          "id": "circuit-11",
+          "type": "Practical viva",
+          "prompt": "Why does the Circuit Lab describe itself as a logic workbench rather than a timing simulator?",
+          "options": [
+            "It evaluates ideal logic levels and does not model gate delays or analogue rise and fall times",
+            "It only works with analogue voltages",
+            "It compiles Verilog in the browser",
+            "It requires a physical FPGA connected by USB"
+          ],
+          "answer": 0,
+          "explanation": "The lab shows the intended Boolean behaviour immediately. Real hardware has propagation delays, setup and hold requirements, and analogue effects that a gate-level truth-table model does not represent."
+        }
+      ]
+    },
+    {
+      "id": "playground",
+      "title": "Playground Fundamentals",
+      "short": "Playground",
+      "kicker": "Local workflow",
+      "description": "Compiling, running and reading a Verilog project on your own machine, plus the habits that keep a design and its testbench honest.",
+      "icon": "code",
+      "questions": [
+        {
+          "id": "playground-01",
+          "type": "Multiple choice",
+          "prompt": "Which command compiles `design.v` and `tb.v` into an Icarus simulation image?",
+          "options": [
+            "`iverilog -g2001 -o simulation.out design.v tb.v`",
+            "`vvp design.v tb.v`",
+            "`gtkwave design.v tb.v`",
+            "`python design.v`"
+          ],
+          "answer": 0,
+          "explanation": "`iverilog` is the compiler. `-g2001` selects Verilog-2001, `-o` names the output image, and the two source files follow."
+        },
+        {
+          "id": "playground-02",
+          "type": "Multiple choice",
+          "prompt": "Which command executes the compiled simulation image?",
+          "options": [
+            "`vvp simulation.out`",
+            "`iverilog simulation.out`",
+            "`gtkwave simulation.out`",
+            "`run simulation.out`"
+          ],
+          "answer": 0,
+          "explanation": "`vvp` is the Icarus runtime. It executes the simulation image produced by `iverilog` and prints any `$display` or `$monitor` output."
+        },
+        {
+          "id": "playground-03",
+          "type": "Verilog syntax",
+          "prompt": "What does the `-g2001` option tell Icarus Verilog?",
+          "options": [
+            "Use the Verilog-2001 language generation",
+            "Generate exactly 2001 test vectors",
+            "Run for 2001 simulation seconds",
+            "Compile with 2001-bit buses"
+          ],
+          "answer": 0,
+          "explanation": "`-g2001` selects the language standard. The examples use Verilog-2001 port declarations such as `input wire a`, so the same generation is used for verification."
+        },
+        {
+          "id": "playground-04",
+          "type": "Multiple choice",
+          "prompt": "Which file in a Playground project is intended to become hardware?",
+          "options": [
+            "`design.v`",
+            "`tb.v`",
+            "`expected.txt`",
+            "`simulation.out`"
+          ],
+          "answer": 0,
+          "explanation": "The design contains the synthesizable module. The testbench drives it for simulation, the transcript records the result, and `simulation.out` is the compiled simulation image."
+        },
+        {
+          "id": "playground-05",
+          "type": "Code output",
+          "prompt": "Both registers are four bits wide. What does this print?",
+          "code": "reg [3:0] a = 4'b1111;\nreg [3:0] b = 4'b0001;\ninitial $display(\"%b\", a + b);",
+          "options": [
+            "`10000`",
+            "`0000`",
+            "`1111`",
+            "`0001`"
+          ],
+          "answer": 1,
+          "explanation": "The expression is evaluated in a four-bit context here, so the carry out of the top bit is lost. 15 + 1 wraps to 0 and prints `0000`. A five-bit destination would preserve `10000`."
+        },
+        {
+          "id": "playground-06",
+          "type": "Identify the error",
+          "prompt": "The design file defines `module and2(...)`, but the testbench instantiates `and_gate uut (...);`. What will happen?",
+          "options": [
+            "Elaboration fails because `and_gate` is not a known module",
+            "The testbench silently renames the design",
+            "The design is compiled twice",
+            "The simulation runs but ignores the inputs"
+          ],
+          "answer": 0,
+          "explanation": "A module instance must name a module that exists in the compiled source set. The mismatch produces an “Unknown module type” error before simulation starts."
+        },
+        {
+          "id": "playground-07",
+          "type": "Multiple choice",
+          "prompt": "What is the role of `$finish` in a testbench?",
+          "options": [
+            "It ends the simulation cleanly",
+            "It compiles the design",
+            "It opens GTKWave",
+            "It clears the waveform file"
+          ],
+          "answer": 0,
+          "explanation": "`$finish` stops the simulation and returns control to the runtime. Without it, a testbench with no more events may need an explicit end or may appear to hang."
+        },
+        {
+          "id": "playground-08",
+          "type": "Multiple choice",
+          "prompt": "Why does the Playground stop calling an example “verified” after you edit either file?",
+          "options": [
+            "The displayed transcript belongs to the original files and was not regenerated for your edit",
+            "The browser automatically deletes the example",
+            "Editing always introduces a syntax error",
+            "The download button stops working"
+          ],
+          "answer": 0,
+          "explanation": "The reference transcript is evidence for the exact shipped sources. Once the text changes, only a new local compile and run can show what your version does."
+        },
+        {
+          "id": "playground-09",
+          "type": "Multiple choice",
+          "prompt": "Which browser key stores optional Playground drafts?",
+          "options": [
+            "`va.playground.drafts`",
+            "`va.progress`",
+            "`va.quizzes`",
+            "`va.theme`"
+          ],
+          "answer": 0,
+          "explanation": "Drafts use their own versioned key. `va.progress` stores lesson and experiment completion, `va.quizzes` stores quiz attempts, and `va.theme` stores the colour theme."
+        },
+        {
+          "id": "playground-10",
+          "type": "Practical viva",
+          "prompt": "After downloading `design.v` and `tb.v` from the Playground, what is the correct next step?",
+          "options": [
+            "Open a terminal in that folder, compile both files with Icarus, run the image and compare the output",
+            "Open the files in a browser tab and wait for the page to compile them",
+            "Rename both files to `.txt` and submit them",
+            "Upload them to the Playground for automatic grading"
+          ],
+          "answer": 0,
+          "explanation": "The Playground prepares the files; it does not compile them. The documented workflow is a local `iverilog` compile followed by `vvp`, with the transcript compared against your own result."
+        },
+        {
+          "id": "playground-11",
+          "type": "Verilog syntax",
+          "prompt": "Which declaration describes a single-bit output net in a Verilog-2001 module port list?",
+          "options": [
+            "`output wire y`",
+            "`output reg y`",
+            "`input wire y`",
+            "`wire output y`"
+          ],
+          "answer": 0,
+          "explanation": "`output wire y` declares a net driven out of the module. `output reg y` is procedural, `input wire y` is an input, and `wire output y` has the keywords in the wrong order."
+        }
+      ]
+    }
+  ]
+}

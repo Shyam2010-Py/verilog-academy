@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="index, follow">
+  <title>Verilog Academy — Digital Logic and Verilog HDL</title>
+  <meta name="description" content="A structured engineering course in digital logic and Verilog HDL for SBTET C-23 ECE. Study EC-405 theory and verify designs in the EC-410 laboratory.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Verilog Academy — Digital Logic and Verilog HDL">
+  <meta property="og:description" content="A structured engineering course in digital logic and Verilog HDL for SBTET C-23 ECE. Study EC-405 theory and verify designs in the EC-410 laboratory.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body class="page-home" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="theory/index.html">Theory</a>
+          <a class="nav-link" href="labs/index.html">Laboratory</a>
+          <a class="nav-link" href="circuit-lab/index.html">Circuit Lab</a>
+          <a class="nav-link" href="playground/index.html">Playground</a>
+          <a class="nav-link" href="quizzes/index.html">Quizzes</a>
+          <a class="nav-link" href="guides/index.html">Guides</a>
+          <a class="nav-link" href="index.html#path">Learning path</a>
+          <a class="nav-link" href="index.html#toolchain">Toolchain</a>
+          <a class="nav-link" href="dashboard.html">Dashboard</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <section class="home-hero">
+  <div class="home-hero__atmosphere" aria-hidden="true"></div>
+  <div class="container home-hero__grid">
+    <div class="home-hero__copy" data-reveal>
+      <span class="eyebrow">SBTET C-23 · ECE · IV Semester</span>
+      <h1 class="display">Build hardware<br><span class="gradient-text">you can prove.</span></h1>
+      <p class="lede">A structured engineering course in digital logic and Verilog HDL. Learn how hardware is described, modelled and verified — then make it work on the bench.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#curriculum">
+          Explore the curriculum
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn-secondary btn-lg" href="#path">
+          See the learning path
+          <svg class="icon" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
+        </a>
+      </div>
+      <div class="hero-facts" aria-label="First release scope">
+        <div><strong>EC-405</strong><span>Theory track</span></div>
+        <div><strong>EC-410</strong><span>Practical track</span></div>
+        <div><strong>23</strong><span>Theory topics</span></div>
+        <div><strong>06</strong><span>Lab experiments</span></div>
+      </div>
+    </div>
+
+    <div class="home-hero__visual" data-reveal style="--reveal-delay: 120ms">
+      <div class="hero-halo" aria-hidden="true"></div>
+      <div class="workbench" data-workbench>
+        <div class="workbench__bar">
+          <span class="workbench__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="workbench__file">half_adder.v</span>
+          <span class="badge badge-cyan">Concept preview</span>
+        </div>
+
+        <div class="workbench__tabs" role="tablist" aria-label="Half adder views">
+          <button class="workbench__tab" id="wb-tab-rtl" type="button" role="tab" aria-selected="true" aria-controls="wb-panel-rtl" tabindex="0">RTL</button>
+          <button class="workbench__tab" id="wb-tab-tb" type="button" role="tab" aria-selected="false" aria-controls="wb-panel-tb" tabindex="-1">Testbench</button>
+          <button class="workbench__tab" id="wb-tab-wave" type="button" role="tab" aria-selected="false" aria-controls="wb-panel-wave" tabindex="-1">Waveform</button>
+        </div>
+
+        <div class="workbench__panels">
+          <div class="workbench__panel" id="wb-panel-rtl" role="tabpanel" aria-labelledby="wb-tab-rtl" tabindex="0">
+            <pre><code><span class="tok-keyword">module</span> <span class="tok-type">half_adder</span> (
+  <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> a,
+  <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> b,
+  <span class="tok-keyword">output</span> <span class="tok-keyword">wire</span> sum,
+  <span class="tok-keyword">output</span> <span class="tok-keyword">wire</span> carry
+);
+
+  <span class="tok-keyword">assign</span> sum   = a <span class="tok-operator">^</span> b;
+  <span class="tok-keyword">assign</span> carry = a <span class="tok-operator">&amp;</span> b;
+
+<span class="tok-keyword">endmodule</span></code></pre>
+          </div>
+
+          <div class="workbench__panel" id="wb-panel-tb" role="tabpanel" aria-labelledby="wb-tab-tb" tabindex="0" hidden>
+            <pre><code><span class="tok-directive">`timescale</span> 1ns / 1ps
+
+<span class="tok-keyword">module</span> <span class="tok-type">half_adder_tb</span>;
+  <span class="tok-keyword">reg</span>  a, b;
+  <span class="tok-keyword">wire</span> sum, carry;
+  <span class="tok-keyword">integer</span> i;
+
+  <span class="tok-type">half_adder</span> dut (a, b, sum, carry);
+
+  <span class="tok-keyword">initial</span> <span class="tok-keyword">begin</span>
+    <span class="tok-system">$dumpfile</span>(<span class="tok-string">"half_adder.vcd"</span>);
+    <span class="tok-system">$dumpvars</span>(0, half_adder_tb);
+
+    <span class="tok-keyword">for</span> (i = 0; i &lt; 4; i = i + 1) <span class="tok-keyword">begin</span>
+      {a, b} = i[1:0];
+      #10 <span class="tok-system">$display</span>(<span class="tok-string">"a=%b b=%b sum=%b carry=%b"</span>,
+                     a, b, sum, carry);
+    <span class="tok-keyword">end</span>
+
+    <span class="tok-system">$finish</span>;
+  <span class="tok-keyword">end</span>
+<span class="tok-keyword">endmodule</span></code></pre>
+          </div>
+
+          <div class="workbench__panel workbench__panel--wave" id="wb-panel-wave" role="tabpanel" aria-labelledby="wb-tab-wave" tabindex="0" hidden>
+            <svg class="waveform" viewBox="0 0 520 240" role="img" aria-label="Half adder waveform: when A and B are both zero, SUM and CARRY are zero. When either input is one, SUM is one. When both inputs are one, CARRY is one.">
+              <g class="wave-grid" aria-hidden="true">
+                <path d="M64 22V206M173 22V206M282 22V206M391 22V206M500 22V206"/>
+              </g>
+              <g class="wave-labels" aria-hidden="true">
+                <text x="0" y="52">A</text>
+                <text x="0" y="96">B</text>
+                <text x="0" y="140">SUM</text>
+                <text x="0" y="184">CARRY</text>
+              </g>
+              <g class="wave-traces" aria-hidden="true">
+                <path class="wave-trace wave-trace--a" d="M64 62H282V34H500"/>
+                <path class="wave-trace wave-trace--b" d="M64 106H173V78H282V106H391V78H500"/>
+                <path class="wave-trace wave-trace--sum" d="M64 150H173V122H391V150H500"/>
+                <path class="wave-trace wave-trace--carry" d="M64 194H391V166H500"/>
+              </g>
+              <g class="wave-time" aria-hidden="true">
+                <text x="64" y="226">0</text>
+                <text x="173" y="226">10</text>
+                <text x="282" y="226">20</text>
+                <text x="391" y="226">30</text>
+                <text x="500" y="226">40</text>
+              </g>
+              <text class="wave-unit" x="500" y="14" text-anchor="end" aria-hidden="true">ns</text>
+            </svg>
+            <p class="workbench__caption">All four input combinations · A, B → SUM, CARRY</p>
+          </div>
+        </div>
+
+        <div class="workbench__foot">
+          <span class="badge">Verilog-2001</span>
+          <span class="workbench__note">Half adder · 2 inputs, 2 outputs</span>
+          <span class="workbench__status"><span class="status-dot"></span> Sim-ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="signal-strip" aria-label="Course themes">
+  <div class="signal-strip-inner">
+    <span class="signal-strip-item">Digital logic</span>
+    <span class="signal-strip-item">Verilog-2001</span>
+    <span class="signal-strip-item">Gate-level modelling</span>
+    <span class="signal-strip-item">Dataflow</span>
+    <span class="signal-strip-item">Behavioural modelling</span>
+    <span class="signal-strip-item">Testbenches</span>
+    <span class="signal-strip-item">Icarus Verilog</span>
+    <span class="signal-strip-item">GTKWave</span>
+    <span class="signal-strip-item">Synthesis</span>
+    <span class="signal-strip-item">FPGA flow</span>
+    <span class="signal-strip-item" aria-hidden="true">Digital logic</span>
+    <span class="signal-strip-item" aria-hidden="true">Verilog-2001</span>
+    <span class="signal-strip-item" aria-hidden="true">Gate-level modelling</span>
+    <span class="signal-strip-item" aria-hidden="true">Dataflow</span>
+    <span class="signal-strip-item" aria-hidden="true">Behavioural modelling</span>
+    <span class="signal-strip-item" aria-hidden="true">Testbenches</span>
+    <span class="signal-strip-item" aria-hidden="true">Icarus Verilog</span>
+    <span class="signal-strip-item" aria-hidden="true">GTKWave</span>
+    <span class="signal-strip-item" aria-hidden="true">Synthesis</span>
+    <span class="signal-strip-item" aria-hidden="true">FPGA flow</span>
+  </div>
+  <button class="marquee-toggle" type="button" data-marquee-toggle aria-pressed="false" aria-label="Pause topic ticker">
+    <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-pause"></use></svg>
+  </button>
+</section>
+
+<section class="section" id="approach">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">01 / The approach</span>
+        <h2>Theory, practice and proof.</h2>
+      </div>
+      <p>A hardware engineer does not stop at a description that looks right. The course is built around the same loop a real design team uses: understand the circuit, model it, then verify the behaviour.</p>
+    </div>
+
+    <div class="principle-grid">
+      <article class="principle panel" data-reveal>
+        <span class="principle-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#icon-layers"></use></svg></span>
+        <h3>Structure before syntax</h3>
+        <p>Start with the design flow, module boundaries and data types. Verilog syntax makes sense once you know what the hardware is doing.</p>
+      </article>
+      <article class="principle panel" data-reveal style="--reveal-delay: 80ms">
+        <span class="principle-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#icon-code"></use></svg></span>
+        <h3>Build the model</h3>
+        <p>Move from gate primitives to dataflow and behavioural descriptions, writing Verilog-2001 that maps to real circuits.</p>
+      </article>
+      <article class="principle panel" data-reveal style="--reveal-delay: 160ms">
+        <span class="principle-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#icon-waveform"></use></svg></span>
+        <h3>Prove the design</h3>
+        <p>Every idea ends in a testbench and a waveform. If the simulation is wrong, the design is not finished.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="curriculum">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">02 / Curriculum</span>
+        <h2>Two papers. One workflow.</h2>
+      </div>
+      <p>EC-405 builds the language and the models. EC-410 puts them on the bench. The first release covers Units 1–3 of the theory paper and Experiments 1–6 of the practical paper.</p>
+    </div>
+
+    <div class="track-grid">
+      <article class="track-card panel" id="ec-405" data-reveal>
+        <div class="track-card__head">
+          <span class="track-code">EC-405</span>
+          <span class="badge badge-cyan">Theory · First release</span>
+        </div>
+        <h3>Digital Logic Design Through Verilog HDL</h3>
+        <p>The language and modelling foundation: design flow, modules and ports, gate-level and dataflow descriptions, then behavioural modelling and verification.</p>
+        <span class="track-card__meta">3 units · 23 topics · 75 periods</span>
+
+        <div class="track-scope">
+          <span class="track-scope__label">Available in this release</span>
+          <ul class="track-list">
+                <li class="track-row"><span class="track-row__code">Unit 1</span><span class="track-row__title">Introduction to Verilog HDL, Language Constructs and Conventions</span><span class="track-row__meta">10 topics</span></li>
+                <li class="track-row"><span class="track-row__code">Unit 2</span><span class="track-row__title">Gate Level and Data Flow Modelling</span><span class="track-row__meta">6 topics</span></li>
+                <li class="track-row"><span class="track-row__code">Unit 3</span><span class="track-row__title">Behavioural Modelling</span><span class="track-row__meta">7 topics</span></li>
+          </ul>
+        </div>
+
+        <div class="track-scope track-scope--locked">
+          <span class="track-scope__label"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-bookmark"></use></svg> Later release</span>
+          <ul class="track-list">
+                <li class="track-row is-locked"><span class="track-row__code">Unit 4</span><span class="track-row__title">Modelling of Combinational and Sequential Logic Circuits</span><span class="track-row__meta">Roadmap</span></li>
+                <li class="track-row is-locked"><span class="track-row__code">Unit 5</span><span class="track-row__title">System Design Concepts</span><span class="track-row__meta">Roadmap</span></li>
+          </ul>
+        </div>
+
+        <a class="btn btn-secondary" href="theory/index.html">
+          Enter the theory classroom
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </article>
+
+      <article class="track-card panel" id="ec-410" data-reveal style="--reveal-delay: 80ms">
+        <div class="track-card__head">
+          <span class="track-code track-code--lab">EC-410</span>
+          <span class="badge badge-violet">Practical · First release</span>
+        </div>
+        <h3>Digital Logic Design Through Verilog HDL Lab</h3>
+        <p>The practical half: six experiments that turn the theory into working modules, simulated and inspected before they leave the bench.</p>
+        <span class="track-card__meta">6 experiments · 45 periods</span>
+
+        <div class="track-scope">
+          <span class="track-scope__label">Available in this release</span>
+          <ul class="track-list track-list--lab">
+                <li class="track-row track-row--lab"><span class="track-row__code">Exp 01</span><span class="track-row__title">Implementation of Basic Logic Gates</span></li>
+                <li class="track-row track-row--lab"><span class="track-row__code">Exp 02</span><span class="track-row__title">Implementation of Adders</span></li>
+                <li class="track-row track-row--lab"><span class="track-row__code">Exp 03</span><span class="track-row__title">Implementation of Subtractors</span></li>
+                <li class="track-row track-row--lab"><span class="track-row__code">Exp 04</span><span class="track-row__title">Implementation of 4-Bit Parallel Adder</span></li>
+                <li class="track-row track-row--lab"><span class="track-row__code">Exp 05</span><span class="track-row__title">Implementation of Multiplexers</span></li>
+                <li class="track-row track-row--lab"><span class="track-row__code">Exp 06</span><span class="track-row__title">Implementation of Demultiplexers</span></li>
+          </ul>
+        </div>
+
+        <div class="track-scope track-scope--locked">
+          <span class="track-scope__label"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-bookmark"></use></svg> Later release</span>
+          <ul class="track-list">
+                <li class="track-row is-locked"><span class="track-row__code">Exp 07–15</span><span class="track-row__title">Reserved for the next release</span><span class="track-row__meta">Roadmap</span></li>
+          </ul>
+        </div>
+
+        <a class="btn btn-secondary" href="labs/index.html">
+          Enter the laboratory
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="path">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">03 / Learning path</span>
+        <h2>From first gate to verified design.</h2>
+      </div>
+      <p>A deliberate sequence: learn the language, describe circuits structurally and behaviourally, then validate each idea in the laboratory. No skipped steps and no unexplained code.</p>
+    </div>
+
+    <div class="path-grid">
+      <article class="path-step panel" id="theory-path" data-reveal>
+        <div class="path-step__top">
+          <span class="path-step__index">01</span>
+          <span class="path-step__meta">EC-405 · Unit 1 · 20 periods</span>
+        </div>
+        <h3>Foundations of the language</h3>
+        <p>Understand how hardware is described before writing a line of Verilog.</p>
+        <ul>
+          <li>VLSI design flow and the role of HDL</li>
+          <li>Modules, instances, ports and hierarchy</li>
+          <li>Nets, registers, vectors and number systems</li>
+        </ul>
+      </article>
+
+      <article class="path-step panel" data-reveal style="--reveal-delay: 60ms">
+        <div class="path-step__top">
+          <span class="path-step__index">02</span>
+          <span class="path-step__meta">EC-405 · Unit 2 · 10 periods</span>
+        </div>
+        <h3>Structural and dataflow modelling</h3>
+        <p>Describe a circuit as gates, or as continuous equations over its signals.</p>
+        <ul>
+          <li>Gate primitives and delay modelling</li>
+          <li>Continuous assignments and operators</li>
+          <li>Adders, multiplexers, decoders and ALUs</li>
+        </ul>
+      </article>
+
+      <article class="path-step panel" data-reveal style="--reveal-delay: 120ms">
+        <div class="path-step__top">
+          <span class="path-step__index">03</span>
+          <span class="path-step__meta">EC-405 · Unit 3 · 15 periods</span>
+        </div>
+        <h3>Behavioural modelling</h3>
+        <p>Model processes, timing and state, then prove the behaviour with a testbench.</p>
+        <ul>
+          <li>initial, always and timing controls</li>
+          <li>Blocking versus non-blocking assignment</li>
+          <li>Conditionals, loops and user-defined primitives</li>
+        </ul>
+      </article>
+
+      <article class="path-step path-step--lab panel" id="practical-path" data-reveal style="--reveal-delay: 180ms">
+        <div class="path-step__top">
+          <span class="path-step__index">04</span>
+          <span class="path-step__meta">EC-410 · Experiments 1–6</span>
+        </div>
+        <h3>Practical validation</h3>
+        <p>Put the language to work on the bench, from basic gates to arithmetic and routing.</p>
+        <ul>
+          <li>Basic logic gates and adders</li>
+          <li>Subtractors and a 4-bit parallel adder</li>
+          <li>Multiplexers and demultiplexers</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="toolchain">
+  <div class="container toolchain-grid">
+    <div class="toolchain-copy" data-reveal>
+      <span class="eyebrow">04 / Toolchain</span>
+      <h2>No simulated success.</h2>
+      <p class="lede">The course targets a real Verilog workflow. You will compile, simulate and inspect waveforms with tools you can install on a normal PC — not a browser mock-up that hides the result.</p>
+
+      <dl class="toolchain-facts">
+        <div><dt>Language</dt><dd>Verilog-2001</dd></div>
+        <div><dt>Simulation</dt><dd>Icarus Verilog 13.0</dd></div>
+        <div><dt>Waveforms</dt><dd>GTKWave</dd></div>
+        <div><dt>Synthesis</dt><dd>Xilinx ISE / Vivado or similar</dd></div>
+      </dl>
+
+      <div class="toolchain-actions">
+        <a class="btn btn-secondary btn-sm" href="guides/windows.html">
+          Windows setup guide
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn-ghost btn-sm" href="guides/android.html">Android guide</a>
+      </div>
+    </div>
+
+    <div class="terminal panel" data-reveal style="--reveal-delay: 80ms">
+      <div class="terminal__bar">
+        <span class="workbench__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>half_adder — simulation</span>
+      </div>
+      <pre><code><span class="term-prompt">$</span> iverilog -g2001 -o half_adder half_adder.v half_adder_tb.v
+<span class="term-prompt">$</span> vvp half_adder
+<span class="term-dim">VCD info: dumpfile half_adder.vcd opened for output.</span>
+a=0 b=0 sum=0 carry=0
+a=0 b=1 sum=1 carry=0
+a=1 b=0 sum=1 carry=0
+a=1 b=1 sum=0 carry=1
+<span class="term-dim">$finish called at 40000 (1ps)</span></code></pre>
+      <div class="terminal__foot">
+        <span class="status-dot"></span>
+        <span>Captured locally · Icarus Verilog 13.0</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="panel panel-glow cta-panel" data-reveal>
+      <div>
+        <span class="eyebrow">First release</span>
+        <h2>Start with the foundations.</h2>
+        <p>EC-405 Units 1–3 and EC-410 Experiments 1–6 define the first release. Review the scope, follow the path, and see exactly what you will be able to design and verify.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="#ec-405">
+          Review EC-405 scope
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+        </a>
+        <a class="btn btn-secondary" href="labs/index.html">
+          Review EC-410 laboratory
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="index.html#path">Learning path</a>
+              <a class="footer-link" href="index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="guides/index.html">Setup guides</a>
+              <a class="footer-link" href="index.html#approach">The approach</a>
+              <a class="footer-link" href="styleguide.html">Design system</a>
+              <a class="footer-link" href="styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="theory/index.html">Theory<span>01</span></a>
+        <a class="mobile-nav-link" href="labs/index.html">Laboratory<span>02</span></a>
+        <a class="mobile-nav-link" href="circuit-lab/index.html">Circuit Lab<span>03</span></a>
+        <a class="mobile-nav-link" href="playground/index.html">Playground<span>04</span></a>
+        <a class="mobile-nav-link" href="quizzes/index.html">Quizzes<span>05</span></a>
+        <a class="mobile-nav-link" href="guides/index.html">Guides<span>06</span></a>
+        <a class="mobile-nav-link" href="index.html#path">Learning path<span>07</span></a>
+        <a class="mobile-nav-link" href="index.html#toolchain">Toolchain<span>08</span></a>
+        <a class="mobile-nav-link" href="dashboard.html">Dashboard<span>09</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+  
+</body>
+</html>

@@ -1,0 +1,2812 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "logic-gates",
+      "title": "Logic gates",
+      "description": "The seven primitive gates: switch inputs, watch the output, and relate the symbol to its Boolean operator."
+    },
+    {
+      "id": "arithmetic",
+      "title": "Arithmetic",
+      "description": "Adders and subtractors built from Boolean equations, ending with a four-bit ripple-carry datapath."
+    },
+    {
+      "id": "routing",
+      "title": "Routing and selection",
+      "description": "Multiplexers, demultiplexers and decoders: circuits that choose, route and expand binary codes."
+    },
+    {
+      "id": "coding",
+      "title": "Encoding and comparison",
+      "description": "Priority encoding and magnitude comparison, the blocks that turn patterns into codes and decisions."
+    },
+    {
+      "id": "sequential",
+      "title": "Sequential logic",
+      "description": "Storage and clocked behaviour: a D flip-flop with enable and asynchronous reset."
+    }
+  ],
+  "circuits": [
+    {
+      "id": "and-gate",
+      "number": 1,
+      "title": "AND Gate",
+      "category": "logic-gates",
+      "kind": "combinational",
+      "summary": "The AND gate produces 1 only when every input is 1. With two inputs there is exactly one true row in its truth table.",
+      "scope": "2 inputs · 1 output · 4 combinations",
+      "minutes": 4,
+      "objectives": [
+        "Relate the AND symbol to the Boolean product Y = A · B.",
+        "Predict the output for all four input pairs before switching.",
+        "Recognise that a single 0 input forces the output to 0."
+      ],
+      "operation": [
+        "Each input is a logic level. The output is the logical product of A and B, so it is high only when both switches are high. Any low input blocks the output.",
+        "In gate-level Verilog this behaviour is `and (y, a, b)`; in dataflow it is `assign y = a & b;`. The interactive diagram evaluates the same equation in JavaScript."
+      ],
+      "equation": "Y = A · B",
+      "applications": [
+        "Enabling a signal only when a device is selected and its data is valid.",
+        "Building the carry term of an adder and the enable path of a register."
+      ],
+      "observations": [
+        "AND is not the same as OR: three of the four rows produce 0.",
+        "The output is 0 for 0·1, 1·0 and 0·0. Only 1·1 produces 1."
+      ],
+      "mistakes": [
+        "Reading the symbol as OR because both inputs enter the flat side.",
+        "Assuming an unconnected input is high; an undriven input is unknown, not 1."
+      ],
+      "revision": [
+        "AND is high only when all inputs are high.",
+        "The Boolean operator is multiplication: Y = A · B.",
+        "A single 0 is a blocking input for an AND gate."
+      ],
+      "table": {
+        "caption": "AND gate truth table",
+        "note": "Every row is checked by the interactive engine.",
+        "columns": [
+          "A",
+          "B",
+          "Y"
+        ],
+        "rows": [
+          {
+            "key": "00",
+            "cells": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "01",
+            "cells": [
+              "0",
+              "1",
+              "0"
+            ]
+          },
+          {
+            "key": "10",
+            "cells": [
+              "1",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "11",
+            "cells": [
+              "1",
+              "1",
+              "1"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y",
+            "label": "Y",
+            "group": "",
+            "help": "High only when both inputs are high."
+          }
+        ]
+      },
+      "io": "A and B are active-high inputs: logic 1 means the switch is on and the node is high. Y is the active-high output. A dot in the Boolean equation means logical AND, not arithmetic multiplication.",
+      "verilog": "assign y = a & b;"
+    },
+    {
+      "id": "or-gate",
+      "number": 2,
+      "title": "OR Gate",
+      "category": "logic-gates",
+      "kind": "combinational",
+      "summary": "The OR gate produces 1 when at least one input is 1. It produces 0 only for the all-zero input row.",
+      "scope": "2 inputs · 1 output · 4 combinations",
+      "minutes": 4,
+      "objectives": [
+        "Relate the OR symbol to the Boolean sum Y = A + B.",
+        "Identify the single row that produces 0.",
+        "Distinguish logical OR from arithmetic addition."
+      ],
+      "operation": [
+        "The output is the logical sum of A and B. If either switch is high the output is high; only 0 and 0 leave it low.",
+        "Verilog writes this as `assign y = a | b;`. The plus sign in Boolean algebra means OR, not binary addition, so 1 + 1 still produces 1."
+      ],
+      "equation": "Y = A + B",
+      "applications": [
+        "Combining multiple interrupt requests into one alert signal.",
+        "Detecting that any one of several fault conditions is active."
+      ],
+      "observations": [
+        "Three of the four rows produce 1, the mirror image of AND.",
+        "Boolean 1 + 1 = 1; arithmetic 1 + 1 = 10 is a different operation."
+      ],
+      "mistakes": [
+        "Expecting OR to carry like a binary adder.",
+        "Confusing the curved input side of OR with the flat input side of AND."
+      ],
+      "revision": [
+        "OR is low only when every input is low.",
+        "The Boolean operator is addition: Y = A + B.",
+        "Logical addition never produces a carry."
+      ],
+      "table": {
+        "caption": "OR gate truth table",
+        "note": "Every row is checked by the interactive engine.",
+        "columns": [
+          "A",
+          "B",
+          "Y"
+        ],
+        "rows": [
+          {
+            "key": "00",
+            "cells": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "01",
+            "cells": [
+              "0",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "10",
+            "cells": [
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "11",
+            "cells": [
+              "1",
+              "1",
+              "1"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y",
+            "label": "Y",
+            "group": "",
+            "help": "High when at least one input is high."
+          }
+        ]
+      },
+      "io": "A and B are active-high inputs. Y is high when either input is high, and low only for A = 0 and B = 0. The plus sign in the equation means logical OR, so 1 + 1 still gives 1, with no carry.",
+      "verilog": "assign y = a | b;"
+    },
+    {
+      "id": "not-gate",
+      "number": 3,
+      "title": "NOT Gate (Inverter)",
+      "category": "logic-gates",
+      "kind": "combinational",
+      "summary": "The inverter produces the complement of its single input. It is the only one-input gate in the set.",
+      "scope": "1 input · 1 output · 2 combinations",
+      "minutes": 4,
+      "objectives": [
+        "Relate the triangle-and-bubble symbol to logical inversion.",
+        "Explain why the inverter has no two-input truth table.",
+        "Use inversion to form active-low signals."
+      ],
+      "operation": [
+        "The output is the opposite of the input. A 0 becomes 1 and a 1 becomes 0, with no other possible result for a defined input.",
+        "Verilog writes the complement as `~a`. In gate-level form the primitive is `not (y, a)`. Inversion is the basis of NAND, NOR, XNOR and active-low control."
+      ],
+      "equation": "Y = ~A",
+      "applications": [
+        "Generating the select complement inside a 2:1 multiplexer.",
+        "Converting an active-high request into an active-low enable."
+      ],
+      "observations": [
+        "The bubble at the output means inversion, not a separate gate.",
+        "An inverter cannot create a defined output from an unknown input; the result is unknown."
+      ],
+      "mistakes": [
+        "Drawing the bubble on the input side and calling it an inverter.",
+        "Forgetting that two inverters in series restore the original polarity."
+      ],
+      "revision": [
+        "NOT has one input and one output.",
+        "Y = ~A; the output is always the complement.",
+        "Two inversions cancel."
+      ],
+      "table": {
+        "caption": "NOT gate truth table",
+        "note": "Every row is checked by the interactive engine.",
+        "columns": [
+          "A",
+          "Y"
+        ],
+        "rows": [
+          {
+            "key": "0",
+            "cells": [
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "1",
+            "cells": [
+              "1",
+              "0"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y",
+            "label": "Y",
+            "group": "",
+            "help": "Complement of A."
+          }
+        ]
+      },
+      "io": "A is the single active-high input and Y is its complement. When A is high, Y is low; when A is low, Y is high. The small circle at the gate output is the inversion bubble.",
+      "verilog": "assign y = ~a;"
+    },
+    {
+      "id": "nand-gate",
+      "number": 4,
+      "title": "NAND Gate",
+      "category": "logic-gates",
+      "kind": "combinational",
+      "summary": "NAND is an AND gate followed by an inverter. It is low only when both inputs are high.",
+      "scope": "2 inputs · 1 output · 4 combinations",
+      "minutes": 4,
+      "objectives": [
+        "Read NAND as inverted AND.",
+        "Identify the only input pair that produces 0.",
+        "Explain why NAND is called a universal gate."
+      ],
+      "operation": [
+        "The gate forms A · B and then complements the result. The output is 0 only for A = 1 and B = 1; every other row is 1.",
+        "Verilog dataflow uses `assign y = ~(a & b);` or the primitive `nand (y, a, b)`. NAND can implement NOT, AND, OR and any other combinational function when gates are combined."
+      ],
+      "equation": "Y = ~(A · B)",
+      "applications": [
+        "Building flash memory and SR latch structures from cross-coupled NAND gates.",
+        "Implementing arbitrary logic in a NAND-only ASIC library."
+      ],
+      "observations": [
+        "NAND is the complement of AND, so every row is reversed.",
+        "The output is 1 for three of the four input pairs."
+      ],
+      "mistakes": [
+        "Placing the bubble on the inputs instead of the output; that describes an OR gate with inverted inputs.",
+        "Forgetting the inversion when converting an AND design to NAND."
+      ],
+      "revision": [
+        "NAND = NOT(AND).",
+        "Output 0 only for 1,1.",
+        "NAND is a universal gate."
+      ],
+      "table": {
+        "caption": "NAND gate truth table",
+        "note": "Every row is checked by the interactive engine.",
+        "columns": [
+          "A",
+          "B",
+          "Y"
+        ],
+        "rows": [
+          {
+            "key": "00",
+            "cells": [
+              "0",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "01",
+            "cells": [
+              "0",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "10",
+            "cells": [
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "11",
+            "cells": [
+              "1",
+              "1",
+              "0"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y",
+            "label": "Y",
+            "group": "",
+            "help": "Low only when both inputs are high."
+          }
+        ]
+      },
+      "io": "A and B are active-high inputs and Y is the active-high output. NAND is an AND gate with an output bubble, so the output is the complement of A · B. The bubble marks the inversion, not an active-low input.",
+      "verilog": "assign y = ~(a & b);"
+    },
+    {
+      "id": "nor-gate",
+      "number": 5,
+      "title": "NOR Gate",
+      "category": "logic-gates",
+      "kind": "combinational",
+      "summary": "NOR is an OR gate followed by an inverter. It is high only when both inputs are low.",
+      "scope": "2 inputs · 1 output · 4 combinations",
+      "minutes": 4,
+      "objectives": [
+        "Read NOR as inverted OR.",
+        "Identify the only input pair that produces 1.",
+        "Use NOR as an active-low any-input detector."
+      ],
+      "operation": [
+        "The gate forms A + B and then complements the result. The output is 1 only when A = 0 and B = 0.",
+        "Verilog dataflow uses `assign y = ~(a | b);` or the primitive `nor (y, a, b)`. Like NAND, NOR is universal and can build any combinational function."
+      ],
+      "equation": "Y = ~(A + B)",
+      "applications": [
+        "Detecting the all-clear condition in an active-low fault system.",
+        "Building cross-coupled NOR SR latches."
+      ],
+      "observations": [
+        "NOR is the complement of OR, so exactly one row produces 1.",
+        "It is not an OR gate with inverted inputs; that different circuit is an AND gate."
+      ],
+      "mistakes": [
+        "Mixing up NOR and NAND truth tables.",
+        "Assuming a NOR output is high when one input is low; both must be low."
+      ],
+      "revision": [
+        "NOR = NOT(OR).",
+        "Output 1 only for 0,0.",
+        "NOR is a universal gate."
+      ],
+      "table": {
+        "caption": "NOR gate truth table",
+        "note": "Every row is checked by the interactive engine.",
+        "columns": [
+          "A",
+          "B",
+          "Y"
+        ],
+        "rows": [
+          {
+            "key": "00",
+            "cells": [
+              "0",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "01",
+            "cells": [
+              "0",
+              "1",
+              "0"
+            ]
+          },
+          {
+            "key": "10",
+            "cells": [
+              "1",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "11",
+            "cells": [
+              "1",
+              "1",
+              "0"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y",
+            "label": "Y",
+            "group": "",
+            "help": "High only when both inputs are low."
+          }
+        ]
+      },
+      "io": "A and B are active-high inputs and Y is the active-high output. NOR is an OR gate with an output bubble, so Y is the complement of A + B. It is not an OR gate with inverted inputs.",
+      "verilog": "assign y = ~(a | b);"
+    },
+    {
+      "id": "xor-gate",
+      "number": 6,
+      "title": "XOR Gate",
+      "category": "logic-gates",
+      "kind": "combinational",
+      "summary": "XOR produces 1 when the inputs differ. It is the parity detector and the sum term of a half adder.",
+      "scope": "2 inputs · 1 output · 4 combinations",
+      "minutes": 4,
+      "objectives": [
+        "Relate the XOR symbol to inequality detection.",
+        "Predict the output for equal and unequal inputs.",
+        "Connect XOR to the sum output of an adder."
+      ],
+      "operation": [
+        "The output is high when exactly one input is high. Equal inputs produce 0, whether both are 0 or both are 1.",
+        "Verilog writes this as `assign y = a ^ b;`. XOR is associative, so a chain of XOR gates computes the parity of all its inputs."
+      ],
+      "equation": "Y = A ⊕ B",
+      "applications": [
+        "Parity generation and error detection.",
+        "The sum bit of half and full adders."
+      ],
+      "observations": [
+        "XOR is not OR: 1 ⊕ 1 = 0 while 1 + 1 = 1.",
+        "The output detects difference, not the presence of a 1."
+      ],
+      "mistakes": [
+        "Using OR when the equation calls for XOR.",
+        "Forgetting that an XOR chain inverts when an odd number of inputs is high."
+      ],
+      "revision": [
+        "XOR = 1 when inputs differ.",
+        "Y = A ⊕ B.",
+        "XOR is the sum term of a half adder."
+      ],
+      "table": {
+        "caption": "XOR gate truth table",
+        "note": "Every row is checked by the interactive engine.",
+        "columns": [
+          "A",
+          "B",
+          "Y"
+        ],
+        "rows": [
+          {
+            "key": "00",
+            "cells": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "01",
+            "cells": [
+              "0",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "10",
+            "cells": [
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "11",
+            "cells": [
+              "1",
+              "1",
+              "0"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y",
+            "label": "Y",
+            "group": "",
+            "help": "High when the inputs differ."
+          }
+        ]
+      },
+      "io": "A and B are active-high inputs. Y is high when exactly one input is high and low when the inputs match. The encircled plus sign is the XOR operator.",
+      "verilog": "assign y = a ^ b;"
+    },
+    {
+      "id": "xnor-gate",
+      "number": 7,
+      "title": "XNOR Gate",
+      "category": "logic-gates",
+      "kind": "combinational",
+      "summary": "XNOR is inverted XOR. It produces 1 when the inputs are equal, making it an equality detector.",
+      "scope": "2 inputs · 1 output · 4 combinations",
+      "minutes": 4,
+      "objectives": [
+        "Read XNOR as equality detection.",
+        "Relate XNOR to the complement of XOR.",
+        "Recognise the XNOR symbol and its output bubble."
+      ],
+      "operation": [
+        "The output is high when A and B are both 0 or both 1. It is low when the inputs differ.",
+        "Verilog writes this as `assign y = ~(a ^ b);`. Cascaded XNOR gates are less common than XOR for parity because the inversion polarity depends on the number of stages."
+      ],
+      "equation": "Y = ~(A ⊕ B)",
+      "applications": [
+        "Comparing two single-bit signals for equality.",
+        "Detecting when a pair of bits matches in a larger comparator."
+      ],
+      "observations": [
+        "XNOR is the exact complement of XOR.",
+        "It produces 1 for two rows, not one."
+      ],
+      "mistakes": [
+        "Calling XNOR \"not OR\"; it is not NOR.",
+        "Forgetting the output bubble when drawing the symbol."
+      ],
+      "revision": [
+        "XNOR = 1 when inputs are equal.",
+        "Y = ~(A ⊕ B).",
+        "XNOR is the complement of XOR."
+      ],
+      "table": {
+        "caption": "XNOR gate truth table",
+        "note": "Every row is checked by the interactive engine.",
+        "columns": [
+          "A",
+          "B",
+          "Y"
+        ],
+        "rows": [
+          {
+            "key": "00",
+            "cells": [
+              "0",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "01",
+            "cells": [
+              "0",
+              "1",
+              "0"
+            ]
+          },
+          {
+            "key": "10",
+            "cells": [
+              "1",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "11",
+            "cells": [
+              "1",
+              "1",
+              "1"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Active-high logic input."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y",
+            "label": "Y",
+            "group": "",
+            "help": "High when the inputs match."
+          }
+        ]
+      },
+      "io": "A and B are active-high inputs. Y is high when A and B match. The output bubble on the XOR symbol produces the complement, so XNOR is an equality detector.",
+      "verilog": "assign y = ~(a ^ b);"
+    },
+    {
+      "id": "half-adder",
+      "number": 8,
+      "title": "Half Adder",
+      "category": "arithmetic",
+      "kind": "combinational",
+      "summary": "A half adder adds two one-bit inputs and produces a sum and a carry. It cannot accept a carry from a lower stage.",
+      "scope": "2 inputs · 2 outputs · 4 combinations",
+      "minutes": 6,
+      "objectives": [
+        "Derive sum and carry from the binary addition of two bits.",
+        "Explain why XOR gives the sum and AND gives the carry.",
+        "State why a half adder is insufficient for multi-bit addition."
+      ],
+      "operation": [
+        "The sum output is A ⊕ B and the carry output is A · B. Adding 1 + 1 produces sum 0 and carry 1, which is binary 10.",
+        "The circuit is exactly one XOR gate and one AND gate sharing the same inputs. Verilog can describe it with two continuous assignments."
+      ],
+      "equation": "S = A ⊕ B    C = A · B",
+      "applications": [
+        "The least significant stage of a small adder where no incoming carry exists.",
+        "A teaching block for separating sum and carry behaviour."
+      ],
+      "observations": [
+        "The arithmetic total is 2·C + S.",
+        "The half adder has no carry input, so it cannot be chained directly."
+      ],
+      "mistakes": [
+        "Using OR for carry, which produces a carry for 0 + 1.",
+        "Trying to chain half adders without accounting for the missing carry input."
+      ],
+      "revision": [
+        "S = A ⊕ B, C = A · B.",
+        "1 + 1 gives S = 0, C = 1.",
+        "A full adder is required for intermediate bit positions."
+      ],
+      "table": {
+        "caption": "Half adder truth table",
+        "note": "The decimal column shows the arithmetic value A + B.",
+        "columns": [
+          "A",
+          "B",
+          "S",
+          "C",
+          "A + B"
+        ],
+        "rows": [
+          {
+            "key": "00",
+            "cells": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "01",
+            "cells": [
+              "0",
+              "1",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "10",
+            "cells": [
+              "1",
+              "0",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "11",
+            "cells": [
+              "1",
+              "1",
+              "0",
+              "1",
+              "2"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "First addend bit."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Second addend bit."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "S",
+            "label": "S",
+            "group": "",
+            "help": "Sum bit."
+          },
+          {
+            "name": "C",
+            "label": "C",
+            "group": "",
+            "help": "Carry bit."
+          }
+        ]
+      },
+      "io": "A and B are the two active-high addend bits. S is the active-high sum bit and C is the active-high carry bit. The arithmetic value is 2·C + S, so 1 + 1 produces S = 0 and C = 1.",
+      "verilog": "assign s = a ^ b;\nassign c = a & b;"
+    },
+    {
+      "id": "full-adder",
+      "number": 9,
+      "title": "Full Adder",
+      "category": "arithmetic",
+      "kind": "combinational",
+      "summary": "A full adder adds three one-bit inputs: A, B and the carry-in from the previous stage. It is the reusable stage of a ripple-carry adder.",
+      "scope": "3 inputs · 2 outputs · 8 combinations",
+      "minutes": 7,
+      "objectives": [
+        "Compute sum and carry for all eight input combinations.",
+        "Use the propagate and generate terms to explain the carry.",
+        "Explain why a full adder can be chained."
+      ],
+      "operation": [
+        "The sum is A ⊕ B ⊕ Cin. A carry is produced when A and B are both 1, or when exactly one of them is 1 and Cin is 1.",
+        "Using p = A ⊕ B and g = A · B, the carry is g + p·Cin. That form exposes why a carry can be generated locally or propagated from the previous bit."
+      ],
+      "equation": "S = A ⊕ B ⊕ Cin    Cout = A·B + Cin·(A ⊕ B)",
+      "applications": [
+        "Each bit slice of a ripple-carry, carry-select or carry-lookahead adder.",
+        "Arithmetic inside an ALU and address-generation units."
+      ],
+      "observations": [
+        "The full adder reduces to a half adder when Cin = 0.",
+        "With Cin = 1, the sum polarity of A ⊕ B is inverted and a carry can propagate."
+      ],
+      "mistakes": [
+        "Leaving Cin out of the carry equation.",
+        "Using A + B for sum; sum is XOR, not OR."
+      ],
+      "revision": [
+        "S = A ⊕ B ⊕ Cin.",
+        "Cout = A·B + Cin·(A ⊕ B).",
+        "Four full adders make a four-bit ripple-carry adder."
+      ],
+      "table": {
+        "caption": "Full adder truth table",
+        "note": "The decimal column shows A + B + Cin.",
+        "columns": [
+          "A",
+          "B",
+          "Cin",
+          "S",
+          "Cout",
+          "Total"
+        ],
+        "rows": [
+          {
+            "key": "000",
+            "cells": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "001",
+            "cells": [
+              "0",
+              "0",
+              "1",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "010",
+            "cells": [
+              "0",
+              "1",
+              "0",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "011",
+            "cells": [
+              "0",
+              "1",
+              "1",
+              "0",
+              "1",
+              "2"
+            ]
+          },
+          {
+            "key": "100",
+            "cells": [
+              "1",
+              "0",
+              "0",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "101",
+            "cells": [
+              "1",
+              "0",
+              "1",
+              "0",
+              "1",
+              "2"
+            ]
+          },
+          {
+            "key": "110",
+            "cells": [
+              "1",
+              "1",
+              "0",
+              "0",
+              "1",
+              "2"
+            ]
+          },
+          {
+            "key": "111",
+            "cells": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "3"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "First addend bit."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Second addend bit."
+          },
+          {
+            "name": "Cin",
+            "label": "Cin",
+            "group": "",
+            "default": 0,
+            "help": "Carry from the previous stage."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "S",
+            "label": "S",
+            "group": "",
+            "help": "Sum bit."
+          },
+          {
+            "name": "Cout",
+            "label": "Cout",
+            "group": "",
+            "help": "Carry to the next stage."
+          }
+        ]
+      },
+      "io": "A, B and Cin are active-high one-bit inputs. S is the sum bit and Cout is the carry to the next stage. The arithmetic value is 2·Cout + S, covering totals from 0 to 3.",
+      "verilog": "assign s = a ^ b ^ cin;\nassign cout = (a & b) | (cin & (a ^ b));"
+    },
+    {
+      "id": "half-subtractor",
+      "number": 10,
+      "title": "Half Subtractor",
+      "category": "arithmetic",
+      "kind": "combinational",
+      "summary": "A half subtractor computes A − B for two one-bit inputs, producing a difference and a borrow.",
+      "scope": "2 inputs · 2 outputs · 4 combinations",
+      "minutes": 6,
+      "objectives": [
+        "Derive the difference and borrow equations.",
+        "Explain why 0 − 1 needs a borrow.",
+        "Compare the half subtractor with the half adder."
+      ],
+      "operation": [
+        "The difference is A ⊕ B. The borrow is ~A · B, because a borrow is needed only when A is 0 and B is 1.",
+        "The arithmetic result is difference minus 2·borrow. The half subtractor has no borrow input, so it cannot be chained without adding one."
+      ],
+      "equation": "D = A ⊕ B    Bout = ~A · B",
+      "applications": [
+        "The least significant stage of a subtractor where no incoming borrow exists.",
+        "Teaching the relationship between subtraction and two's-complement addition."
+      ],
+      "observations": [
+        "Difference uses XOR, the same as the half adder's sum.",
+        "Only 0 − 1 produces a borrow."
+      ],
+      "mistakes": [
+        "Using A · ~B for borrow; that is the condition for no borrow.",
+        "Expecting a half subtractor to accept a borrow input."
+      ],
+      "revision": [
+        "D = A ⊕ B, Bout = ~A · B.",
+        "0 − 1 gives D = 1, Bout = 1.",
+        "A full subtractor adds the borrow input."
+      ],
+      "table": {
+        "caption": "Half subtractor truth table",
+        "note": "The result column shows A − B in decimal.",
+        "columns": [
+          "A",
+          "B",
+          "D",
+          "Bout",
+          "A − B"
+        ],
+        "rows": [
+          {
+            "key": "00",
+            "cells": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "01",
+            "cells": [
+              "0",
+              "1",
+              "1",
+              "1",
+              "−1"
+            ]
+          },
+          {
+            "key": "10",
+            "cells": [
+              "1",
+              "0",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "11",
+            "cells": [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "Minuend bit."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Subtrahend bit."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "D",
+            "label": "D",
+            "group": "",
+            "help": "Difference bit."
+          },
+          {
+            "name": "Bout",
+            "label": "Bout",
+            "group": "",
+            "help": "Borrow out."
+          }
+        ]
+      },
+      "io": "A is the active-high minuend bit and B is the active-high subtrahend bit. D is the difference and Bout is the borrow. Bout = 1 means the column needed to borrow 2 from the next stage.",
+      "verilog": "assign d = a ^ b;\nassign bout = ~a & b;"
+    },
+    {
+      "id": "full-subtractor",
+      "number": 11,
+      "title": "Full Subtractor",
+      "category": "arithmetic",
+      "kind": "combinational",
+      "summary": "A full subtractor computes A − B − Bin, producing a difference and a borrow-out. It is the reusable stage of a multi-bit subtractor.",
+      "scope": "3 inputs · 2 outputs · 8 combinations",
+      "minutes": 7,
+      "objectives": [
+        "Compute difference and borrow for all eight combinations.",
+        "Explain how an incoming borrow changes the operation.",
+        "Relate the full subtractor to a full adder."
+      ],
+      "operation": [
+        "The difference is A ⊕ B ⊕ Bin. A borrow-out occurs when A is less than B + Bin.",
+        "Equivalently, Bout = ~A·B + Bin·~(A ⊕ B). The second term propagates a borrow when the difference of A and B would be zero before the incoming borrow is applied."
+      ],
+      "equation": "D = A ⊕ B ⊕ Bin    Bout = ~A·B + Bin·~(A ⊕ B)",
+      "applications": [
+        "Each bit slice of a multi-bit subtractor.",
+        "Subtraction implemented as addition of a two's-complement value."
+      ],
+      "observations": [
+        "With Bin = 0 the circuit behaves as a half subtractor.",
+        "A borrow can be generated locally or propagated from the previous stage."
+      ],
+      "mistakes": [
+        "Using ~A·B alone and forgetting the propagated borrow term.",
+        "Mixing the borrow input with the carry input of a full adder."
+      ],
+      "revision": [
+        "D = A ⊕ B ⊕ Bin.",
+        "Bout = ~A·B + Bin·~(A ⊕ B).",
+        "A full subtractor can be built by complementing the B input of a full adder."
+      ],
+      "table": {
+        "caption": "Full subtractor truth table",
+        "note": "The result column shows A − B − Bin in decimal.",
+        "columns": [
+          "A",
+          "B",
+          "Bin",
+          "D",
+          "Bout",
+          "Result"
+        ],
+        "rows": [
+          {
+            "key": "000",
+            "cells": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "001",
+            "cells": [
+              "0",
+              "0",
+              "1",
+              "1",
+              "1",
+              "−1"
+            ]
+          },
+          {
+            "key": "010",
+            "cells": [
+              "0",
+              "1",
+              "0",
+              "1",
+              "1",
+              "−1"
+            ]
+          },
+          {
+            "key": "011",
+            "cells": [
+              "0",
+              "1",
+              "1",
+              "0",
+              "1",
+              "−2"
+            ]
+          },
+          {
+            "key": "100",
+            "cells": [
+              "1",
+              "0",
+              "0",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "101",
+            "cells": [
+              "1",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "110",
+            "cells": [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "111",
+            "cells": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "−1"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A",
+            "label": "A",
+            "group": "",
+            "default": 0,
+            "help": "Minuend bit."
+          },
+          {
+            "name": "B",
+            "label": "B",
+            "group": "",
+            "default": 0,
+            "help": "Subtrahend bit."
+          },
+          {
+            "name": "Bin",
+            "label": "Bin",
+            "group": "",
+            "default": 0,
+            "help": "Borrow from the previous stage."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "D",
+            "label": "D",
+            "group": "",
+            "help": "Difference bit."
+          },
+          {
+            "name": "Bout",
+            "label": "Bout",
+            "group": "",
+            "help": "Borrow to the next stage."
+          }
+        ]
+      },
+      "io": "A, B and Bin are active-high one-bit inputs. D is the difference and Bout is the borrow out. The result represents A − B − Bin, which can be negative even though D itself is a single bit.",
+      "verilog": "assign d = a ^ b ^ bin;\nassign bout = (~a & b) | (bin & ~(a ^ b));"
+    },
+    {
+      "id": "four-bit-adder",
+      "number": 12,
+      "title": "4-Bit Ripple-Carry Adder",
+      "category": "arithmetic",
+      "kind": "combinational",
+      "summary": "Four full adders chained by their carries add two four-bit numbers, with carry-out and signed overflow flags.",
+      "scope": "9 inputs · 6 outputs · 512 combinations",
+      "minutes": 9,
+      "objectives": [
+        "Trace a carry from bit 0 through bit 3.",
+        "Distinguish unsigned carry-out from signed overflow.",
+        "Predict the result for boundary cases such as 15 + 1 and 8 + 8."
+      ],
+      "operation": [
+        "The least significant full adder receives Cin. Its carry-out feeds the next stage, and so on. The four sum bits form S = A + B + Cin modulo 16.",
+        "Carry-out is the bit beyond bit 3. Overflow is different: it is set when two operands with the same sign produce a result with the opposite sign. Compare 15 + 1, which sets carry but not overflow, with 8 + 8, which sets both."
+      ],
+      "equation": "S = (A + B + Cin) mod 16    Cout = carry beyond bit 3    Overflow = (A3 == B3) · (S3 != A3)",
+      "applications": [
+        "The arithmetic core of a small ALU or address incrementer.",
+        "A concrete example of carry propagation delay in a datapath."
+      ],
+      "observations": [
+        "The 512-row exhaustive table is verified by the engine test; the table below shows the boundary cases.",
+        "Unsigned carry and signed overflow answer different questions and can be set independently."
+      ],
+      "mistakes": [
+        "Using carry-out as the overflow flag.",
+        "Reversing the bit order so A3 feeds the least significant stage."
+      ],
+      "revision": [
+        "Four full adders form a four-bit ripple-carry adder.",
+        "Cout is the carry beyond bit 3; overflow uses the sign bits.",
+        "15 + 1 gives S = 0, Cout = 1, Overflow = 0.",
+        "8 + 8 gives S = 0, Cout = 1, Overflow = 1."
+      ],
+      "table": {
+        "caption": "4-bit ripple-carry adder truth table",
+        "note": "All 512 combinations of A, B and Cin are listed. The decimal columns show the operands and the 4-bit sum; Cout and OVF are separate flags.",
+        "columns": [
+          "A",
+          "B",
+          "Cin",
+          "S",
+          "Cout",
+          "Overflow"
+        ],
+        "rows": [
+          {
+            "key": "5,3,0",
+            "cells": [
+              "5 (0101)",
+              "3 (0011)",
+              "0",
+              "8 (1000)",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "7,1,0",
+            "cells": [
+              "7 (0111)",
+              "1 (0001)",
+              "0",
+              "8 (1000)",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "4,4,0",
+            "cells": [
+              "4 (0100)",
+              "4 (0100)",
+              "0",
+              "8 (1000)",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "15,1,0",
+            "cells": [
+              "15 (1111)",
+              "1 (0001)",
+              "0",
+              "0 (0000)",
+              "1",
+              "0"
+            ]
+          },
+          {
+            "key": "9,7,0",
+            "cells": [
+              "9 (1001)",
+              "7 (0111)",
+              "0",
+              "0 (0000)",
+              "1",
+              "0"
+            ]
+          },
+          {
+            "key": "8,8,0",
+            "cells": [
+              "8 (1000)",
+              "8 (1000)",
+              "0",
+              "0 (0000)",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "7,7,1",
+            "cells": [
+              "7 (0111)",
+              "7 (0111)",
+              "1",
+              "15 (1111)",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "0,0,1",
+            "cells": [
+              "0 (0000)",
+              "0 (0000)",
+              "1",
+              "1 (0001)",
+              "0",
+              "0"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A3",
+            "label": "A3",
+            "group": "A",
+            "default": 0,
+            "help": "Four-bit operand A. A3 is the most significant bit."
+          },
+          {
+            "name": "A2",
+            "label": "A2",
+            "group": "A",
+            "default": 0,
+            "help": "Four-bit operand A. A3 is the most significant bit."
+          },
+          {
+            "name": "A1",
+            "label": "A1",
+            "group": "A",
+            "default": 0,
+            "help": "Four-bit operand A. A3 is the most significant bit."
+          },
+          {
+            "name": "A0",
+            "label": "A0",
+            "group": "A",
+            "default": 0,
+            "help": "Four-bit operand A. A3 is the most significant bit."
+          },
+          {
+            "name": "B3",
+            "label": "B3",
+            "group": "B",
+            "default": 0,
+            "help": "Four-bit operand B. B3 is the most significant bit."
+          },
+          {
+            "name": "B2",
+            "label": "B2",
+            "group": "B",
+            "default": 0,
+            "help": "Four-bit operand B. B3 is the most significant bit."
+          },
+          {
+            "name": "B1",
+            "label": "B1",
+            "group": "B",
+            "default": 0,
+            "help": "Four-bit operand B. B3 is the most significant bit."
+          },
+          {
+            "name": "B0",
+            "label": "B0",
+            "group": "B",
+            "default": 0,
+            "help": "Four-bit operand B. B3 is the most significant bit."
+          },
+          {
+            "name": "Cin",
+            "label": "Cin",
+            "group": "carry",
+            "default": 0,
+            "help": "Carry into bit 0."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "S3",
+            "label": "S3",
+            "group": "sum",
+            "help": "Four-bit sum. S3 is the most significant bit."
+          },
+          {
+            "name": "S2",
+            "label": "S2",
+            "group": "sum",
+            "help": "Four-bit sum. S3 is the most significant bit."
+          },
+          {
+            "name": "S1",
+            "label": "S1",
+            "group": "sum",
+            "help": "Four-bit sum. S3 is the most significant bit."
+          },
+          {
+            "name": "S0",
+            "label": "S0",
+            "group": "sum",
+            "help": "Four-bit sum. S3 is the most significant bit."
+          },
+          {
+            "name": "Cout",
+            "label": "Cout",
+            "group": "",
+            "help": "Carry beyond bit 3."
+          },
+          {
+            "name": "OVF",
+            "label": "OVF",
+            "group": "",
+            "help": "Signed overflow flag."
+          }
+        ]
+      },
+      "io": "A3…A0 and B3…B0 are the two active-high four-bit operands, with A3 and B3 the sign bits when the values are interpreted as signed. Cin is the carry into bit 0. S3…S0 is the four-bit sum, Cout is the carry beyond bit 3, and OVF is the signed overflow flag. Cout and OVF answer different questions.",
+      "verilog": "assign {cout, sum} = a + b + cin;\nassign ovf = (a[3] == b[3]) && (sum[3] != a[3]);"
+    },
+    {
+      "id": "mux-4-to-1",
+      "number": 13,
+      "title": "4:1 Multiplexer",
+      "category": "routing",
+      "kind": "combinational",
+      "summary": "A 4:1 multiplexer routes one of four data inputs to a single output, selected by a two-bit code.",
+      "scope": "6 inputs · 1 output · 64 combinations",
+      "minutes": 6,
+      "objectives": [
+        "Explain how the select code chooses a data input.",
+        "Write the multiplexer expression as a sum of gated terms.",
+        "Verify that only the selected data bit reaches the output."
+      ],
+      "operation": [
+        "The two select bits decode to one of four channels. The selected channel's data value appears at Y; the other channels are ignored.",
+        "The Boolean form is Y = ~S1·~S0·D0 + ~S1·S0·D1 + S1·~S0·D2 + S1·S0·D3. Only one product term is active for a given select code."
+      ],
+      "equation": "Y = D[S]    (S = {S1, S0})",
+      "applications": [
+        "Selecting one of several sensors, registers or buses for a shared data path.",
+        "Building a barrel shifter from a tree of multiplexers."
+      ],
+      "observations": [
+        "The select code chooses a channel; the data value itself does not affect which channel is chosen.",
+        "A 2:1 multiplexer needs one select line; a 4:1 needs two."
+      ],
+      "mistakes": [
+        "Reversing S1 and S0, which swaps channels 1 and 2.",
+        "Confusing a multiplexer with a decoder; a decoder does not route data."
+      ],
+      "revision": [
+        "A 4:1 mux has four data inputs, two select lines and one output.",
+        "Y equals the selected D input.",
+        "The select code is a binary channel number."
+      ],
+      "table": {
+        "caption": "4:1 multiplexer truth table",
+        "note": "All 64 combinations of S1, S0 and D3…D0 are listed. Y follows the selected data input.",
+        "columns": [
+          "S1",
+          "S0",
+          "Selected input",
+          "Y"
+        ],
+        "rows": [
+          {
+            "key": "0",
+            "cells": [
+              "0",
+              "0",
+              "D0",
+              "D0"
+            ]
+          },
+          {
+            "key": "1",
+            "cells": [
+              "0",
+              "1",
+              "D1",
+              "D1"
+            ]
+          },
+          {
+            "key": "2",
+            "cells": [
+              "1",
+              "0",
+              "D2",
+              "D2"
+            ]
+          },
+          {
+            "key": "3",
+            "cells": [
+              "1",
+              "1",
+              "D3",
+              "D3"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "S1",
+            "label": "S1",
+            "group": "S",
+            "default": 0,
+            "help": "High select bit."
+          },
+          {
+            "name": "S0",
+            "label": "S0",
+            "group": "S",
+            "default": 0,
+            "help": "Low select bit."
+          },
+          {
+            "name": "D0",
+            "label": "D0",
+            "group": "D",
+            "default": 0,
+            "help": "Data input 0."
+          },
+          {
+            "name": "D1",
+            "label": "D1",
+            "group": "D",
+            "default": 0,
+            "help": "Data input 1."
+          },
+          {
+            "name": "D2",
+            "label": "D2",
+            "group": "D",
+            "default": 0,
+            "help": "Data input 2."
+          },
+          {
+            "name": "D3",
+            "label": "D3",
+            "group": "D",
+            "default": 0,
+            "help": "Data input 3."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y",
+            "label": "Y",
+            "group": "",
+            "help": "The selected data input."
+          }
+        ]
+      },
+      "io": "D0…D3 are active-high data inputs. S1 and S0 form the active-high binary channel number, with S1 the high bit. Y follows the selected data input; the other data inputs have no effect on Y.",
+      "verilog": "assign y = d[s];"
+    },
+    {
+      "id": "demux-1-to-4",
+      "number": 14,
+      "title": "1:4 Demultiplexer",
+      "category": "routing",
+      "kind": "combinational",
+      "summary": "A 1:4 demultiplexer routes one data input to one of four outputs, selected by a two-bit code. All unselected outputs are 0.",
+      "scope": "3 inputs · 4 outputs · 8 combinations",
+      "minutes": 6,
+      "objectives": [
+        "Explain the difference between a demultiplexer and a decoder.",
+        "Show that every unselected output is driven to 0.",
+        "Trace the data input through the selected output."
+      ],
+      "operation": [
+        "The select code chooses one output. That output follows Din, while the other three are forced to 0. When Din = 0, all four outputs are 0 regardless of the select code.",
+        "This is a decoder with the data input acting as an enable. The one-hot property comes from the select decode; the data input gates the selected line."
+      ],
+      "equation": "Y[i] = Din · (S == i)    for i = 0..3",
+      "applications": [
+        "Distributing one serial data stream to one of several destinations.",
+        "Routing a clock or enable to a selected register bank."
+      ],
+      "observations": [
+        "Unlike a decoder, a demultiplexer can produce an all-zero output when Din is 0.",
+        "The unselected outputs are driven low, not left floating."
+      ],
+      "mistakes": [
+        "Assigning only the selected output and leaving the others undriven.",
+        "Using OR instead of AND, which forces outputs high when Din is 0."
+      ],
+      "revision": [
+        "A 1:4 demux has one data input, two select lines and four outputs.",
+        "Exactly one output follows Din; the others are 0.",
+        "Din = 0 produces all zeros."
+      ],
+      "table": {
+        "caption": "1:4 demultiplexer truth table",
+        "note": "Every input and select combination is listed.",
+        "columns": [
+          "Din",
+          "S1",
+          "S0",
+          "Y3",
+          "Y2",
+          "Y1",
+          "Y0"
+        ],
+        "rows": [
+          {
+            "key": "000",
+            "cells": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "001",
+            "cells": [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "010",
+            "cells": [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "011",
+            "cells": [
+              "0",
+              "1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "100",
+            "cells": [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "101",
+            "cells": [
+              "1",
+              "0",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          },
+          {
+            "key": "110",
+            "cells": [
+              "1",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "111",
+            "cells": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "Din",
+            "label": "Din",
+            "group": "data",
+            "default": 0,
+            "help": "Data input that is routed to one output."
+          },
+          {
+            "name": "S1",
+            "label": "S1",
+            "group": "S",
+            "default": 0,
+            "help": "High select bit."
+          },
+          {
+            "name": "S0",
+            "label": "S0",
+            "group": "S",
+            "default": 0,
+            "help": "Low select bit."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y3",
+            "label": "Y3",
+            "group": "Y",
+            "help": "Output channel 3."
+          },
+          {
+            "name": "Y2",
+            "label": "Y2",
+            "group": "Y",
+            "help": "Output channel 2."
+          },
+          {
+            "name": "Y1",
+            "label": "Y1",
+            "group": "Y",
+            "help": "Output channel 1."
+          },
+          {
+            "name": "Y0",
+            "label": "Y0",
+            "group": "Y",
+            "help": "Output channel 0."
+          }
+        ]
+      },
+      "io": "Din is the active-high data input and S1/S0 form the channel number. Exactly one output follows Din; the other three outputs are driven low. When Din = 0 every output is low, whatever the select code.",
+      "verilog": "assign y0 = din & ~s1 & ~s0;\nassign y1 = din & ~s1 &  s0;\nassign y2 = din &  s1 & ~s0;\nassign y3 = din &  s1 &  s0;"
+    },
+    {
+      "id": "decoder-2-to-4",
+      "number": 15,
+      "title": "2-to-4 Decoder with Enable",
+      "category": "routing",
+      "kind": "combinational",
+      "summary": "A 2-to-4 decoder asserts exactly one of four outputs for each input code. An enable input can force all outputs low.",
+      "scope": "3 inputs · 4 outputs · 8 combinations",
+      "minutes": 6,
+      "objectives": [
+        "Map a two-bit code to its one-hot output.",
+        "Explain the effect of the active-high enable.",
+        "Distinguish a decoder from a demultiplexer."
+      ],
+      "operation": [
+        "When EN = 1, the input code selects one output and drives it high. The other outputs stay low. When EN = 0, all four outputs are forced low.",
+        "Each output is a product term: Y0 = EN·~A1·~A0, Y1 = EN·~A1·A0, and so on. The enable makes the decoder safe to place on a shared bus."
+      ],
+      "equation": "Y[i] = EN · (A == i)    for i = 0..3",
+      "applications": [
+        "Selecting one register, memory bank or peripheral from a shared bus.",
+        "Driving a seven-segment display through a code converter."
+      ],
+      "observations": [
+        "A decoder does not pass a data value; it passes an enable to the selected output.",
+        "The enable prevents an unintended one-hot pattern during reset."
+      ],
+      "mistakes": [
+        "Forgetting the enable term in each output equation.",
+        "Calling a decoder a demultiplexer when no data input is gated."
+      ],
+      "revision": [
+        "A 2-to-4 decoder has two select bits and four one-hot outputs.",
+        "EN = 0 forces all outputs to 0.",
+        "Only one output is high when EN = 1."
+      ],
+      "table": {
+        "caption": "2-to-4 decoder truth table",
+        "note": "All enable and input combinations are listed.",
+        "columns": [
+          "EN",
+          "A1",
+          "A0",
+          "Y3",
+          "Y2",
+          "Y1",
+          "Y0"
+        ],
+        "rows": [
+          {
+            "key": "000",
+            "cells": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "001",
+            "cells": [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "010",
+            "cells": [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "011",
+            "cells": [
+              "0",
+              "1",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "100",
+            "cells": [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "101",
+            "cells": [
+              "1",
+              "0",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          },
+          {
+            "key": "110",
+            "cells": [
+              "1",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "111",
+            "cells": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "EN",
+            "label": "EN",
+            "group": "control",
+            "default": 0,
+            "help": "Active-high enable. Low forces every output low."
+          },
+          {
+            "name": "A1",
+            "label": "A1",
+            "group": "A",
+            "default": 0,
+            "help": "High address bit."
+          },
+          {
+            "name": "A0",
+            "label": "A0",
+            "group": "A",
+            "default": 0,
+            "help": "Low address bit."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Y3",
+            "label": "Y3",
+            "group": "Y",
+            "help": "One-hot output 3."
+          },
+          {
+            "name": "Y2",
+            "label": "Y2",
+            "group": "Y",
+            "help": "One-hot output 2."
+          },
+          {
+            "name": "Y1",
+            "label": "Y1",
+            "group": "Y",
+            "help": "One-hot output 1."
+          },
+          {
+            "name": "Y0",
+            "label": "Y0",
+            "group": "Y",
+            "help": "One-hot output 0."
+          }
+        ]
+      },
+      "io": "EN is an active-high enable. A1 and A0 form the active-high address. When EN = 1 exactly one output is high and the rest are low; when EN = 0 all four outputs are forced low.",
+      "verilog": "assign y0 = en & ~a1 & ~a0;\nassign y1 = en & ~a1 &  a0;\nassign y2 = en &  a1 & ~a0;\nassign y3 = en &  a1 &  a0;"
+    },
+    {
+      "id": "encoder-4-to-2",
+      "number": 16,
+      "title": "4-to-2 Priority Encoder",
+      "category": "coding",
+      "kind": "combinational",
+      "summary": "A priority encoder converts four request lines into a two-bit code, choosing the highest-numbered active request and reporting whether any request exists.",
+      "scope": "4 inputs · 3 outputs · 16 combinations",
+      "minutes": 7,
+      "objectives": [
+        "Explain priority when more than one request is active.",
+        "Read the valid output as an any-request flag.",
+        "Write the encoder outputs as Boolean expressions."
+      ],
+      "operation": [
+        "R3 has the highest priority, then R2, R1 and R0. The code reports the highest active request. If no request is active, valid = 0 and the code is 00.",
+        "The outputs are code1 = R3 + R2 and code0 = R3 + ~R2·R1. The valid flag is the OR of all requests. The code bits are not simply the two highest request lines because priority changes the encoding."
+      ],
+      "equation": "Valid = R3 + R2 + R1 + R0    Code1 = R3 + R2    Code0 = R3 + ~R2·R1",
+      "applications": [
+        "Interrupt controllers that must identify the highest-priority request.",
+        "Arbitration in a shared bus or memory port."
+      ],
+      "observations": [
+        "The output code can be 00 even when a request is active only if that request is R0; valid distinguishes this from the no-request case.",
+        "Multiple active inputs are allowed; the highest one wins."
+      ],
+      "mistakes": [
+        "Ignoring priority and treating the input as one-hot only.",
+        "Forgetting the valid flag, which makes R0 and no-request indistinguishable."
+      ],
+      "revision": [
+        "Priority order: R3, R2, R1, R0.",
+        "Valid is the OR of all requests.",
+        "The code identifies the highest active request."
+      ],
+      "table": {
+        "caption": "4-to-2 priority encoder truth table",
+        "note": "R3 is the highest-priority request.",
+        "columns": [
+          "R3",
+          "R2",
+          "R1",
+          "R0",
+          "Code1",
+          "Code0",
+          "Valid"
+        ],
+        "rows": [
+          {
+            "key": "0000",
+            "cells": [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "0001",
+            "cells": [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "0010",
+            "cells": [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "0011",
+            "cells": [
+              "0",
+              "0",
+              "1",
+              "1",
+              "0",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "0100",
+            "cells": [
+              "0",
+              "1",
+              "0",
+              "0",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "0101",
+            "cells": [
+              "0",
+              "1",
+              "0",
+              "1",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "0110",
+            "cells": [
+              "0",
+              "1",
+              "1",
+              "0",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "0111",
+            "cells": [
+              "0",
+              "1",
+              "1",
+              "1",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "1000",
+            "cells": [
+              "1",
+              "0",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "1001",
+            "cells": [
+              "1",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "1010",
+            "cells": [
+              "1",
+              "0",
+              "1",
+              "0",
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "1011",
+            "cells": [
+              "1",
+              "0",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "1100",
+            "cells": [
+              "1",
+              "1",
+              "0",
+              "0",
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "1101",
+            "cells": [
+              "1",
+              "1",
+              "0",
+              "1",
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "1110",
+            "cells": [
+              "1",
+              "1",
+              "1",
+              "0",
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "1111",
+            "cells": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "R3",
+            "label": "R3",
+            "group": "R",
+            "default": 0,
+            "help": "Request 3. Higher numbers have higher priority."
+          },
+          {
+            "name": "R2",
+            "label": "R2",
+            "group": "R",
+            "default": 0,
+            "help": "Request 2. Higher numbers have higher priority."
+          },
+          {
+            "name": "R1",
+            "label": "R1",
+            "group": "R",
+            "default": 0,
+            "help": "Request 1. Higher numbers have higher priority."
+          },
+          {
+            "name": "R0",
+            "label": "R0",
+            "group": "R",
+            "default": 0,
+            "help": "Request 0. Higher numbers have higher priority."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Code1",
+            "label": "Code1",
+            "group": "code",
+            "help": "High code bit."
+          },
+          {
+            "name": "Code0",
+            "label": "Code0",
+            "group": "code",
+            "help": "Low code bit."
+          },
+          {
+            "name": "Valid",
+            "label": "Valid",
+            "group": "",
+            "help": "High when any request is active."
+          }
+        ]
+      },
+      "io": "R3…R0 are active-high request lines, with R3 highest priority. Code1 and Code0 report the highest active request. Valid is high when any request is active, which distinguishes request R0 from the no-request case.",
+      "verilog": "assign valid = |r;\nassign code  = r[3] ? 2'd3 : r[2] ? 2'd2 : r[1] ? 2'd1 : 2'd0;"
+    },
+    {
+      "id": "comparator-4-bit",
+      "number": 17,
+      "title": "4-Bit Magnitude Comparator",
+      "category": "coding",
+      "kind": "combinational",
+      "summary": "A 4-bit comparator compares two unsigned binary numbers and asserts one of three outputs: greater than, equal or less than.",
+      "scope": "8 inputs · 3 outputs · 256 combinations",
+      "minutes": 8,
+      "objectives": [
+        "Compare two four-bit unsigned values and predict the active output.",
+        "Explain why only one of the three outputs is high.",
+        "Distinguish unsigned comparison from signed comparison."
+      ],
+      "operation": [
+        "The comparator subtracts B from A internally and examines the result. In this demonstration the values are unsigned, so 1111 (15) is greater than 0000 (0).",
+        "Exactly one output is asserted: GT when A > B, EQ when A = B, and LT when A < B. Equal comparison can also be built as an XNOR of each bit pair ANDed together."
+      ],
+      "equation": "GT = (A > B)    EQ = (A == B)    LT = (A < B)",
+      "applications": [
+        "Address decoding, loop counters and conditional branch hardware.",
+        "Sorting and threshold detection in a datapath."
+      ],
+      "observations": [
+        "The comparison here is unsigned. 1000 is 8, not −8.",
+        "GT, EQ and LT are mutually exclusive and collectively exhaustive."
+      ],
+      "mistakes": [
+        "Using signed values without changing the comparison rule.",
+        "Assuming more than one output can be high at the same time."
+      ],
+      "revision": [
+        "A 4-bit unsigned comparator has 256 input combinations.",
+        "GT, EQ and LT are one-hot.",
+        "EQ is true only when all four bit pairs match."
+      ],
+      "table": {
+        "caption": "4-bit magnitude comparator truth table",
+        "note": "All 256 unsigned operand pairs are listed. Exactly one of GT, EQ and LT is high for every pair.",
+        "columns": [
+          "A",
+          "B",
+          "GT",
+          "EQ",
+          "LT"
+        ],
+        "rows": [
+          {
+            "key": "5,3",
+            "cells": [
+              "5 (0101)",
+              "3 (0011)",
+              "1",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "3,5",
+            "cells": [
+              "3 (0011)",
+              "5 (0101)",
+              "0",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "7,7",
+            "cells": [
+              "7 (0111)",
+              "7 (0111)",
+              "0",
+              "1",
+              "0"
+            ]
+          },
+          {
+            "key": "0,0",
+            "cells": [
+              "0 (0000)",
+              "0 (0000)",
+              "0",
+              "1",
+              "0"
+            ]
+          },
+          {
+            "key": "15,0",
+            "cells": [
+              "15 (1111)",
+              "0 (0000)",
+              "1",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "0,15",
+            "cells": [
+              "0 (0000)",
+              "15 (1111)",
+              "0",
+              "0",
+              "1"
+            ]
+          },
+          {
+            "key": "8,7",
+            "cells": [
+              "8 (1000)",
+              "7 (0111)",
+              "1",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "10,10",
+            "cells": [
+              "10 (1010)",
+              "10 (1010)",
+              "0",
+              "1",
+              "0"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "A3",
+            "label": "A3",
+            "group": "A",
+            "default": 0,
+            "help": "Four-bit unsigned operand A."
+          },
+          {
+            "name": "A2",
+            "label": "A2",
+            "group": "A",
+            "default": 0,
+            "help": "Four-bit unsigned operand A."
+          },
+          {
+            "name": "A1",
+            "label": "A1",
+            "group": "A",
+            "default": 0,
+            "help": "Four-bit unsigned operand A."
+          },
+          {
+            "name": "A0",
+            "label": "A0",
+            "group": "A",
+            "default": 0,
+            "help": "Four-bit unsigned operand A."
+          },
+          {
+            "name": "B3",
+            "label": "B3",
+            "group": "B",
+            "default": 0,
+            "help": "Four-bit unsigned operand B."
+          },
+          {
+            "name": "B2",
+            "label": "B2",
+            "group": "B",
+            "default": 0,
+            "help": "Four-bit unsigned operand B."
+          },
+          {
+            "name": "B1",
+            "label": "B1",
+            "group": "B",
+            "default": 0,
+            "help": "Four-bit unsigned operand B."
+          },
+          {
+            "name": "B0",
+            "label": "B0",
+            "group": "B",
+            "default": 0,
+            "help": "Four-bit unsigned operand B."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "GT",
+            "label": "GT",
+            "group": "",
+            "help": "High when A is greater than B."
+          },
+          {
+            "name": "EQ",
+            "label": "EQ",
+            "group": "",
+            "help": "High when A equals B."
+          },
+          {
+            "name": "LT",
+            "label": "LT",
+            "group": "",
+            "help": "High when A is less than B."
+          }
+        ]
+      },
+      "io": "A3…A0 and B3…B0 are active-high unsigned operands. GT, EQ and LT are mutually exclusive active-high outputs. Only one of the three is high at a time.",
+      "verilog": "assign gt = (a > b);\nassign eq = (a == b);\nassign lt = (a < b);"
+    },
+    {
+      "id": "d-flip-flop",
+      "number": 18,
+      "title": "D Flip-Flop with Enable and Reset",
+      "category": "sequential",
+      "kind": "sequential",
+      "summary": "A positive-edge-triggered D flip-flop stores one bit. Enable decides whether a clock edge loads D, and an asynchronous reset clears Q immediately.",
+      "scope": "D, EN, CLK, RST · Q and Q̄ · state",
+      "minutes": 9,
+      "objectives": [
+        "Distinguish a clock edge from a clock level.",
+        "Explain the roles of D, enable and asynchronous reset.",
+        "Predict Q after a sequence of load, hold and reset operations."
+      ],
+      "operation": [
+        "Q changes only on a rising clock edge, and only when EN = 1. With EN = 0 the flip-flop holds its previous value even if D changes. Reset is asynchronous: asserting RST clears Q immediately, without waiting for a clock edge.",
+        "The next-state equation is Qnext = RST ? 0 : (rising edge ? (EN ? D : Q) : Q). This is sequential behaviour: the output depends on the stored state as well as the current inputs. The clock button below produces one rising edge."
+      ],
+      "equation": "Qnext = RST ? 0 : (CLK↑ ? (EN ? D : Q) : Q)",
+      "applications": [
+        "Registers, pipelines and state machines.",
+        "Debouncing and synchronising a mechanical input to a clock domain."
+      ],
+      "observations": [
+        "Changing D while the clock is not rising must not change Q.",
+        "Reset is asynchronous in this model, so it acts even with no clock edge.",
+        "Q̄ is always the complement of Q while Q is defined."
+      ],
+      "mistakes": [
+        "Treating a high clock level as a continuous load; only the edge loads.",
+        "Forgetting the enable and expecting every edge to capture D."
+      ],
+      "revision": [
+        "A D flip-flop captures D on the active clock edge.",
+        "Enable gates the capture; reset clears the state.",
+        "State changes only on an edge, not on a level."
+      ],
+      "table": {
+        "caption": "D flip-flop state table",
+        "note": "The table describes the next state. The live bench records each clock edge.",
+        "columns": [
+          "RST",
+          "CLK",
+          "EN",
+          "D",
+          "Qnext"
+        ],
+        "rows": [
+          {
+            "key": "reset",
+            "cells": [
+              "1",
+              "X",
+              "X",
+              "X",
+              "0 (async)"
+            ]
+          },
+          {
+            "key": "load0",
+            "cells": [
+              "0",
+              "↑",
+              "1",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "key": "load1",
+            "cells": [
+              "0",
+              "↑",
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "key": "hold-en",
+            "cells": [
+              "0",
+              "↑",
+              "0",
+              "X",
+              "Q (hold)"
+            ]
+          },
+          {
+            "key": "hold-noedge",
+            "cells": [
+              "0",
+              "0 or 1",
+              "X",
+              "X",
+              "Q (hold)"
+            ]
+          }
+        ]
+      },
+      "signals": {
+        "inputs": [
+          {
+            "name": "D",
+            "label": "D",
+            "group": "data",
+            "default": 0,
+            "help": "Data captured on a rising clock edge."
+          },
+          {
+            "name": "EN",
+            "label": "EN",
+            "group": "control",
+            "default": 0,
+            "help": "Active-high enable. Low holds the stored value."
+          },
+          {
+            "name": "RST",
+            "label": "RST",
+            "group": "control",
+            "default": 0,
+            "help": "Active-high asynchronous reset."
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Q",
+            "label": "Q",
+            "group": "",
+            "help": "Stored state."
+          },
+          {
+            "name": "Qbar",
+            "label": "Qbar",
+            "group": "",
+            "help": "Complement of Q."
+          }
+        ]
+      },
+      "io": "D is the active-high data input. EN is an active-high enable and RST is an active-high asynchronous reset. Q is the stored state and Q̄ is its complement. The clock is an explicit control: only a rising edge can update Q.",
+      "verilog": "always @(posedge clk or posedge rst)\n  if (rst) q <= 1'b0;\n  else if (en) q <= d;"
+    }
+  ]
+}

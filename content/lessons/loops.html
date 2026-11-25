@@ -1,0 +1,95 @@
+<section class="lesson-section">
+  <h2 id="why-loops">Loops describe repetition, not time</h2>
+  <p class="lesson-lead">A Verilog loop does not repeat an action over time. It repeats a piece of description, and synthesis unrolls that repetition into replicated hardware or a chain of operations. That is why a four-iteration loop can build four adders, and why a loop whose bound is not known at elaboration cannot be synthesised at all.</p>
+  <p>This is the most common conceptual error in the topic. In software, a loop saves memory and costs time. In hardware, a loop saves typing and costs area: the iterations become parallel or chained logic that all exists at once.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="forms">The four loop forms</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Loop statements in Verilog-2001</caption>
+      <thead><tr><th scope="col">Form</th><th scope="col">Semantics</th><th scope="col">Synthesis</th></tr></thead>
+      <tbody>
+        <tr><td><code>for (i = 0; i &lt; N; i = i + 1)</code></td><td>Initialise, test, execute, increment, repeat.</td><td>Yes, when <code>N</code> is constant and the body is synthesizable.</td></tr>
+        <tr><td><code>while (cond)</code></td><td>Test before each iteration; may run zero times.</td><td>Not in general: the trip count is not known at elaboration.</td></tr>
+        <tr><td><code>repeat (N)</code></td><td>Execute the body exactly <code>N</code> times.</td><td>Rarely; fine in a testbench.</td></tr>
+        <tr><td><code>forever</code></td><td>Execute the body endlessly until <code>$finish</code> or <code>disable</code>.</td><td>No. Used for clock generators and monitors.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><code>forever</code> is the explicit form of what an <code>always</code> block already does. <code>always #5 clk = ~clk;</code> is a forever loop with a delay. Writing <code>forever #5 clk = ~clk;</code> inside an <code>initial</code> block is also legal and equally simulation-only.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="synthesis">What a for loop becomes</h2>
+  <p>Two patterns account for almost all synthesizable for loops:</p>
+  <ul>
+    <li><strong>Accumulation.</strong> <code>count = count + d[i]</code> over a fixed range builds a chain of adders: the result of iteration 0 feeds iteration 1, and so on. The loop describes a reduction tree, and the tool may balance it.</li>
+    <li><strong>Bit mapping.</strong> <code>q[i] = d[7 - i]</code> over a fixed range builds eight wires, each crossing from one input bit to one output bit. The loop is pure wiring, not arithmetic.</li>
+  </ul>
+  <p>Either way, the loop variable must not be a signal that exists in hardware. It is typically an <code>integer</code>, which is a 32-bit signed variable used only during elaboration and simulation. A loop bound must be a constant expression so the tool can decide how many copies to build.</p>
+  <p>For replicating <em>instances</em> rather than statements, Verilog-2001 provides <code>generate</code> and <code>genvar</code>. A <code>for</code> loop inside a generate block elaborates several module instances with distinct names; a <code>for</code> loop inside an <code>always</code> block elaborates several statements in one procedural block. Both unroll, but only the generate form can create instances.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Popcount, bit reversal and two testbench loops</h2>
+  <p>The design has two combinational modules. <code>popcount4</code> counts the ones in a four-bit word with an accumulating loop. <code>reverse8</code> reverses the bit order of a byte with a mapping loop.</p>
+
+  {{CODE:examples/verilog/loops/design.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>integer i;</code> declares the loop variable inside the module. It is shared by every activation of the block, which is acceptable because the block is combinational and executes to completion each time.</li>
+    <li><code>count = 3'd0;</code> initialises the accumulator before the loop. Without this, the first iteration would add to whatever <code>count</code> held, which is <code>x</code> after power-up and a latch in hardware.</li>
+    <li><code>for (i = 0; i &lt; 4; i = i + 1) count = count + d[i];</code> adds each input bit. The body is a single statement, so no <code>begin</code>/<code>end</code> is needed.</li>
+    <li><code>count = count + d[i];</code> mixes a three-bit value with a one-bit value. The one-bit operand is zero-extended, and the result is truncated to three bits, which is enough for a maximum of 4.</li>
+    <li><code>q[i] = d[7 - i];</code> maps input bit 7 to output bit 0, input bit 6 to output bit 1, and so on. Every output bit is assigned, so there is no latch.</li>
+    <li>Both loops have constant bounds (4 and 8), so synthesis can unroll them fully.</li>
+  </ul>
+
+  {{CODE:examples/verilog/loops/tb.v}}
+
+  <p>The testbench drives all sixteen <code>popcount4</code> inputs, prints one reversed byte, and then demonstrates <code>while</code> and <code>repeat</code> as simulation conveniences.</p>
+
+  {{COMMANDS:loops}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/loops/expected.txt}}
+
+  <p>The popcount column is the number of set bits in <code>d</code>: <code>0000</code> gives 0, <code>0011</code> gives 2, <code>1111</code> gives 4. Because the loop accumulates, the synthesis result is a chain of three-bit adders, not a counter clocked four times.</p>
+  <p>The reversal is easy to check by hand. <code>1011_0001</code> read from the other end is <code>1000_1101</code>, which is exactly what is printed. The outer bits swap, and the inner bits swap.</p>
+  <p>The last four lines are simulation-only. The <code>while</code> loop sums 0 + 1 + 2 + 3 to 6, and the <code>repeat (3)</code> loop prints three identical lines. Neither describes hardware in this context.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="zero-times">Zero-iteration and infinite loops</h2>
+  <p>A <code>for</code> loop whose condition is false at entry executes zero times. That is legal and sometimes useful, but it means the body's assignments never happen — another route to an inferred latch in a combinational block. A <code>while</code> loop with a condition that never becomes false hangs the simulation at the current time, exactly like an <code>always</code> block without a timing control.</p>
+  <p>Loops inside a clocked block add a further constraint: if the loop has a fixed trip count, the logic it describes must settle within one clock period. A loop that performs a long computation in one cycle is a large combinational path, not a fast loop. Iterative algorithms in hardware are usually written as a state machine that performs one iteration per clock, which is a structural decision, not a loop.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Expecting a loop to take time.</strong> A synthesizable <code>for</code> loop unrolls; all iterations exist in parallel or in a chain.</li>
+    <li><strong>Using a non-constant bound in RTL.</strong> If the tool cannot count the iterations at elaboration, it cannot build the hardware.</li>
+    <li><strong>Forgetting to initialise an accumulator.</strong> The first iteration adds to an unknown value and synthesis infers storage.</li>
+    <li><strong>Declaring the loop variable as a <code>reg</code> and using it as a signal.</strong> The loop variable is elaboration machinery; use an <code>integer</code> and do not read it elsewhere.</li>
+    <li><strong>Using <code>while</code> or <code>forever</code> in synthesizable RTL.</strong> The trip count is unknown; the tool cannot build a fixed structure.</li>
+    <li><strong>Writing a loop that does not assign every output bit.</strong> The unassigned bits infer latches, exactly as in an incomplete <code>if</code>.</li>
+    <li><strong>Confusing procedural loops with generate loops.</strong> Only <code>generate</code> can replicate module instances.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Synthesizable loops unroll into replicated or chained hardware; they do not iterate over time.</li>
+    <li><code>for</code> with a constant bound is the standard synthesizable loop; <code>while</code>, <code>repeat</code> and <code>forever</code> are mainly testbench constructs.</li>
+    <li>An accumulator needs an initial value, or the loop infers storage.</li>
+    <li>Use <code>generate</code> with <code>genvar</code> to replicate instances, not a procedural <code>for</code>.</li>
+    <li>Every output bit must be assigned on every path, including inside loops.</li>
+  </ul>
+</section>

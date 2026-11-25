@@ -1,0 +1,110 @@
+<section class="lesson-section">
+  <h2 id="why">An expression has a width and a sign</h2>
+  <p class="lesson-lead">In software, <code>15 + 1</code> is 16. In Verilog, the answer depends on the width and signedness of the operands and on the context in which the expression appears. A four-bit context gives 0. A 32-bit signed context gives 16. Both are correct; the language is telling you which hardware you asked for.</p>
+  <p>This topic is not a list of operators to memorise. It is a set of rules for predicting what an expression means before the simulator tells you. Once you can predict width, sign and precedence, most "strange" results become ordinary.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="operators">Operator classes</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Verilog-2001 operators by class</caption>
+      <thead><tr><th scope="col">Class</th><th scope="col">Operators</th><th scope="col">Result</th></tr></thead>
+      <tbody>
+        <tr><td>Arithmetic</td><td><code>+ - * / %</code></td><td>Same width as the widest operand (or the assignment context)</td></tr>
+        <tr><td>Relational</td><td><code>&lt; &lt;= &gt; &gt;=</code></td><td>One bit</td></tr>
+        <tr><td>Equality</td><td><code>== != === !==</code></td><td>One bit; <code>===</code>/<code>!==</code> also compare <code>x</code> and <code>z</code></td></tr>
+        <tr><td>Logical</td><td><code>&amp;&amp; || !</code></td><td>One bit, treating any non-zero value as true</td></tr>
+        <tr><td>Bitwise</td><td><code>~ &amp; | ^ ~^</code></td><td>Vector, bit by bit</td></tr>
+        <tr><td>Reduction</td><td><code>&amp; ~&amp; | ~| ^ ~^</code></td><td>One bit, reducing a vector to one value</td></tr>
+        <tr><td>Shift</td><td><code>&lt;&lt; &gt;&gt; &lt;&lt;&lt; &gt;&gt;&gt;</code></td><td>Same width as the left operand</td></tr>
+        <tr><td>Conditional</td><td><code>? :</code></td><td>Width of the larger branch</td></tr>
+        <tr><td>Concatenation</td><td><code>{a, b}</code>, <code>{n{...}}</code></td><td>Sum of the operand widths</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 id="precedence">Precedence, from tightest to loosest</h2>
+  <ol>
+    <li>Unary: <code>+ - ! ~</code> and the unary reductions</li>
+    <li><code>* / %</code></li>
+    <li><code>+ -</code> (binary)</li>
+    <li><code>&lt;&lt; &gt;&gt; &lt;&lt;&lt; &gt;&gt;&gt;</code></li>
+    <li><code>&lt; &lt;= &gt; &gt;=</code></li>
+    <li><code>== != === !==</code></li>
+    <li><code>&amp;</code></li>
+    <li><code>^ ~^</code></li>
+    <li><code>|</code></li>
+    <li><code>&amp;&amp;</code></li>
+    <li><code>||</code></li>
+    <li><code>? :</code> (right-associative)</li>
+  </ol>
+  <p>The table is useful, but parentheses are better. An expression such as <code>a &amp; b == c</code> is legal and means <code>a &amp; (b == c)</code> because equality binds tighter than bitwise AND. Most readers guess the other way. Write the parentheses you intend.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="width-sign">Width and signedness rules</h2>
+  <ul>
+    <li>An unsized decimal literal is 32 bits wide and signed.</li>
+    <li>The width of an expression is the maximum of its operands, unless the assignment context forces a narrower or wider width. Assignment propagates its width into the expression.</li>
+    <li>If any operand in an expression is unsigned, the expression is evaluated as unsigned. A signed operand next to an unsigned one loses its sign interpretation.</li>
+    <li>Arithmetic does not grow automatically. An 8-bit add produces eight bits; the carry out must be captured explicitly, for example by adding in a nine-bit context.</li>
+    <li><code>&gt;&gt;</code> is a logical right shift (zero fill). <code>&gt;&gt;&gt;</code> is arithmetic (sign fill) and is meaningful only for signed operands.</li>
+    <li><code>$signed()</code> and <code>$unsigned()</code> change the interpretation of a value; they do not change its bits.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">One expression of each kind</h2>
+  <p>The example evaluates bitwise, logical, reduction, arithmetic, shift, conditional and comparison expressions on small values, so every result can be checked by hand.</p>
+
+  {{CODE:examples/verilog/expressions-operators/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>a = 4'b1010;</code> and <code>b = 4'b0101;</code> are exact complements, so <code>a &amp; b</code> is 0 and <code>a | b</code> is all ones.</li>
+    <li><code>a ^ b</code> is all ones because every bit differs. <code>~a</code> is the four-bit complement, <code>0101</code>.</li>
+    <li><code>&amp;a</code> is the reduction AND: 0 because not every bit of <code>1010</code> is 1. <code>|a</code> is 1 because at least one bit is 1. <code>^a</code> is 0 because the number of ones is even.</li>
+    <li><code>a &amp;&amp; b</code> is logical AND: both vectors are non-zero, so the result is 1, not a vector.</li>
+    <li><code>a == b</code> is 0. <code>1'b1 == 1'bx</code> is <code>x</code>: a normal equality with an unknown operand cannot be decided. <code>1'b1 === 1'bx</code> is 0 because case equality compares the actual values, and 1 is not x.</li>
+    <li><code>4'd15 + 4'd1</code> is evaluated in four bits, so it wraps to <code>0000</code>. The same sum in a five-bit context would be <code>10000</code>.</li>
+    <li><code>s = -3</code> is stored as <code>1101</code>. <code>s &gt;&gt;&gt; 1</code> shifts in the sign bit, giving <code>1110</code>, which prints as -2. <code>a &gt;&gt; 1</code> shifts in zero, giving <code>0101</code>.</li>
+    <li><code>a[0] ? b : a</code> uses bit 0 of <code>a</code> as the selector. It is 0, so the result is <code>a</code>.</li>
+    <li><code>-1 &lt; 0</code> compares two signed 32-bit values and is true. <code>4'b1111 &gt; 0</code> compares an unsigned four-bit value with a signed 32-bit zero; the unsigned interpretation wins, so 15 &gt; 0 is true.</li>
+  </ul>
+
+  {{COMMANDS:expressions-operators}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/expressions-operators/expected.txt}}
+
+  <p>Two lines deserve a second look. The equality pair shows the difference between <code>==</code> and <code>===</code> with an unknown value: the first cannot decide, the second can. The comparison pair shows how an unsigned operand forces the whole comparison to be unsigned, even when the other operand is a signed literal.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Expecting arithmetic to grow.</strong> Addition and multiplication keep the operand width. Capture the carry deliberately.</li>
+    <li><strong>Using <code>==</code> to detect <code>x</code>.</strong> <code>x == x</code> is <code>x</code>, not 1. Use <code>===</code> when you genuinely need to compare unknown values.</li>
+    <li><strong>Mixing signed and unsigned operands.</strong> One unsigned operand makes the comparison or arithmetic unsigned. Declare signedness consistently or convert explicitly.</li>
+    <li><strong>Using <code>&gt;&gt;</code> on a signed negative value.</strong> It zero-fills and changes the sign. Use <code>&gt;&gt;&gt;</code> for arithmetic shift.</li>
+    <li><strong>Confusing <code>!</code> with <code>~</code>.</strong> <code>!a</code> is one bit (logical negation); <code>~a</code> is bitwise and preserves width.</li>
+    <li><strong>Assuming <code>/</code> and <code>%</code> are cheap.</strong> Division by an arbitrary signal is expensive or unsupported in synthesis; division by a power of two is a shift.</li>
+    <li><strong>Relying on precedence.</strong> Parenthesise comparisons inside bitwise expressions and mixed logical expressions.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Expression width is the maximum operand width, propagated from the assignment context; arithmetic does not grow automatically.</li>
+    <li>An unsigned operand makes the expression unsigned. Unsized decimals are 32-bit signed.</li>
+    <li><code>==</code> yields <code>x</code> when an operand is unknown; <code>===</code> compares known and unknown values exactly.</li>
+    <li>Bitwise operators work on vectors; logical and reduction operators produce one bit.</li>
+    <li><code>&gt;&gt;</code> zero-fills; <code>&gt;&gt;&gt;</code> sign-fills and belongs with signed values.</li>
+  </ul>
+</section>

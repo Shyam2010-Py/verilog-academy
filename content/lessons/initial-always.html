@@ -1,0 +1,107 @@
+<section class="lesson-section">
+  <h2 id="two-procedures">Two procedural constructs, two jobs</h2>
+  <p class="lesson-lead">Verilog has exactly two procedural constructs: <code>initial</code> and <code>always</code>. Both contain statements that execute in sequence, and both start at time zero during elaboration. The difference is what happens next. An <code>initial</code> block runs its statements once and then stops forever. An <code>always</code> block runs its statements once and then starts again, endlessly, for as long as the simulation lasts.</p>
+  <p>Neither keyword says anything about hardware on its own. The hardware comes from what the block contains. An <code>always @*</code> block is combinational logic; an <code>always @(posedge clk)</code> block is a register; an <code>initial</code> block is usually a testbench or an FPGA power-up initialisation.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="timing-controls">Without a timing control, an always block never yields</h2>
+  <p>This is the single most important rule in the topic. If an <code>always</code> block has no timing control — no <code>@(...)</code>, no <code>#delay</code>, no <code>wait</code> — it executes its body, reaches the end, and immediately starts again at the same simulation time. Nothing can stop it, no other process gets a turn, and the simulator appears to hang.</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Infinite loop at time zero</span><span class="snippet-tag">do not run this</span></div>
+    <div class="code-block__body"><pre><code>always begin
+    count = count + 1;   // no @, no #, no wait: loops forever at t = 0
+end</code></pre></div>
+  </div>
+  <p>A combinational <code>always</code> block avoids the trap with a sensitivity list, usually <code>@*</code>, which means "re-run when any signal read by this block changes". A clocked block uses <code>@(posedge clk)</code> or <code>@(negedge clk)</code>. A testbench clock generator uses a delay: <code>always #5 clk = ~clk;</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="which-where">Which construct belongs where</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Choosing between initial and always</caption>
+      <thead><tr><th scope="col">Use</th><th scope="col">Construct</th><th scope="col">Synthesizable?</th></tr></thead>
+      <tbody>
+        <tr><td>Testbench stimulus, one-shot setup</td><td><code>initial</code></td><td>No (simulation only)</td></tr>
+        <tr><td>Clock and reset generation in a testbench</td><td><code>always</code> with a delay</td><td>No</td></tr>
+        <tr><td>Combinational logic in RTL</td><td><code>always @*</code></td><td>Yes</td></tr>
+        <tr><td>Registers in RTL</td><td><code>always @(posedge clk)</code></td><td>Yes</td></tr>
+        <tr><td>Power-up values in an FPGA</td><td><code>initial</code> on a <code>reg</code></td><td>FPGA-specific, not ASIC</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The FPGA row is a real exception that must not be generalised. Most FPGA tools can initialise a register from an <code>initial</code> block because the bitstream configures every register at power-up. An ASIC has no such mechanism: its registers come out of reset in an unknown state, so every design needs an explicit reset strategy. Writing <code>initial</code> in RTL that must also synthesise for an ASIC is therefore a portability bug, even if the FPGA build works.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">A clock, a counter and a stimulus block</h2>
+  <p>The example is a complete self-contained testbench. One <code>always</code> generates the clock, a second <code>always</code> implements a synchronous counter, and the <code>initial</code> block applies reset, waits, and prints samples.</p>
+
+  {{CODE:examples/verilog/initial-always/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>always #5 clk = ~clk;</code> has no sensitivity list. The delay is the timing control: wait 5 ns, invert the clock, repeat. That gives a 10 ns period, a 100 MHz clock in this timescale.</li>
+    <li><code>always @(posedge clk)</code> runs its body once at every rising edge and then waits for the next one. It is a register, because it stores <code>count</code> between edges.</li>
+    <li><code>if (reset) count &lt;= 3'd0;</code> makes reset synchronous: the counter is cleared on the next clock edge, not immediately when <code>reset</code> goes high.</li>
+    <li><code>count &lt;= count + 3'd1;</code> describes a three-bit counter. It wraps from 7 to 0 naturally because the destination is three bits.</li>
+    <li>The non-blocking assignments matter here. If the two branches used blocking assignments, the counter would still work in this simple case, but mixing styles across a design is how race conditions start. The next topic explains why in detail.</li>
+    <li><code>initial begin ... end</code> runs once at time zero. It initialises the clock and reset, then uses delays to schedule later actions.</li>
+    <li><code>#12 reset = 1'b0;</code> releases reset at 12 ns, which is between two rising edges. The counter therefore starts incrementing at the edge at 15 ns.</li>
+    <li><code>#14 $display(...)</code> at 26 ns samples the value set at the edge at 25 ns. The later samples at 36 and 46 ns follow the same pattern.</li>
+    <li><code>$finish</code> ends the simulation. Without it, the clock generator would keep the event queue alive forever.</li>
+  </ul>
+
+  {{COMMANDS:initial-always}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/initial-always/expected.txt}}
+
+  <p>Follow the time line:</p>
+  <ul>
+    <li><strong>t = 0:</strong> both blocks start. The clock is 0, reset is 1, count is 0. The first rising edge is at 5 ns.</li>
+    <li><strong>t = 5 ns:</strong> reset is still high, so the counter loads 0 again.</li>
+    <li><strong>t = 12 ns:</strong> reset is released. This is not a clock edge, so nothing is stored yet; the message is printed by the <code>initial</code> block.</li>
+    <li><strong>t = 15 ns:</strong> the first rising edge with reset low. <code>count</code> becomes 1.</li>
+    <li><strong>t = 25 ns:</strong> <code>count</code> becomes 2. The sample at 26 ns reads 2.</li>
+    <li><strong>t = 35 ns:</strong> <code>count</code> becomes 3; the sample at 36 ns reads 3.</li>
+    <li><strong>t = 45 ns:</strong> <code>count</code> becomes 4; the sample at 46 ns reads 4.</li>
+  </ul>
+  <p>The printed times are 7000, 12000 and so on because <code>%0t</code> formats in the simulation precision, 1 ps. Twelve nanoseconds is 12000 ps.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="sensitivity">Sensitivity lists and <code>@*</code></h2>
+  <p>Before Verilog-2001, a combinational block had to list every input by hand: <code>always @(a or b or sel)</code>. Forgetting one produced a simulation that behaved differently from synthesis, because the block simply did not re-run when the missing signal changed. Verilog-2001 introduced <code>@*</code> (and the equivalent <code>@(*)</code>), which infers the list from the signals read inside the block.</p>
+  <ul>
+    <li>Use <code>always @*</code> for combinational logic. It removes an entire class of stale-sensitivity bugs.</li>
+    <li>Use an explicit edge list for sequential logic. <code>@*</code> must never be used for a register, because it would trigger on data changes as well as clock edges.</li>
+    <li><code>@*</code> includes signals read in the block, not signals written. A signal that only appears on the left-hand side is not an input.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>An <code>always</code> block with no timing control.</strong> It loops forever at time zero and the simulation hangs. Every <code>always</code> needs <code>@</code>, <code>#</code> or <code>wait</code>.</li>
+    <li><strong>Using <code>initial</code> in ASIC RTL.</strong> It is not synthesizable there. Use a reset. FPGA initialisation works but does not port.</li>
+    <li><strong>Using <code>@*</code> for a register.</strong> The block then triggers on data transitions, which is not a flip-flop.</li>
+    <li><strong>Forgetting <code>$finish</code> in a testbench.</strong> A free-running clock keeps the simulation alive until the tool's time limit.</li>
+    <li><strong>Assuming <code>initial</code> runs before <code>always</code>.</strong> Both start at time zero; the order between them is not defined by the language. Never rely on it.</li>
+    <li><strong>Treating a synchronous reset as asynchronous.</strong> <code>if (reset)</code> inside <code>@(posedge clk)</code> takes effect at the next edge, not immediately. Asynchronous reset needs <code>or negedge reset</code> in the sensitivity list and its own timing analysis.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li><code>initial</code> runs once; <code>always</code> repeats forever and must contain a timing control.</li>
+    <li><code>always @*</code> describes combinational logic; <code>always @(posedge clk)</code> describes registers.</li>
+    <li>A testbench clock generator is <code>always #5 clk = ~clk;</code> — simulation only.</li>
+    <li><code>initial</code> is not synthesizable for ASIC; FPGA power-up initialisation is a vendor-specific exception.</li>
+    <li>Both constructs start at time zero, and their relative order is undefined.</li>
+  </ul>
+</section>

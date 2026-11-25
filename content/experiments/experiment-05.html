@@ -1,0 +1,299 @@
+<section class="lesson-section">
+  <h2 id="aim">Aim and scope</h2>
+  <p class="lesson-lead">Implement 2:1, 4:1 and 8:1 multiplexers in Verilog-2001, then verify every select value against every data pattern for each width.</p>
+  <p>A multiplexer is a digital selector: several data inputs share one output, and the select lines choose which input is connected. This experiment uses three widths so the relationship between select-line count and input count is visible: one select line selects between 2 inputs, two select lines between 4, and three select lines between 8.</p>
+  <p>The 2:1 multiplexer is written as a conditional assignment. The 4:1 and 8:1 multiplexers use an <code>always @*</code> block with a <code>case</code> statement, so every select value has an explicit branch. The testbench checks all 8 combinations of the 2:1 device, all 64 data/select combinations of the 4:1 device, and all 2,048 data/select combinations of the 8:1 device.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="objectives">Learning objectives</h2>
+  <ul class="objective-list">
+    <li>Express a 2:1 multiplexer with the conditional operator.</li>
+    <li>Express wider multiplexers with a <code>case</code> statement inside <code>always @*</code>.</li>
+    <li>Relate <em>n</em> select lines to 2<sup><em>n</em></sup> data inputs.</li>
+    <li>Explain why a multiplexer output is a <code>reg</code> when it is assigned in a procedural block.</li>
+    <li>Verify every select path and every data pattern for all three widths.</li>
+    <li>Recognise the incomplete-assignment latch hazard in combinational <code>always</code> blocks.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="tools">Required tools and files</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Experiment 05 bench inventory</caption>
+      <thead><tr><th scope="col">Item</th><th scope="col">Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Icarus Verilog 13.0</td><td>Compiles the three multiplexer modules and runs the exhaustive testbench.</td></tr>
+        <tr><td><code>design.v</code></td><td>Contains <code>mux2</code>, <code>mux4</code> and <code>mux8</code>.</td></tr>
+        <tr><td><code>tb.v</code></td><td>Checks 2,132 data/select combinations and counts mismatches.</td></tr>
+        <tr><td>Terminal</td><td>Runs the compile and simulation commands from the example directory.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The 8:1 testbench is the largest in this laboratory: 2,048 checks in one loop. It still finishes almost instantly because the design is purely combinational.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="theory">Theory and working principle</h2>
+  <p>A multiplexer performs a many-to-one selection. For a device with 2<sup><em>n</em></sup> data inputs, <em>n</em> select lines encode the index of the input that reaches the output. If <code>s = 0</code>, a 2:1 multiplexer passes <code>d0</code>; if <code>s = 1</code>, it passes <code>d1</code>. A 4:1 multiplexer uses two select bits, so <code>s = 2'b10</code> passes <code>d2</code>. An 8:1 multiplexer uses three select bits, so <code>s = 3'b101</code> passes <code>d5</code>.</p>
+  <p>The Boolean form of a 2:1 multiplexer is <code>y = (~s &amp; d0) | (s &amp; d1)</code>. Each product term is enabled by one value of the select line. The conditional operator <code>s ? d1 : d0</code> describes the same function more compactly and is the form used in the design.</p>
+  <p>For wider multiplexers the sum-of-products grows quickly: a 4:1 device has four three-literal product terms, and an 8:1 device has eight four-literal terms. A <code>case</code> statement maps each select value directly to its data input, which is easier to read and less error-prone than a long expression. The synthesis result is still a multiplexer; the <code>case</code> is a description, not a command to build a priority chain.</p>
+  <p>A multiplexer is not a decoder. A decoder takes a binary code and asserts one of several outputs; a multiplexer takes several data inputs and routes one of them to a single output. The demultiplexers in Experiment 06 are closer to decoders with data gating.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="diagram">Logic diagram</h2>
+  <p>All three devices are drawn with their select inputs at the bottom and their data inputs on the left. The output label matches the port name <code>y</code> in every module. Wider data ports are drawn as buses with a slash and a width label.</p>
+
+  <figure class="lab-figure">
+    <div class="lab-figure__scroll" tabindex="0" role="group" aria-label="Block diagram of the 2 to 1, 4 to 1 and 8 to 1 multiplexers. The figure scrolls horizontally on narrow screens.">
+      <svg class="lab-svg" viewBox="0 0 1000 300" role="img" aria-labelledby="fig-mux-title fig-mux-desc">
+        <title id="fig-mux-title">2:1, 4:1 and 8:1 multiplexer block diagrams</title>
+        <desc id="fig-mux-desc">Three multiplexer blocks. The 2:1 block has data inputs d0 and d1 and select s. The 4:1 block has a four-bit data bus and a two-bit select. The 8:1 block has an eight-bit data bus and a three-bit select.</desc>
+
+        <rect class="lab-svg__block" x="50" y="90" width="170" height="100" rx="5"/>
+        <text x="135" y="132" text-anchor="middle">2:1 MUX</text>
+        <text class="lab-svg__note" x="135" y="154" text-anchor="middle">y = s ? d1 : d0</text>
+        <path class="lab-svg__wire" d="M10 115 H50 M10 165 H50"/>
+        <text class="lab-svg__value" x="14" y="109">d0</text>
+        <text class="lab-svg__value" x="14" y="159">d1</text>
+        <path class="lab-svg__wire" d="M135 240 V190"/>
+        <text class="lab-svg__value" x="135" y="258" text-anchor="middle">s</text>
+        <path class="lab-svg__wire" d="M220 140 H270"/>
+        <text class="lab-svg__value" x="278" y="144">y</text>
+
+        <rect class="lab-svg__block" x="340" y="80" width="180" height="120" rx="5"/>
+        <text x="430" y="126" text-anchor="middle">4:1 MUX</text>
+        <text class="lab-svg__note" x="430" y="148" text-anchor="middle">y = d[s]</text>
+        <path class="lab-svg__wire" d="M280 120 H340"/>
+        <text class="lab-svg__value" x="286" y="112">d[3:0]</text>
+        <path class="lab-svg__wire" d="M304 112 L314 128"/>
+        <path class="lab-svg__wire" d="M430 250 V200"/>
+        <text class="lab-svg__value" x="430" y="268" text-anchor="middle">s[1:0]</text>
+        <path class="lab-svg__wire" d="M520 140 H560"/>
+        <text class="lab-svg__value" x="568" y="144">y</text>
+
+        <rect class="lab-svg__block" x="650" y="60" width="190" height="160" rx="5"/>
+        <text x="745" y="126" text-anchor="middle">8:1 MUX</text>
+        <text class="lab-svg__note" x="745" y="148" text-anchor="middle">y = d[s]</text>
+        <path class="lab-svg__wire" d="M590 120 H650"/>
+        <text class="lab-svg__value" x="596" y="112">d[7:0]</text>
+        <path class="lab-svg__wire" d="M610 112 L620 128"/>
+        <path class="lab-svg__wire" d="M745 260 V220"/>
+        <text class="lab-svg__value" x="745" y="278" text-anchor="middle">s[2:0]</text>
+        <path class="lab-svg__wire" d="M840 140 H880"/>
+        <text class="lab-svg__value" x="888" y="144">y</text>
+
+        <text class="lab-svg__note" x="24" y="290">One select line selects 2 inputs · two select lines select 4 · three select lines select 8</text>
+      </svg>
+    </div>
+    <figcaption><strong>Figure 1.</strong> The three multiplexer widths. Each device has 2<sup><em>n</em></sup> data inputs and <em>n</em> select lines. The output is always the single port <code>y</code>.</figcaption>
+  </figure>
+</section>
+
+<section class="lesson-section">
+  <h2 id="truth-table">Truth tables</h2>
+  <h3>2:1 multiplexer</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Every data pattern and both select values</caption>
+      <thead><tr><th scope="col">s</th><th scope="col">d1</th><th scope="col">d0</th><th scope="col">y</th><th scope="col">Selected input</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>d0</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>d0</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>d0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>1</td><td>d0</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>d1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>d1</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>d1</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>d1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>4:1 multiplexer</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Select paths with the test pattern d = 1010</caption>
+      <thead><tr><th scope="col">s1</th><th scope="col">s0</th><th scope="col">y</th><th scope="col">Selected input</th><th scope="col">d[s]</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>d0</td><td>d[0] = 0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>d1</td><td>d[1] = 1</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>d2</td><td>d[2] = 0</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>d3</td><td>d[3] = 1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>8:1 multiplexer</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Select paths with the test pattern d = 10101010</caption>
+      <thead><tr><th scope="col">s2</th><th scope="col">s1</th><th scope="col">s0</th><th scope="col">y</th><th scope="col">Selected input</th><th scope="col">d[s]</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>d0</td><td>d[0] = 0</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>d1</td><td>d[1] = 1</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>d2</td><td>d[2] = 0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>1</td><td>d3</td><td>d[3] = 1</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>d4</td><td>d[4] = 0</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>1</td><td>d5</td><td>d[5] = 1</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>d6</td><td>d[6] = 0</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>d7</td><td>d[7] = 1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>These tables show one select sweep each. The testbench does not stop there: it repeats each select value for every possible data pattern, which is 4 × 16 = 64 checks for the 4:1 device and 8 × 256 = 2,048 checks for the 8:1 device.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="equations">Boolean equations</h2>
+  <h3>2:1 multiplexer</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Canonical</span><code>y = (~s &amp; d0) | (s &amp; d1)</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Verilog</span><code>y = s ? d1 : d0</code></div>
+  </div>
+  <h3>4:1 multiplexer</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Canonical</span><code>y = (~s1 &amp; ~s0 &amp; d0) | (~s1 &amp; s0 &amp; d1) | (s1 &amp; ~s0 &amp; d2) | (s1 &amp; s0 &amp; d3)</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Indexed</span><code>y = d[s]</code></div>
+  </div>
+  <h3>8:1 multiplexer</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Canonical</span><code>y = OR over i of (d[i] &amp; select_equals_i)</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Indexed</span><code>y = d[s]</code></div>
+  </div>
+  <p>The indexed form <code>d[s]</code> is valid Verilog-2001 and describes exactly the same selection. The design spells the cases out instead, because an explicit <code>case</code> makes each path visible to a reader who is checking the truth table line by line.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="design">Verilog design code</h2>
+  <p><code>mux2</code> uses a continuous assignment, so its output is a wire. <code>mux4</code> and <code>mux8</code> assign <code>y</code> inside <code>always @*</code>, so their outputs are declared as <code>reg</code>. Both forms describe combinational logic.</p>
+  {{CODE:examples/labs/experiment-05/design.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="testbench">Testbench</h2>
+  <p>The testbench checks the 2:1 device against a conditional expression, then checks the wider devices against <code>d[s]</code>. That independent expectation catches a swapped case item or a select-bit reversal.</p>
+  {{CODE:examples/labs/experiment-05/tb.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="explanation">Line-by-line explanation</h2>
+  <h3>Design</h3>
+  <ul>
+    <li><code>assign y = s ? d1 : d0;</code> is the conditional operator. When <code>s</code> is 1, <code>y</code> takes <code>d1</code>; otherwise it takes <code>d0</code>.</li>
+    <li><code>always @*</code> re-evaluates the block whenever any signal read inside it changes. This is the combinational sensitivity list.</li>
+    <li><code>case (s)</code> compares the select value against each listed constant using four-state equality.</li>
+    <li><code>2'b00: y = d[0];</code> and the following items map each select code to one data bit.</li>
+    <li><code>default: y = 1'b0;</code> guarantees an assignment for any value not covered, including <code>x</code> and <code>z</code>. It also prevents a latch.</li>
+    <li><code>output reg y</code> is required because <code>y</code> is assigned procedurally. The <code>reg</code> keyword does not imply a hardware register here; it only means a procedural variable.</li>
+  </ul>
+  <h3>Testbench</h3>
+  <ul>
+    <li><code>pattern</code> walks all data values for each select. For <code>mux2</code>, the loop covers 4 patterns × 2 selects = 8 checks.</li>
+    <li><code>{m2_d1, m2_d0} = pattern[1:0];</code> packs the two data bits in the order used by the comparison.</li>
+    <li>The 4:1 section first prints a four-row path check with <code>m4_d = 4'b1010</code>, then runs 64 exhaustive checks.</li>
+    <li>The 8:1 section does the same with <code>m8_d = 8'b10101010</code> and then 2,048 checks.</li>
+    <li><code>if (m4_y !== m4_d[s])</code> compares the output with the indexed data bit; <code>s</code> is an integer used as the index.</li>
+    <li><code>checks</code> counts every comparison, and the final line reports the total.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="commands">Compilation and simulation commands</h2>
+  {{COMMANDS:experiment-05}}
+  <p>The simulation performs 2,132 one-nanosecond checks. If the transcript stops early, check that all three modules are present in <code>design.v</code>; a missing module is an elaboration error, not a mismatch.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">Actual simulator output</h2>
+  <p>The captured transcript prints a path table for each device, then the exhaustive counts. It is reproduced exactly as Icarus Verilog 13.0 produced it.</p>
+  {{OUTPUT:examples/labs/experiment-05/expected.txt}}
+  <p>The summary line reports <strong>2,132</strong> checked combinations and <strong>0</strong> mismatches. The finish time of 2,132,000 ps is 2,132 ns, one nanosecond per check.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="waveform">Waveform and timing</h2>
+  <p>There is no clock. The select and data inputs change once per nanosecond, and the output follows in the same simulation step after the continuous or procedural assignment settles.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Check allocation across the three devices</caption>
+      <thead><tr><th scope="col">Device</th><th scope="col">Path checks</th><th scope="col">Exhaustive checks</th><th scope="col">Total</th></tr></thead>
+      <tbody>
+        <tr><td>2:1</td><td>—</td><td>4 patterns × 2 selects</td><td>8</td></tr>
+        <tr><td>4:1</td><td>4</td><td>16 patterns × 4 selects</td><td>68</td></tr>
+        <tr><td>8:1</td><td>8</td><td>256 patterns × 8 selects</td><td>2,056</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>12</strong></td><td><strong>2,120</strong></td><td><strong>2,132</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A waveform would show <code>y</code> switching to whichever data line the select code names. It should never show <code>y</code> following an unselected input; that would indicate a swapped select bit or a missing case item.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="result">Result</h2>
+  <div class="lab-result">
+    <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+    <div>
+      <h3>All three multiplexers selected the correct input in every case.</h3>
+      <p>The testbench performed <strong>2,132 checks</strong> across the 2:1, 4:1 and 8:1 devices and reported <strong>0 mismatches</strong>. Every select value and every data pattern behaved as the truth tables predict.</p>
+    </div>
+  </div>
+  <p>Because the wider devices are checked against every possible data pattern for every select value, no combination of data and select is left untested.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes and troubleshooting</h2>
+  <div class="concept-grid">
+    <article class="concept-card">
+      <h3>Swapping the select bits</h3>
+      <p>Writing <code>case ({s[0], s[1]})</code> reverses the index. The output then follows a different data line for the same numeric select value.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Declaring a procedural output as <code>wire</code></h3>
+      <p>An output assigned inside <code>always</code> must be a <code>reg</code> in Verilog-2001. A wire would produce a compile error.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Omitting the <code>default</code></h3>
+      <p>Without a default, an uncovered select value leaves <code>y</code> unassigned and can infer a latch. The design assigns 0 in the default branch.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Using <code>always @(s)</code></h3>
+      <p>Listing only the select line misses changes on the data inputs. Use <code>always @*</code> so every read signal is in the sensitivity set.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Confusing a multiplexer with a decoder</h3>
+      <p>A multiplexer routes one of many inputs to one output. A decoder converts a code into a one-hot output set. Experiment 06's demultiplexers are the routing counterpart.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Assuming <code>d[s]</code> is out of range safe</h3>
+      <p>An index outside the declared range yields an unknown bit. The explicit <code>case</code> avoids that by covering every legal select value and defining a default.</p>
+    </article>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 id="viva">Viva questions</h2>
+  <ol class="lab-viva">
+    <li>How many select lines does a 16:1 multiplexer need?</li>
+    <li>Write the canonical Boolean expression for a 2:1 multiplexer.</li>
+    <li>Why is the output of <code>mux4</code> declared as <code>reg</code> while <code>mux2</code>'s output is a wire?</li>
+    <li>What is the difference between a multiplexer and a decoder?</li>
+    <li>What hardware could a missing <code>default</code> branch infer?</li>
+    <li>How many data/select combinations does an 8:1 multiplexer have?</li>
+    <li>Can a multiplexer be built from tri-state buffers? What are the trade-offs?</li>
+  </ol>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>An <em>n</em>-bit select chooses among 2<sup><em>n</em></sup> data inputs.</li>
+    <li>2:1: <code>y = s ? d1 : d0</code>; wider devices can use <code>case</code> or <code>d[s]</code>.</li>
+    <li>Procedural assignments require <code>reg</code> outputs; continuous assignments require wires.</li>
+    <li><code>always @*</code> plus a complete <code>case</code> describes combinational logic without a latch.</li>
+    <li>The testbench checks 8 + 68 + 2,056 = 2,132 combinations.</li>
+    <li>A multiplexer selects one input; a demultiplexer routes one input to one of several outputs.</li>
+  </ul>
+</section>

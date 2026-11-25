@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="index, follow">
+  <title>Verilog Playground — Verilog Academy</title>
+  <meta name="description" content="A local-first Verilog workbench: edit fourteen verified design and testbench pairs, download the .v files and compile them with Icarus Verilog. No browser compiler and no hidden simulation.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Verilog Playground — Verilog Academy">
+  <meta property="og:description" content="A local-first Verilog workbench: edit fourteen verified design and testbench pairs, download the .v files and compile them with Icarus Verilog. No browser compiler and no hidden simulation.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="../assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="../assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <link rel="stylesheet" href="../css/theory.css"><link rel="stylesheet" href="../css/playground.css">
+</head>
+<body class="page-theory page-playground" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="../theory/index.html">Theory</a>
+          <a class="nav-link" href="../labs/index.html">Laboratory</a>
+          <a class="nav-link" href="../circuit-lab/index.html">Circuit Lab</a>
+          <a class="nav-link is-active" href="../playground/index.html" aria-current="page">Playground</a>
+          <a class="nav-link" href="../quizzes/index.html">Quizzes</a>
+          <a class="nav-link" href="../guides/index.html">Guides</a>
+          <a class="nav-link" href="../dashboard.html">Dashboard</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <script type="application/json" id="playground-data">[{"id":"and-gate","title":"AND Gate","category":"Logic gates","level":"Foundation","summary":"The simplest product term: the output is high only when both inputs are high.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// A two-input AND gate described by one continuous assignment.\nmodule and_gate (\n    input  wire a,\n    input  wire b,\n    output wire y\n);\n\n    assign y = a & b;\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule and_gate_tb;\n    reg  a;\n    reg  b;\n    wire y;\n    reg [1:0] vec;\n    integer i;\n    integer errors;\n\n    and_gate dut (.a(a), .b(b), .y(y));\n\n    initial begin\n        errors = 0;\n        $display(\"AND gate truth table\");\n        $display(\"a b | y\");\n        $display(\"----+--\");\n        for (i = 0; i < 4; i = i + 1) begin\n            vec = i;\n            {a, b} = vec;\n            #1;\n            $display(\"%b %b | %b\", a, b, y);\n            if (y !== (a & b)) errors = errors + 1;\n        end\n        if (errors == 0) $display(\"PASS: 4/4 rows match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":4},{"id":"or-gate","title":"OR Gate","category":"Logic gates","level":"Foundation","summary":"The sum term: the output is low only when every input is low.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// A two-input OR gate. The output is low only when both inputs are low.\nmodule or_gate (\n    input  wire a,\n    input  wire b,\n    output wire y\n);\n\n    assign y = a | b;\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule or_gate_tb;\n    reg  a;\n    reg  b;\n    wire y;\n    reg [1:0] vec;\n    integer i;\n    integer errors;\n\n    or_gate dut (.a(a), .b(b), .y(y));\n\n    initial begin\n        errors = 0;\n        $display(\"OR gate truth table\");\n        $display(\"a b | y\");\n        $display(\"----+--\");\n        for (i = 0; i < 4; i = i + 1) begin\n            vec = i;\n            {a, b} = vec;\n            #1;\n            $display(\"%b %b | %b\", a, b, y);\n            if (y !== (a | b)) errors = errors + 1;\n        end\n        if (errors == 0) $display(\"PASS: 4/4 rows match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":4},{"id":"xor-gate","title":"XOR Gate","category":"Logic gates","level":"Foundation","summary":"The difference detector: the output is high when the two inputs disagree.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// XOR gives 1 when the inputs differ, so it is also a one-bit parity gate.\nmodule xor_gate (\n    input  wire a,\n    input  wire b,\n    output wire y\n);\n\n    assign y = a ^ b;\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule xor_gate_tb;\n    reg  a;\n    reg  b;\n    wire y;\n    reg [1:0] vec;\n    integer i;\n    integer errors;\n\n    xor_gate dut (.a(a), .b(b), .y(y));\n\n    initial begin\n        errors = 0;\n        $display(\"XOR gate truth table\");\n        $display(\"a b | y\");\n        $display(\"----+--\");\n        for (i = 0; i < 4; i = i + 1) begin\n            vec = i;\n            {a, b} = vec;\n            #1;\n            $display(\"%b %b | %b\", a, b, y);\n            if (y !== (a ^ b)) errors = errors + 1;\n        end\n        if (errors == 0) $display(\"PASS: 4/4 rows match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":4},{"id":"half-adder","title":"Half Adder","category":"Arithmetic","level":"Foundation","summary":"Adds two one-bit inputs and produces a sum and a carry.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// Half adder: sum is XOR, carry is the AND of the two input bits.\nmodule half_adder (\n    input  wire a,\n    input  wire b,\n    output wire sum,\n    output wire carry\n);\n\n    assign sum   = a ^ b;\n    assign carry = a & b;\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule half_adder_tb;\n    reg  a;\n    reg  b;\n    wire sum;\n    wire carry;\n    reg [1:0] vec;\n    integer i;\n    integer errors;\n    integer a_int;\n    integer b_int;\n\n    half_adder dut (.a(a), .b(b), .sum(sum), .carry(carry));\n\n    initial begin\n        errors = 0;\n        $display(\"Half adder truth table\");\n        $display(\"a b | sum carry | a+b\");\n        $display(\"----+-----------+----\");\n        for (i = 0; i < 4; i = i + 1) begin\n            vec = i;\n            {a, b} = vec;\n            #1;\n            a_int = a;\n            b_int = b;\n            $display(\"%b %b |  %b    %b   |  %0d\", a, b, sum, carry, a_int + b_int);\n            if (sum !== (a ^ b)) errors = errors + 1;\n            if (carry !== (a & b)) errors = errors + 1;\n        end\n        if (errors == 0) $display(\"PASS: 4/4 rows match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":4},{"id":"full-adder","title":"Full Adder","category":"Arithmetic","level":"Intermediate","summary":"Adds three one-bit inputs, including a carry-in, and produces sum and carry-out.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// Full adder: sum is the parity of three bits; carry is the majority vote.\nmodule full_adder (\n    input  wire a,\n    input  wire b,\n    input  wire cin,\n    output wire sum,\n    output wire carry\n);\n\n    assign sum   = a ^ b ^ cin;\n    assign carry = (a & b) | (cin & (a ^ b));\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule full_adder_tb;\n    reg  a;\n    reg  b;\n    reg  cin;\n    wire sum;\n    wire carry;\n    reg [2:0] vec;\n    integer i;\n    integer errors;\n    integer a_int;\n    integer b_int;\n    integer cin_int;\n\n    full_adder dut (.a(a), .b(b), .cin(cin), .sum(sum), .carry(carry));\n\n    initial begin\n        errors = 0;\n        $display(\"Full adder truth table\");\n        $display(\"a b cin | sum carry | a+b+cin\");\n        $display(\"--------+-----------+--------\");\n        for (i = 0; i < 8; i = i + 1) begin\n            vec = i;\n            {a, b, cin} = vec;\n            #1;\n            a_int = a;\n            b_int = b;\n            cin_int = cin;\n            $display(\"%b %b  %b  |  %b    %b   |    %0d\", a, b, cin, sum, carry, a_int + b_int + cin_int);\n            if (sum !== (a ^ b ^ cin)) errors = errors + 1;\n            if (carry !== ((a & b) | (cin & (a ^ b)))) errors = errors + 1;\n        end\n        if (errors == 0) $display(\"PASS: 8/8 rows match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":8},{"id":"half-subtractor","title":"Half Subtractor","category":"Arithmetic","level":"Foundation","summary":"Subtracts B from A and reports the difference and the borrow.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// Half subtractor: difference is XOR; borrow is high only for 0 - 1.\nmodule half_subtractor (\n    input  wire a,\n    input  wire b,\n    output wire diff,\n    output wire borrow\n);\n\n    assign diff   = a ^ b;\n    assign borrow = (~a) & b;\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule half_subtractor_tb;\n    reg  a;\n    reg  b;\n    wire diff;\n    wire borrow;\n    reg [1:0] vec;\n    integer i;\n    integer errors;\n    integer a_int;\n    integer b_int;\n\n    half_subtractor dut (.a(a), .b(b), .diff(diff), .borrow(borrow));\n\n    initial begin\n        errors = 0;\n        $display(\"Half subtractor truth table\");\n        $display(\"a b | diff borrow | a-b\");\n        $display(\"----+-------------+----\");\n        for (i = 0; i < 4; i = i + 1) begin\n            vec = i;\n            {a, b} = vec;\n            #1;\n            a_int = a;\n            b_int = b;\n            $display(\"%b %b |  %b     %b    |  %0d\", a, b, diff, borrow, a_int - b_int);\n            if (diff !== (a ^ b)) errors = errors + 1;\n            if (borrow !== ((~a) & b)) errors = errors + 1;\n        end\n        if (errors == 0) $display(\"PASS: 4/4 rows match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":4},{"id":"full-subtractor","title":"Full Subtractor","category":"Arithmetic","level":"Intermediate","summary":"Subtracts B and a borrow-in from A, producing difference and borrow-out.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// Full subtractor: difference is three-bit parity; borrow includes bin.\nmodule full_subtractor (\n    input  wire a,\n    input  wire b,\n    input  wire bin,\n    output wire diff,\n    output wire borrow\n);\n\n    assign diff   = a ^ b ^ bin;\n    assign borrow = (~a & b) | (~(a ^ b) & bin);\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule full_subtractor_tb;\n    reg  a;\n    reg  b;\n    reg  bin;\n    wire diff;\n    wire borrow;\n    reg [2:0] vec;\n    integer i;\n    integer errors;\n    integer a_int;\n    integer b_int;\n    integer bin_int;\n\n    full_subtractor dut (.a(a), .b(b), .bin(bin), .diff(diff), .borrow(borrow));\n\n    initial begin\n        errors = 0;\n        $display(\"Full subtractor truth table\");\n        $display(\"a b bin | diff borrow | a-b-bin\");\n        $display(\"--------+-------------+--------\");\n        for (i = 0; i < 8; i = i + 1) begin\n            vec = i;\n            {a, b, bin} = vec;\n            #1;\n            a_int = a;\n            b_int = b;\n            bin_int = bin;\n            $display(\"%b %b  %b  |  %b     %b    |    %0d\", a, b, bin, diff, borrow, a_int - b_int - bin_int);\n            if (diff !== (a ^ b ^ bin)) errors = errors + 1;\n            if (borrow !== ((~a & b) | (~(a ^ b) & bin))) errors = errors + 1;\n        end\n        if (errors == 0) $display(\"PASS: 8/8 rows match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":8},{"id":"four-bit-adder","title":"4-Bit Ripple-Carry Adder","category":"Arithmetic","level":"Intermediate","summary":"Chains four full adders to add two four-bit numbers with a carry-in.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// One full adder is reused four times. carry[0] leaves bit 0, carry[3]\n// leaves bit 3 and becomes the unsigned carry-out.\nmodule full_adder (\n    input  wire a,\n    input  wire b,\n    input  wire cin,\n    output wire sum,\n    output wire carry\n);\n\n    assign sum   = a ^ b ^ cin;\n    assign carry = (a & b) | (cin & (a ^ b));\n\nendmodule\n\nmodule four_bit_adder (\n    input  wire [3:0] a,\n    input  wire [3:0] b,\n    input  wire       cin,\n    output wire [3:0] sum,\n    output wire       cout,\n    output wire       overflow\n);\n\n    wire [3:0] carry;\n\n    full_adder fa0 (.a(a[0]), .b(b[0]), .cin(cin),     .sum(sum[0]), .carry(carry[0]));\n    full_adder fa1 (.a(a[1]), .b(b[1]), .cin(carry[0]), .sum(sum[1]), .carry(carry[1]));\n    full_adder fa2 (.a(a[2]), .b(b[2]), .cin(carry[1]), .sum(sum[2]), .carry(carry[2]));\n    full_adder fa3 (.a(a[3]), .b(b[3]), .cin(carry[2]), .sum(sum[3]), .carry(carry[3]));\n\n    assign cout     = carry[3];\n    assign overflow = carry[2] ^ carry[3];\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule four_bit_adder_tb;\n    reg  [3:0] a;\n    reg  [3:0] b;\n    reg        cin;\n    wire [3:0] sum;\n    wire       cout;\n    wire       overflow;\n    reg  [4:0] expected_sum;\n    integer ai;\n    integer bi;\n    integer ci;\n    integer checks;\n    integer errors;\n\n    four_bit_adder dut (\n        .a(a), .b(b), .cin(cin),\n        .sum(sum), .cout(cout), .overflow(overflow)\n    );\n\n    initial begin\n        checks = 0;\n        errors = 0;\n        $display(\"4-bit ripple-carry adder\");\n        $display(\"A    B    Cin | Cout Sum  OVF\");\n        $display(\"---------------+--------------\");\n        for (ai = 0; ai < 16; ai = ai + 1) begin\n            for (bi = 0; bi < 16; bi = bi + 1) begin\n                for (ci = 0; ci < 2; ci = ci + 1) begin\n                    a = ai;\n                    b = bi;\n                    cin = ci[0];\n                    #1;\n                    expected_sum = {1'b0, a} + {1'b0, b} + cin;\n                    checks = checks + 1;\n                    if ({cout, sum} !== expected_sum) errors = errors + 1;\n                    if (overflow !== ((a[3] & b[3] & ~sum[3]) | (~a[3] & ~b[3] & sum[3]))) errors = errors + 1;\n                    if (((a == 4'd0)  && (b == 4'd0)  && (cin == 1'b0)) ||\n                        ((a == 4'd10) && (b == 4'd5)  && (cin == 1'b0)) ||\n                        ((a == 4'd15) && (b == 4'd1)  && (cin == 1'b0)) ||\n                        ((a == 4'd8)  && (b == 4'd8)  && (cin == 1'b0)) ||\n                        ((a == 4'd15) && (b == 4'd15) && (cin == 1'b1)))\n                        $display(\"%b %b   %b  |  %b   %b   %b\", a, b, cin, cout, sum, overflow);\n                end\n            end\n        end\n        $display(\"Checked %0d input combinations\", checks);\n        if (errors == 0) $display(\"PASS: 512/512 combinations match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":512},{"id":"mux-4-to-1","title":"4:1 Multiplexer","category":"Routing","level":"Intermediate","summary":"Routes one of four data inputs to a single output under a two-bit select.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// A 4:1 multiplexer selects one of four data bits with a two-bit select.\nmodule mux_4_to_1 (\n    input  wire [3:0] d,\n    input  wire [1:0] sel,\n    output reg        y\n);\n\n    always @* begin\n        case (sel)\n            2'b00: y = d[0];\n            2'b01: y = d[1];\n            2'b10: y = d[2];\n            2'b11: y = d[3];\n            default: y = 1'b0;\n        endcase\n    end\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule mux_4_to_1_tb;\n    reg  [3:0] d;\n    reg  [1:0] sel;\n    wire       y;\n    reg        expected;\n    integer si;\n    integer di;\n    integer checks;\n    integer errors;\n\n    mux_4_to_1 dut (.d(d), .sel(sel), .y(y));\n\n    initial begin\n        checks = 0;\n        errors = 0;\n        $display(\"4:1 multiplexer\");\n        $display(\"sel | d3 d2 d1 d0 | y\");\n        $display(\"----+-------------+--\");\n        for (si = 0; si < 4; si = si + 1) begin\n            sel = si;\n            for (di = 0; di < 16; di = di + 1) begin\n                d = di;\n                #1;\n                case (sel)\n                    2'd0: expected = d[0];\n                    2'd1: expected = d[1];\n                    2'd2: expected = d[2];\n                    default: expected = d[3];\n                endcase\n                checks = checks + 1;\n                if (y !== expected) errors = errors + 1;\n                if (d == 4'b1010) $display(\"%b  |  %b | %b\", sel, d, y);\n            end\n        end\n        $display(\"Checked %0d select/data combinations\", checks);\n        if (errors == 0) $display(\"PASS: 64/64 combinations match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":64},{"id":"demux-1-to-4","title":"1:4 Demultiplexer","category":"Routing","level":"Intermediate","summary":"Sends one data input to exactly one of four outputs.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// A 1:4 demultiplexer sends din to exactly one output selected by sel.\nmodule demux_1_to_4 (\n    input  wire       din,\n    input  wire [1:0] sel,\n    output reg  [3:0] y\n);\n\n    always @* begin\n        y = 4'b0000;\n        case (sel)\n            2'b00: y[0] = din;\n            2'b01: y[1] = din;\n            2'b10: y[2] = din;\n            2'b11: y[3] = din;\n            default: y = 4'b0000;\n        endcase\n    end\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule demux_1_to_4_tb;\n    reg        din;\n    reg  [1:0] sel;\n    wire [3:0] y;\n    reg  [3:0] expected;\n    integer di;\n    integer si;\n    integer checks;\n    integer errors;\n\n    demux_1_to_4 dut (.din(din), .sel(sel), .y(y));\n\n    initial begin\n        checks = 0;\n        errors = 0;\n        $display(\"1:4 demultiplexer\");\n        $display(\"din sel | y3 y2 y1 y0\");\n        $display(\"----+-----+-----------\");\n        for (di = 0; di < 2; di = di + 1) begin\n            din = di[0];\n            for (si = 0; si < 4; si = si + 1) begin\n                sel = si;\n                #1;\n                expected = 4'b0000;\n                case (sel)\n                    2'd0: expected[0] = din;\n                    2'd1: expected[1] = din;\n                    2'd2: expected[2] = din;\n                    default: expected[3] = din;\n                endcase\n                checks = checks + 1;\n                if (y !== expected) errors = errors + 1;\n                $display(\" %b   %b |  %b\", din, sel, y);\n            end\n        end\n        $display(\"Checked %0d data/select combinations\", checks);\n        if (errors == 0) $display(\"PASS: 8/8 combinations match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":8},{"id":"decoder-2-to-4","title":"2-to-4 Decoder with Enable","category":"Routing","level":"Intermediate","summary":"Converts a two-bit address into one active output line, with an enable input.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// A 2-to-4 decoder with an active-high enable. Disabled means all low.\nmodule decoder_2_to_4 (\n    input  wire       enable,\n    input  wire [1:0] addr,\n    output reg  [3:0] y\n);\n\n    always @* begin\n        if (!enable)\n            y = 4'b0000;\n        else begin\n            case (addr)\n                2'b00: y = 4'b0001;\n                2'b01: y = 4'b0010;\n                2'b10: y = 4'b0100;\n                2'b11: y = 4'b1000;\n                default: y = 4'b0000;\n            endcase\n        end\n    end\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule decoder_2_to_4_tb;\n    reg        enable;\n    reg  [1:0] addr;\n    wire [3:0] y;\n    reg  [3:0] expected;\n    integer ei;\n    integer ai;\n    integer checks;\n    integer errors;\n\n    decoder_2_to_4 dut (.enable(enable), .addr(addr), .y(y));\n\n    initial begin\n        checks = 0;\n        errors = 0;\n        $display(\"2-to-4 decoder with enable\");\n        $display(\"EN addr | y3 y2 y1 y0\");\n        $display(\"--------+-----------\");\n        for (ei = 0; ei < 2; ei = ei + 1) begin\n            enable = ei[0];\n            for (ai = 0; ai < 4; ai = ai + 1) begin\n                addr = ai;\n                #1;\n                expected = 4'b0000;\n                if (enable) begin\n                    case (addr)\n                        2'd0: expected = 4'b0001;\n                        2'd1: expected = 4'b0010;\n                        2'd2: expected = 4'b0100;\n                        default: expected = 4'b1000;\n                    endcase\n                end\n                checks = checks + 1;\n                if (y !== expected) errors = errors + 1;\n                $display(\" %b   %b  |  %b\", enable, addr, y);\n            end\n        end\n        $display(\"Checked %0d enable/address combinations\", checks);\n        if (errors == 0) $display(\"PASS: 8/8 combinations match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":8},{"id":"priority-encoder","title":"4-to-2 Priority Encoder","category":"Behavioural","level":"Advanced","summary":"Reports the highest-numbered active request as a two-bit code.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// Highest-numbered request wins. valid is low only when no request is high.\nmodule priority_encoder_4_to_2 (\n    input  wire [3:0] req,\n    output reg  [1:0] code,\n    output reg        valid\n);\n\n    always @* begin\n        valid = 1'b1;\n        if      (req[3]) code = 2'd3;\n        else if (req[2]) code = 2'd2;\n        else if (req[1]) code = 2'd1;\n        else if (req[0]) code = 2'd0;\n        else begin\n            code  = 2'd0;\n            valid = 1'b0;\n        end\n    end\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule priority_encoder_4_to_2_tb;\n    reg  [3:0] req;\n    wire [1:0] code;\n    wire       valid;\n    reg  [1:0] exp_code;\n    reg        exp_valid;\n    integer ri;\n    integer checks;\n    integer errors;\n\n    priority_encoder_4_to_2 dut (.req(req), .code(code), .valid(valid));\n\n    initial begin\n        checks = 0;\n        errors = 0;\n        $display(\"4-to-2 priority encoder\");\n        $display(\"req  | code valid\");\n        $display(\"-----+-----------\");\n        for (ri = 0; ri < 16; ri = ri + 1) begin\n            req = ri;\n            #1;\n            casez (req)\n                4'b1???: exp_code = 2'd3;\n                4'b01??: exp_code = 2'd2;\n                4'b001?: exp_code = 2'd1;\n                4'b0001: exp_code = 2'd0;\n                default: exp_code = 2'd0;\n            endcase\n            exp_valid = |req;\n            checks = checks + 1;\n            if (code !== exp_code) errors = errors + 1;\n            if (valid !== exp_valid) errors = errors + 1;\n            $display(\"%b |  %b    %b\", req, code, valid);\n        end\n        $display(\"Checked %0d request patterns\", checks);\n        if (errors == 0) $display(\"PASS: 16/16 patterns match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":16},{"id":"d-flip-flop","title":"D Flip-Flop with Enable and Reset","category":"Sequential","level":"Advanced","summary":"Stores one bit on a rising clock edge, with an enable and an asynchronous reset.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// Positive-edge D flip-flop with active-high enable and asynchronous reset.\nmodule d_flip_flop (\n    input  wire clk,\n    input  wire rst,\n    input  wire en,\n    input  wire d,\n    output reg  q,\n    output wire qbar\n);\n\n    assign qbar = ~q;\n\n    always @(posedge clk or posedge rst) begin\n        if (rst)\n            q <= 1'b0;\n        else if (en)\n            q <= d;\n    end\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule d_flip_flop_tb;\n    reg  clk;\n    reg  rst;\n    reg  en;\n    reg  d;\n    wire q;\n    wire qbar;\n    integer checks;\n    integer errors;\n\n    d_flip_flop dut (.clk(clk), .rst(rst), .en(en), .d(d), .q(q), .qbar(qbar));\n\n    task pulse_clock;\n        begin\n            clk = 1'b1;\n            #5;\n            clk = 1'b0;\n            #5;\n        end\n    endtask\n\n    task check_state;\n        input expected_q;\n        begin\n            #1;\n            checks = checks + 1;\n            if (q !== expected_q || qbar !== ~expected_q) begin\n                errors = errors + 1;\n                $display(\"FAIL: expected Q=%b, got Q=%b Qbar=%b\", expected_q, q, qbar);\n            end\n        end\n    endtask\n\n    initial begin\n        checks = 0;\n        errors = 0;\n        clk = 1'b0;\n        rst = 1'b0;\n        en  = 1'b0;\n        d   = 1'b0;\n        #1;\n        rst = 1'b1;\n        check_state(1'b0);\n        $display(\"D flip-flop: asynchronous reset, enable and rising edge\");\n        $display(\"RST EN D CLK     | Q Qbar\");\n        $display(\"-----------------+-------\");\n        $display(\" 1  0 0  async   | %b  %b\", q, qbar);\n\n        rst = 1'b0;\n        en  = 1'b1;\n        d   = 1'b1;\n        check_state(1'b0);\n        $display(\" 0  1 1  no edge | %b  %b\", q, qbar);\n\n        pulse_clock;\n        check_state(1'b1);\n        $display(\" 0  1 1  rising  | %b  %b\", q, qbar);\n\n        d = 1'b0;\n        check_state(1'b1);\n        $display(\" 0  1 0  no edge | %b  %b\", q, qbar);\n\n        pulse_clock;\n        check_state(1'b0);\n        $display(\" 0  1 0  rising  | %b  %b\", q, qbar);\n\n        en = 1'b0;\n        d  = 1'b1;\n        pulse_clock;\n        check_state(1'b0);\n        $display(\" 0  0 1  rising  | %b  %b\", q, qbar);\n\n        en = 1'b1;\n        pulse_clock;\n        check_state(1'b1);\n        $display(\" 0  1 1  rising  | %b  %b\", q, qbar);\n\n        rst = 1'b1;\n        check_state(1'b0);\n        $display(\" 1  1 1  async   | %b  %b\", q, qbar);\n\n        if (errors == 0) $display(\"PASS: %0d/%0d state checks match\", checks, checks);\n        else $display(\"FAIL: %0d of %0d checks failed\", errors, checks);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":8},{"id":"alu-4-bit","title":"4-Bit Behavioural ALU","category":"Behavioural","level":"Advanced","summary":"Selects AND, OR, addition or subtraction from a two-bit operation code.","design":"`default_nettype none\n`timescale 1ns / 1ps\n\n// A behavioural 4-bit ALU. op selects AND, OR, ADD or SUB.\nmodule alu_4_bit (\n    input  wire [3:0] a,\n    input  wire [3:0] b,\n    input  wire [1:0] op,\n    output reg  [3:0] y\n);\n\n    always @* begin\n        case (op)\n            2'b00: y = a & b;\n            2'b01: y = a | b;\n            2'b10: y = a + b;\n            2'b11: y = a - b;\n            default: y = 4'b0000;\n        endcase\n    end\n\nendmodule\n\n`default_nettype wire\n","testbench":"`default_nettype none\n`timescale 1ns / 1ps\n\nmodule alu_4_bit_tb;\n    reg  [3:0] a;\n    reg  [3:0] b;\n    reg  [1:0] op;\n    wire [3:0] y;\n    reg  [3:0] expected;\n    integer checks;\n    integer errors;\n\n    alu_4_bit dut (.a(a), .b(b), .op(op), .y(y));\n\n    task check_alu;\n        input [1:0] op_value;\n        input [3:0] av;\n        input [3:0] bv;\n        begin\n            op = op_value;\n            a  = av;\n            b  = bv;\n            #1;\n            case (op)\n                2'b00: expected = a & b;\n                2'b01: expected = a | b;\n                2'b10: expected = a + b;\n                default: expected = a - b;\n            endcase\n            checks = checks + 1;\n            if (y !== expected) errors = errors + 1;\n            $display(\"%b | %b %b | %b\", op, a, b, y);\n        end\n    endtask\n\n    initial begin\n        checks = 0;\n        errors = 0;\n        $display(\"4-bit behavioural ALU\");\n        $display(\"op |  a  b  | y\");\n        $display(\"---+--------+--\");\n        check_alu(2'b00, 4'b1010, 4'b0101);\n        check_alu(2'b01, 4'b1010, 4'b0101);\n        check_alu(2'b10, 4'b1010, 4'b0101);\n        check_alu(2'b11, 4'b1010, 4'b0101);\n        check_alu(2'b00, 4'b1111, 4'b0001);\n        check_alu(2'b01, 4'b1111, 4'b0001);\n        check_alu(2'b10, 4'b1111, 4'b0001);\n        check_alu(2'b11, 4'b1111, 4'b0001);\n        $display(\"Checked %0d operation/data pairs\", checks);\n        if (errors == 0) $display(\"PASS: 8/8 cases match\");\n        else $display(\"FAIL: %0d mismatches\", errors);\n        $finish;\n    end\nendmodule\n\n`default_nettype wire\n","checks":8}]</script>
+
+<section class="theory-hero pg-hero">
+  <div class="theory-hero__atmosphere" aria-hidden="true"></div>
+  <div class="container theory-hero__grid">
+    <div class="theory-hero__copy" data-reveal>
+      <span class="eyebrow">Verilog Playground</span>
+      <h1 class="display">Write the design.<br><span class="gradient-text">Compile it locally.</span></h1>
+      <p class="lede">A lightweight coding workbench for 14 verified starter projects. Edit a design and its testbench, download both <code>.v</code> files, then compile and run them with Icarus Verilog on your own machine. The page prepares the files; it does not pretend to compile Verilog inside the browser.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#workbench">
+          Open the workbench
+          <svg class="icon" aria-hidden="true"><use href="#icon-code"></use></svg>
+        </a>
+        <a class="btn btn-secondary btn-lg" href="#library">
+          Browse the library
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+      <div class="hero-facts theory-facts" aria-label="Playground scope">
+        <div><strong>14</strong><span>Verified projects</span></div>
+        <div><strong>660</strong><span>Recorded checks</span></div>
+        <div><strong>13.0</strong><span>Icarus Verilog</span></div>
+        <div><strong>0</strong><span>Browser compilers</span></div>
+      </div>
+    </div>
+
+    <aside class="pg-hero__panel panel" aria-labelledby="pg-boundary-title" data-reveal style="--reveal-delay: 100ms">
+      <div class="pg-hero__panel-head">
+        <div>
+          <span class="panel-kicker">Honest boundary</span>
+          <h2 id="pg-boundary-title">No fake Run button.</h2>
+        </div>
+        <span class="badge badge-warning">Static site</span>
+      </div>
+      <ul class="pg-boundary-list">
+        <li><strong>This page edits and downloads text.</strong> It does not compile, elaborate or simulate Verilog.</li>
+        <li><strong>The transcript is evidence.</strong> Each reference output was produced by Icarus Verilog 13.0 from the original files.</li>
+        <li><strong>Your edits are yours.</strong> As soon as either editor changes, the reference transcript is marked as belonging to the original example.</li>
+        <li><strong>Drafts stay local.</strong> They use a separate browser key and never touch lesson or experiment progress.</li>
+      </ul>
+      <a class="text-link" href="#workflow">See the local workflow
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+      </a>
+    </aside>
+  </div>
+</section>
+
+<div class="container">
+  <div class="theory-alert pg-alert" role="status">
+    <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+    <p><strong>Compilation happens on your computer, not on this page.</strong> The Playground has no server-side compiler and no browser-side Verilog engine. Use the downloaded files with the installed Icarus Verilog toolchain, then compare your transcript with the reference output.</p>
+  </div>
+</div>
+
+<section class="section-tight pg-workbench-section" id="workbench">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">01 / The workbench</span>
+        <h2>One project. Two files. No hidden magic.</h2>
+      </div>
+      <p>Select a verified example, switch between its design and testbench, edit the text, and download the exact files you need. The reference output below the editor belongs to the original example and is marked clearly when your copy changes.</p>
+    </div>
+
+    <div class="pg-shell">
+      <div class="pg-main panel" data-workbench>
+        <div class="pg-toolbar">
+          <label class="pg-select-label" for="pg-example">Project</label>
+          <div class="pg-select-wrap">
+            <select id="pg-example" class="pg-select" data-example-select>
+              <option value="and-gate">01 · AND Gate — Logic gates</option>
+            <option value="or-gate">02 · OR Gate — Logic gates</option>
+            <option value="xor-gate">03 · XOR Gate — Logic gates</option>
+            <option value="half-adder">04 · Half Adder — Arithmetic</option>
+            <option value="full-adder">05 · Full Adder — Arithmetic</option>
+            <option value="half-subtractor">06 · Half Subtractor — Arithmetic</option>
+            <option value="full-subtractor">07 · Full Subtractor — Arithmetic</option>
+            <option value="four-bit-adder">08 · 4-Bit Ripple-Carry Adder — Arithmetic</option>
+            <option value="mux-4-to-1">09 · 4:1 Multiplexer — Routing</option>
+            <option value="demux-1-to-4">10 · 1:4 Demultiplexer — Routing</option>
+            <option value="decoder-2-to-4">11 · 2-to-4 Decoder with Enable — Routing</option>
+            <option value="priority-encoder">12 · 4-to-2 Priority Encoder — Behavioural</option>
+            <option value="d-flip-flop">13 · D Flip-Flop with Enable and Reset — Sequential</option>
+            <option value="alu-4-bit">14 · 4-Bit Behavioural ALU — Behavioural</option>
+            </select>
+            <svg class="icon pg-select-chevron" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
+          </div>
+          <div class="pg-toolbar__meta">
+            <span class="badge badge-cyan" data-project-category>Logic gates</span>
+            <span class="badge badge-success" data-project-state>Verified original</span>
+          </div>
+        </div>
+
+        <div class="pg-project-line">
+          <h3 data-project-title>AND Gate</h3>
+          <p data-project-summary>The simplest product term: the output is high only when both inputs are high.</p>
+        </div>
+
+        <div class="pg-tabs" role="tablist" aria-label="Editor files">
+          <button class="pg-tab" id="pg-tab-design" type="button" role="tab" aria-selected="true" aria-controls="pg-panel-design" tabindex="0" data-tab="design">
+            Design
+            <span class="pg-tab__file">design.v</span>
+          </button>
+          <button class="pg-tab" id="pg-tab-testbench" type="button" role="tab" aria-selected="false" aria-controls="pg-panel-testbench" tabindex="-1" data-tab="testbench">
+            Testbench
+            <span class="pg-tab__file">tb.v</span>
+          </button>
+        </div>
+
+        <div class="pg-editor-panels">
+          <div class="pg-editor-panel" id="pg-panel-design" role="tabpanel" aria-labelledby="pg-tab-design" data-panel="design">
+            <div class="pg-editor" data-editor="design">
+              <div class="pg-gutter" aria-hidden="true"><div class="pg-gutter__inner" data-gutter></div></div>
+              <div class="pg-code">
+                <pre class="pg-highlight" aria-hidden="true"><code data-highlight></code></pre>
+                <textarea class="pg-textarea" data-textarea spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" aria-label="Verilog design editor"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="pg-editor-panel" id="pg-panel-testbench" role="tabpanel" aria-labelledby="pg-tab-testbench" data-panel="testbench" hidden>
+            <div class="pg-editor" data-editor="testbench">
+              <div class="pg-gutter" aria-hidden="true"><div class="pg-gutter__inner" data-gutter></div></div>
+              <div class="pg-code">
+                <pre class="pg-highlight" aria-hidden="true"><code data-highlight></code></pre>
+                <textarea class="pg-textarea" data-textarea spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" aria-label="Verilog testbench editor"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pg-editor-footer">
+          <div class="pg-editor-status">
+            <span data-editor-status>design.v · 0 lines</span>
+            <span class="pg-editor-hint">Tab inserts two spaces · Shift+Tab outdents</span>
+          </div>
+          <div class="pg-editor-actions">
+            <button class="btn btn-secondary btn-sm" type="button" data-action="copy">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" type="button" data-action="download-design">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg>
+              <span>design.v</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" type="button" data-action="download-testbench">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg>
+              <span>tb.v</span>
+            </button>
+            <button class="btn btn-ghost btn-sm" type="button" data-action="reset-file">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-reset"></use></svg>
+              <span>Reset file</span>
+            </button>
+            <button class="btn btn-ghost btn-sm" type="button" data-action="reset-all">
+              <span>Reset both</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="pg-rail" aria-label="Project details">
+        <section class="panel pg-rail-card">
+          <span class="panel-kicker">At a glance</span>
+          <dl class="pg-meta-list">
+            <div><dt>Category</dt><dd data-meta-category>Logic gates</dd></div>
+            <div><dt>Level</dt><dd data-meta-level>Foundation</dd></div>
+            <div><dt>Design</dt><dd><code>design.v</code></dd></div>
+            <div><dt>Testbench</dt><dd><code>tb.v</code></dd></div>
+            <div><dt>Checks</dt><dd data-meta-checks>4</dd></div>
+          </dl>
+        </section>
+
+        <section class="panel pg-rail-card pg-draft-card">
+          <span class="panel-kicker">Local draft</span>
+          <p class="pg-draft-status" data-draft-status>No draft saved for this project.</p>
+          <p class="pg-rail-note">Drafts are stored only in this browser profile under <code>va.playground.drafts</code>. They are separate from <code>va.progress</code> and do not mark any lesson or experiment complete.</p>
+          <button class="btn btn-ghost btn-sm" type="button" data-action="clear-drafts">Clear saved drafts</button>
+        </section>
+
+        <section class="panel pg-rail-card pg-rail-note-card">
+          <span class="panel-kicker">Before you edit</span>
+          <p>The reference transcript is evidence for the original files only. When either editor changes, the badge switches to <strong>Original only</strong>. Nothing is recompiled until you run Icarus locally.</p>
+          <a class="text-link" href="../theory/dataflow-modelling.html">Review continuous assignments
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+          </a>
+        </section>
+      </aside>
+    </div>
+
+    <div class="pg-brief-stack" data-brief-stack>
+      <article class="pg-brief" data-brief="and-gate"><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">01 / Logic gates</span><h3>AND Gate</h3></div><span class="badge badge-violet">Foundation</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a two-input AND gate with a continuous assignment and verify all four input combinations.</p><h4>How the circuit behaves</h4><p>The continuous assignment y = a &amp; b is always active. Whenever a or b changes, the simulator evaluates the bitwise AND and drives y with the result. For single-bit signals, bitwise AND and logical AND agree, but the bitwise operator is the one that describes hardware.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>module and_gate (input wire a, input wire b, output wire y);</code><span>Declares the module and its three single-bit ports. The design has no storage.</span></li><li><code>assign y = a &amp; b;</code><span>Continuously drives y from the AND of a and b. This is dataflow modelling.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>Only the 11 row produces a 1; the other three rows produce 0.</li><li>The output changes as soon as either input changes because the assignment is continuous.</li><li>The testbench checks all four rows and reports 4/4 matches.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Using &amp;&amp; instead of &amp;: &amp;&amp; is a logical operator that returns a one-bit result and is not the usual gate description.</li><li>Declaring y as a reg in a design that only uses assign; a continuous assignment drives a net.</li><li>Connecting the testbench ports in the wrong order instead of using named connections.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> AND is the product term: Y = A · B. It is 1 only for A = 1 and B = 1.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-and-gate" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-and-gate">AND gate truth table
+a b | y
+----+--
+0 0 | 0
+0 1 | 0
+1 0 | 0
+1 1 | 1
+PASS: 4/4 rows match
+tb.v:28: $finish called at 4000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="or-gate" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">02 / Logic gates</span><h3>OR Gate</h3></div><span class="badge badge-violet">Foundation</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a two-input OR gate with a continuous assignment and verify all four input combinations.</p><h4>How the circuit behaves</h4><p>The assignment y = a | b drives y high whenever at least one input is high. The only zero row is 00. Like the AND example, this is pure combinational logic with no clock and no stored state.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>module or_gate (input wire a, input wire b, output wire y);</code><span>The module boundary names the inputs and the output.</span></li><li><code>assign y = a | b;</code><span>The bitwise OR operator describes the gate. It is not the logical || operator.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>Three rows produce 1 and only 00 produces 0.</li><li>OR is not the same as XOR: 11 still produces 1 for OR.</li><li>The testbench reports 4/4 rows match.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Using || instead of | and expecting a multi-bit gate.</li><li>Confusing OR with XOR when the inputs are both high.</li><li>Leaving an output undriven by forgetting the assign statement.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> OR is the sum term: Y = A + B. It is 0 only when A = 0 and B = 0.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-or-gate" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-or-gate">OR gate truth table
+a b | y
+----+--
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 1
+PASS: 4/4 rows match
+tb.v:28: $finish called at 4000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="xor-gate" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">03 / Logic gates</span><h3>XOR Gate</h3></div><span class="badge badge-violet">Foundation</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a two-input XOR gate and verify its four-row truth table.</p><h4>How the circuit behaves</h4><p>The assignment y = a ^ b produces 1 when exactly one input is high. XOR is also the one-bit parity function, which is why it appears inside adders and subtractors. It is combinational and has no memory.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>module xor_gate (input wire a, input wire b, output wire y);</code><span>A small module with two inputs and one output.</span></li><li><code>assign y = a ^ b;</code><span>The ^ operator is bitwise XOR. For 1-bit operands it is the gate function.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>The 01 and 10 rows produce 1; the equal rows 00 and 11 produce 0.</li><li>XOR is not OR: the 11 row is 0, not 1.</li><li>The testbench reports 4/4 rows match.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Calling XOR inclusive OR and expecting 11 to be 1.</li><li>Using ^~ when XNOR is intended.</li><li>Forgetting that XOR is a parity function when it is extended to wider vectors.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> XOR is inequality: Y = A ⊕ B. It is 1 when the inputs differ and 0 when they match.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-xor-gate" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-xor-gate">XOR gate truth table
+a b | y
+----+--
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 0
+PASS: 4/4 rows match
+tb.v:28: $finish called at 4000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="half-adder" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">04 / Arithmetic</span><h3>Half Adder</h3></div><span class="badge badge-violet">Foundation</span></div><p class="pg-aim"><strong>Aim.</strong> Build a half adder from XOR and AND, then compare every row with the decimal sum A + B.</p><h4>How the circuit behaves</h4><p>The sum bit is A XOR B because 1 + 1 produces 0 in the current column and a carry. The carry bit is A AND B because a carry is generated only when both inputs are 1. There is no carry input, so this circuit cannot be chained directly without extra logic.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>assign sum = a ^ b;</code><span>The current-column result of adding two bits.</span></li><li><code>assign carry = a &amp; b;</code><span>The carry generated when both inputs are high.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>1 + 1 gives sum 0 and carry 1, which is decimal 2 when the carry is included.</li><li>The decimal column in the transcript is computed with integers, so it shows 2 rather than a wrapped one-bit value.</li><li>The testbench reports 4/4 rows match.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Forgetting the carry output and treating the circuit as a one-bit adder only.</li><li>Computing the decimal sum with one-bit arithmetic in the testbench, which hides the carry.</li><li>Trying to chain half adders without an extra OR gate for the incoming carry.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> Half adder: S = A ⊕ B, C = A · B. It adds two bits but has no carry input.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-half-adder" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-half-adder">Half adder truth table
+a b | sum carry | a+b
+----+-----------+----
+0 0 |  0    0   |  0
+0 1 |  1    0   |  1
+1 0 |  1    0   |  1
+1 1 |  0    1   |  2
+PASS: 4/4 rows match
+tb.v:34: $finish called at 4000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="full-adder" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">05 / Arithmetic</span><h3>Full Adder</h3></div><span class="badge badge-violet">Intermediate</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a full adder from Boolean equations and verify all eight input combinations.</p><h4>How the circuit behaves</h4><p>The sum is the parity of A, B and Cin, so it is high for an odd number of ones. The carry is the majority function: it is high when at least two of the three inputs are high. The expression (A · B) + (Cin · (A ⊕ B)) is a compact majority form.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>assign sum = a ^ b ^ cin;</code><span>Three-input parity gives the sum bit.</span></li><li><code>assign carry = (a &amp; b) | (cin &amp; (a ^ b));</code><span>Carry is generated by A and B, or propagated by Cin through exactly one of them.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>Rows with an odd number of ones have sum 1; rows with two or three ones have carry 1.</li><li>The decimal column shows 3 for 1 + 1 + 1, not a wrapped one-bit value.</li><li>The testbench reports 8/8 rows match.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Using OR instead of XOR for the sum, which fails when all three inputs are high.</li><li>Forgetting the carry-in term in the carry expression.</li><li>Reversing the carry-out and sum connections in a larger adder.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> Full adder: S = A ⊕ B ⊕ Cin, Cout = A·B + Cin·(A ⊕ B). It is the building block of a ripple-carry adder.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-full-adder" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-full-adder">Full adder truth table
+a b cin | sum carry | a+b+cin
+--------+-----------+--------
+0 0  0  |  0    0   |    0
+0 0  1  |  1    0   |    1
+0 1  0  |  1    0   |    1
+0 1  1  |  0    1   |    2
+1 0  0  |  1    0   |    1
+1 0  1  |  0    1   |    2
+1 1  0  |  0    1   |    2
+1 1  1  |  1    1   |    3
+PASS: 8/8 rows match
+tb.v:37: $finish called at 8000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="half-subtractor" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">06 / Arithmetic</span><h3>Half Subtractor</h3></div><span class="badge badge-violet">Foundation</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a half subtractor and verify all four input combinations, including the negative decimal case.</p><h4>How the circuit behaves</h4><p>The difference is A XOR B, the same parity function used by the half adder. The borrow is high only for 0 − 1, which is (~A) AND B. Subtraction is not symmetric: A − B and B − A produce different borrows.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>assign diff = a ^ b;</code><span>The difference bit for two one-bit operands.</span></li><li><code>assign borrow = (~a) &amp; b;</code><span>A borrow is needed only when A is 0 and B is 1.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>The 0 − 1 row gives difference 1 and borrow 1, which represents −1 in two&#x27;s-complement style arithmetic.</li><li>The decimal column shows −1 rather than the unsigned wrap value 1.</li><li>The testbench reports 4/4 rows match.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Using A AND ~B for the borrow, which is the borrow for B − A.</li><li>Forgetting that the decimal result can be negative.</li><li>Assuming a half subtractor can accept a borrow-in.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> Half subtractor: D = A ⊕ B, Bout = ~A · B. It subtracts two bits and has no borrow input.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-half-subtractor" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-half-subtractor">Half subtractor truth table
+a b | diff borrow | a-b
+----+-------------+----
+0 0 |  0     0    |  0
+0 1 |  1     1    |  -1
+1 0 |  1     0    |  1
+1 1 |  0     0    |  0
+PASS: 4/4 rows match
+tb.v:34: $finish called at 4000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="full-subtractor" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">07 / Arithmetic</span><h3>Full Subtractor</h3></div><span class="badge badge-violet">Intermediate</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a full subtractor and verify all eight input combinations.</p><h4>How the circuit behaves</h4><p>The difference is the parity of A, B and Bin. The borrow-out is high when A is 0 and B is 1, or when the difference term is 0 and Bin is 1. The decimal column uses signed integers in the testbench so negative results are visible.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>assign diff = a ^ b ^ bin;</code><span>Three-input parity gives the difference bit.</span></li><li><code>assign borrow = (~a &amp; b) | (~(a ^ b) &amp; bin);</code><span>Borrow is generated directly, or propagated through the current difference.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>The 0 − 1 − 1 row produces difference 0 and borrow 1, representing −2.</li><li>The borrow-out depends on Bin as well as A and B.</li><li>The testbench reports 8/8 rows match.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Dropping the Bin term from the borrow expression.</li><li>Treating the borrow as A &lt; B only and ignoring the incoming borrow.</li><li>Printing the decimal result with one-bit arithmetic and losing the sign.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> Full subtractor: D = A ⊕ B ⊕ Bin, Bout = ~A·B + ~(A ⊕ B)·Bin. It is the subtractor counterpart of the full adder.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-full-subtractor" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-full-subtractor">Full subtractor truth table
+a b bin | diff borrow | a-b-bin
+--------+-------------+--------
+0 0  0  |  0     0    |    0
+0 0  1  |  1     1    |    -1
+0 1  0  |  1     1    |    -1
+0 1  1  |  0     1    |    -2
+1 0  0  |  1     0    |    1
+1 0  1  |  0     0    |    0
+1 1  0  |  0     0    |    0
+1 1  1  |  1     1    |    -1
+PASS: 8/8 rows match
+tb.v:37: $finish called at 8000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="four-bit-adder" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">08 / Arithmetic</span><h3>4-Bit Ripple-Carry Adder</h3></div><span class="badge badge-violet">Intermediate</span></div><p class="pg-aim"><strong>Aim.</strong> Build a four-bit ripple-carry adder from four full-adder instances and sweep all 512 input combinations.</p><h4>How the circuit behaves</h4><p>Each full adder handles one bit position. The carry from bit 0 feeds bit 1, and so on. The final carry is the unsigned carry-out. Signed overflow is not the same signal: it is the XOR of the carry into and out of the most significant bit, which the design exposes as overflow.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>full_adder fa0 (.a(a[0]), .b(b[0]), .cin(cin), .sum(sum[0]), .carry(carry[0]));</code><span>The first stage adds the least significant bits and the incoming carry.</span></li><li><code>assign cout = carry[3];</code><span>The last carry becomes the unsigned carry-out.</span></li><li><code>assign overflow = carry[2] ^ carry[3];</code><span>Signed overflow is the mismatch between the carry entering and leaving the sign bit.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>The testbench checks all 512 combinations of A, B and Cin.</li><li>8 + 8 produces sum 0000, carry-out 1 and overflow 1: unsigned 16 is negative in four-bit signed arithmetic.</li><li>15 + 15 + 1 produces sum 1111 and carry-out 1, but no signed overflow.</li><li>The transcript prints five representative rows and the 512/512 summary.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Treating carry-out as signed overflow; they answer different questions.</li><li>Reversing the carry chain so bit 0 receives the final carry.</li><li>Using a 4-bit expression for the expected sum and losing the fifth bit.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> A ripple-carry adder chains full adders. Sum is modulo 16 for four bits; carry-out is unsigned overflow, while signed overflow is carry[2] XOR carry[3].</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-four-bit-adder" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-four-bit-adder">4-bit ripple-carry adder
+A    B    Cin | Cout Sum  OVF
+---------------+--------------
+0000 0000   0  |  0   0000   0
+1000 1000   0  |  1   0000   1
+1010 0101   0  |  0   1111   0
+1111 0001   0  |  1   0000   0
+1111 1111   1  |  1   1111   0
+Checked 512 input combinations
+PASS: 512/512 combinations match
+tb.v:52: $finish called at 512000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="mux-4-to-1" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">09 / Routing</span><h3>4:1 Multiplexer</h3></div><span class="badge badge-violet">Intermediate</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a 4:1 multiplexer with a behavioural case statement and verify all 64 select/data combinations.</p><h4>How the circuit behaves</h4><p>The select input chooses which data bit reaches y. Only one branch of the case statement is active at a time. A default branch keeps the output defined even if the select value were unknown or out of range, which also helps avoid an accidental latch.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>always @* begin</code><span>A combinational procedural block: it re-evaluates whenever a read signal changes.</span></li><li><code>case (sel) 2&#x27;b00: y = d[0]; ... endcase</code><span>Selects exactly one data input for each select value.</span></li><li><code>default: y = 1&#x27;b0;</code><span>Keeps the output defined and makes the intent explicit.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>With d = 1010, select 00 gives 0, 01 gives 1, 10 gives 0 and 11 gives 1.</li><li>All 64 combinations of four data bits and four select values are checked.</li><li>The output is purely combinational; there is no clock.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Forgetting the default branch and inferring a latch in some tools.</li><li>Swapping the select bit order so S1 and S0 are reversed.</li><li>Using blocking assignments in a clocked block when combinational behaviour is intended.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> A 4:1 multiplexer is a selector: Y = D[S], where S is the two-bit select value. It is the routing element of a datapath.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-mux-4-to-1" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-mux-4-to-1">4:1 multiplexer
+sel | d3 d2 d1 d0 | y
+----+-------------+--
+00  |  1010 | 0
+01  |  1010 | 1
+10  |  1010 | 0
+11  |  1010 | 1
+Checked 64 select/data combinations
+PASS: 64/64 combinations match
+tb.v:41: $finish called at 64000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="demux-1-to-4" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">10 / Routing</span><h3>1:4 Demultiplexer</h3></div><span class="badge badge-violet">Intermediate</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a 1:4 demultiplexer and verify all eight data/select combinations.</p><h4>How the circuit behaves</h4><p>The output vector is cleared to 0000 first, then the selected bit is driven with din. This one-hot style means exactly one output can be high, and all unselected outputs stay low. The select input is the destination address.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>y = 4&#x27;b0000;</code><span>Clears every output before selecting one destination.</span></li><li><code>case (sel) 2&#x27;b00: y[0] = din; ... endcase</code><span>Routes din to the output named by sel.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>When din = 0, every output is 0 regardless of select.</li><li>When din = 1, exactly one output is 1 and the other three are 0.</li><li>The testbench checks all eight combinations.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Forgetting to clear the other outputs, so old values remain high.</li><li>Driving the same output from two branches.</li><li>Confusing a demultiplexer with a decoder: a demux routes data, while a decoder asserts a selected line.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> A 1:4 demultiplexer is the reverse of a multiplexer: one input is routed to one of four outputs. The unselected outputs must be driven low.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-demux-1-to-4" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-demux-1-to-4">1:4 demultiplexer
+din sel | y3 y2 y1 y0
+----+-----+-----------
+ 0   00 |  0000
+ 0   01 |  0000
+ 0   10 |  0000
+ 0   11 |  0000
+ 1   00 |  0001
+ 1   01 |  0010
+ 1   10 |  0100
+ 1   11 |  1000
+Checked 8 data/select combinations
+PASS: 8/8 combinations match
+tb.v:42: $finish called at 8000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="decoder-2-to-4" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">11 / Routing</span><h3>2-to-4 Decoder with Enable</h3></div><span class="badge badge-violet">Intermediate</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a 2-to-4 decoder with an active-high enable and verify all eight enable/address combinations.</p><h4>How the circuit behaves</h4><p>When enable is low, all four outputs are forced low. When enable is high, exactly one output is high according to the address. This is a one-hot decoder, not a data router: there is no data input to pass through.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>if (!enable) y = 4&#x27;b0000;</code><span>The enable gates the whole decoder.</span></li><li><code>case (addr) 2&#x27;b00: y = 4&#x27;b0001; ... endcase</code><span>Maps each address to one active output.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>With enable = 0, every address produces 0000.</li><li>With enable = 1, address 00 produces 0001, 01 produces 0010, 10 produces 0100 and 11 produces 1000.</li><li>The testbench checks all eight combinations.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Treating enable as active-low without inverting it.</li><li>Using a decoder as a demultiplexer and expecting a data input.</li><li>Forgetting the default branch and leaving outputs undefined.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> A 2-to-4 decoder asserts one of four lines for each address. The enable input can disable every output at once.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-decoder-2-to-4" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-decoder-2-to-4">2-to-4 decoder with enable
+EN addr | y3 y2 y1 y0
+--------+-----------
+ 0   00  |  0000
+ 0   01  |  0000
+ 0   10  |  0000
+ 0   11  |  0000
+ 1   00  |  0001
+ 1   01  |  0010
+ 1   10  |  0100
+ 1   11  |  1000
+Checked 8 enable/address combinations
+PASS: 8/8 combinations match
+tb.v:44: $finish called at 8000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="priority-encoder" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">12 / Behavioural</span><h3>4-to-2 Priority Encoder</h3></div><span class="badge badge-violet">Advanced</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a four-input priority encoder with a valid output and verify all 16 request patterns.</p><h4>How the circuit behaves</h4><p>The if/else-if chain checks req[3] first, then req[2], req[1] and req[0]. The first high request wins. If no request is high, code is 00 and valid is 0; valid distinguishes the no-request case from a genuine request on req[0].</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>valid = 1&#x27;b1;</code><span>The default is valid; the no-request branch clears it.</span></li><li><code>if (req[3]) code = 2&#x27;d3; else if (req[2]) ...</code><span>The order of the branches implements priority.</span></li><li><code>else begin code = 2&#x27;d0; valid = 1&#x27;b0; end</code><span>Handles the no-request case explicitly.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>Request 0000 gives code 00 and valid 0.</li><li>Request 0001 gives code 00 and valid 1, so valid is essential.</li><li>Request 1111 gives code 11 because req[3] has the highest priority.</li><li>The testbench checks all 16 patterns.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Reversing the priority order and checking req[0] first.</li><li>Forgetting the valid output and making 0000 indistinguishable from 0001.</li><li>Using casex instead of casez without understanding the difference between don&#x27;t-care and unknown values.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> A priority encoder reports the most significant active request. The valid bit separates a real request on line 0 from no request at all.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-priority-encoder" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-priority-encoder">4-to-2 priority encoder
+req  | code valid
+-----+-----------
+0000 |  00    0
+0001 |  00    1
+0010 |  01    1
+0011 |  01    1
+0100 |  10    1
+0101 |  10    1
+0110 |  10    1
+0111 |  10    1
+1000 |  11    1
+1001 |  11    1
+1010 |  11    1
+1011 |  11    1
+1100 |  11    1
+1101 |  11    1
+1110 |  11    1
+1111 |  11    1
+Checked 16 request patterns
+PASS: 16/16 patterns match
+tb.v:41: $finish called at 16000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="d-flip-flop" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">13 / Sequential</span><h3>D Flip-Flop with Enable and Reset</h3></div><span class="badge badge-violet">Advanced</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a positive-edge D flip-flop and verify reset, hold, load and no-edge behaviour.</p><h4>How the circuit behaves</h4><p>The always block triggers on a rising clock edge or a rising reset edge. Reset clears q immediately, without waiting for a clock. When reset is low and enable is high, the next rising edge copies d into q. When enable is low, the stored value holds. qbar is the continuous complement of q. The testbench checks both q and qbar.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>always @(posedge clk or posedge rst)</code><span>A positive-edge clock with an asynchronous active-high reset.</span></li><li><code>if (rst) q &lt;= 1&#x27;b0; else if (en) q &lt;= d;</code><span>Reset has priority; enable gates the load.</span></li><li><code>assign qbar = ~q;</code><span>The complement output follows q continuously.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>Changing d while the clock is steady does not change q.</li><li>Enable low holds the old value across a rising edge.</li><li>Reset high clears q immediately, even without a clock edge.</li><li>The testbench reports 8/8 state checks match.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Using blocking assignments in a clocked block and creating a race.</li><li>Treating enable as a clock and expecting a level-sensitive latch.</li><li>Assuming reset waits for the next clock edge when it is asynchronous.</li><li>Forgetting that qbar must be a wire driven by a continuous assignment.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> A D flip-flop samples D on the active clock edge. Enable decides whether the edge loads; asynchronous reset overrides the clock and clears the state.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-d-flip-flop" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-d-flip-flop">D flip-flop: asynchronous reset, enable and rising edge
+RST EN D CLK     | Q Qbar
+-----------------+-------
+ 1  0 0  async   | 0  1
+ 0  1 1  no edge | 0  1
+ 0  1 1  rising  | 1  0
+ 0  1 0  no edge | 1  0
+ 0  1 0  rising  | 0  1
+ 0  0 1  rising  | 0  1
+ 0  1 1  rising  | 1  0
+ 1  1 1  async   | 0  1
+PASS: 8/8 state checks match
+tb.v:87: $finish called at 49000 (1ps)
+</code></pre></section></div></article>
+      <article class="pg-brief" data-brief="alu-4-bit" hidden><div class="pg-brief__notes panel"><div class="pg-brief__head"><div><span class="eyebrow">14 / Behavioural</span><h3>4-Bit Behavioural ALU</h3></div><span class="badge badge-violet">Advanced</span></div><p class="pg-aim"><strong>Aim.</strong> Implement a small combinational ALU with a behavioural case statement and verify all four operations on two data pairs.</p><h4>How the circuit behaves</h4><p>The always @* block is combinational: every output depends only on the current inputs. The case statement selects one operation. Addition and subtraction are four-bit operations, so the result wraps modulo 16; the testbench expects that truncation. The same function could be written as a dataflow conditional expression, which is a useful comparison.</p><h4>Important statements</h4><ul class="pg-statement-list"><li><code>always @* begin</code><span>Re-evaluates whenever a, b or op changes.</span></li><li><code>case (op) 2&#x27;b00: y = a &amp; b; ... endcase</code><span>One branch for each operation code.</span></li><li><code>default: y = 4&#x27;b0000;</code><span>Keeps the output defined for unexpected codes.</span></li></ul><div class="pg-brief__grid"><div><h4>What to observe</h4><ul class="pg-list"><li>Operation 00 performs bitwise AND; 01 performs bitwise OR.</li><li>Operation 10 adds modulo 16; operation 11 subtracts modulo 16.</li><li>The testbench checks eight operation/data pairs and reports 8/8 matches.</li></ul></div><div><h4>Common mistakes</h4><ul class="pg-list pg-list--warning"><li>Forgetting the default branch and inferring a latch.</li><li>Expecting a carry or overflow output that this small ALU does not provide.</li><li>Mixing blocking and non-blocking assignments in a combinational block.</li></ul></div></div><p class="pg-revision"><strong>Revision.</strong> A behavioural ALU uses a case statement to select an operation. It is still combinational hardware: no clock, no stored state, and a defined output for every input.</p></div><div class="pg-brief__side"><section class="panel pg-command-panel"><span class="panel-kicker">Local commands</span><h4>Compile and run</h4><p>Download both files into one folder, open a terminal in that folder, and run:</p><div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div><p class="pg-command-note">The downloads are always named <code>design.v</code> and <code>tb.v</code>. If you rename them, substitute the new names in both commands.</p></section><section class="panel pg-reference" data-reference data-copy-root><div class="pg-reference__head"><div><span class="panel-kicker">Reference output</span><h4>Actual Icarus 13.0 transcript</h4></div><div class="pg-reference__tools"><span class="badge badge-success" data-reference-badge>Verified original</span><button class="copy-btn" type="button" data-copy-target="#pg-output-alu-4-bit" aria-label="Copy reference output"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div></div><p class="pg-reference__note" data-reference-note>Produced by compiling and running the original <code>design.v</code> and <code>tb.v</code> with Icarus Verilog 13.0. The output is not regenerated in the browser.</p><pre class="pg-output"><code id="pg-output-alu-4-bit">4-bit behavioural ALU
+op |  a  b  | y
+---+--------+--
+00 | 1010 0101 | 0000
+01 | 1010 0101 | 1111
+10 | 1010 0101 | 1111
+11 | 1010 0101 | 0101
+00 | 1111 0001 | 0001
+01 | 1111 0001 | 1111
+10 | 1111 0001 | 0000
+11 | 1111 0001 | 1110
+Checked 8 operation/data pairs
+PASS: 8/8 cases match
+tb.v:53: $finish called at 8000 (1ps)
+</code></pre></section></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight pg-library" id="library">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">02 / Example library</span>
+        <h2>14 verified starting points.</h2>
+      </div>
+      <p>Every card opens a complete design and testbench pair. The collection moves from single gates to arithmetic, routing, behavioural blocks and one clocked flip-flop. Start small, or open the circuit that matches your laboratory task.</p>
+    </div>
+    <div class="pg-library-grid">
+      <a class="pg-example-card panel" href="#workbench" data-select-example="and-gate"><span class="pg-example-card__head"><span class="pg-example-card__num">01</span><span class="badge badge-cyan">Logic gates</span></span><h3>AND Gate</h3><p>The simplest product term: the output is high only when both inputs are high.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="or-gate"><span class="pg-example-card__head"><span class="pg-example-card__num">02</span><span class="badge badge-cyan">Logic gates</span></span><h3>OR Gate</h3><p>The sum term: the output is low only when every input is low.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="xor-gate"><span class="pg-example-card__head"><span class="pg-example-card__num">03</span><span class="badge badge-cyan">Logic gates</span></span><h3>XOR Gate</h3><p>The difference detector: the output is high when the two inputs disagree.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="half-adder"><span class="pg-example-card__head"><span class="pg-example-card__num">04</span><span class="badge badge-cyan">Arithmetic</span></span><h3>Half Adder</h3><p>Adds two one-bit inputs and produces a sum and a carry.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="full-adder"><span class="pg-example-card__head"><span class="pg-example-card__num">05</span><span class="badge badge-cyan">Arithmetic</span></span><h3>Full Adder</h3><p>Adds three one-bit inputs, including a carry-in, and produces sum and carry-out.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="half-subtractor"><span class="pg-example-card__head"><span class="pg-example-card__num">06</span><span class="badge badge-cyan">Arithmetic</span></span><h3>Half Subtractor</h3><p>Subtracts B from A and reports the difference and the borrow.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="full-subtractor"><span class="pg-example-card__head"><span class="pg-example-card__num">07</span><span class="badge badge-cyan">Arithmetic</span></span><h3>Full Subtractor</h3><p>Subtracts B and a borrow-in from A, producing difference and borrow-out.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="four-bit-adder"><span class="pg-example-card__head"><span class="pg-example-card__num">08</span><span class="badge badge-cyan">Arithmetic</span></span><h3>4-Bit Ripple-Carry Adder</h3><p>Chains four full adders to add two four-bit numbers with a carry-in.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="mux-4-to-1"><span class="pg-example-card__head"><span class="pg-example-card__num">09</span><span class="badge badge-cyan">Routing</span></span><h3>4:1 Multiplexer</h3><p>Routes one of four data inputs to a single output under a two-bit select.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="demux-1-to-4"><span class="pg-example-card__head"><span class="pg-example-card__num">10</span><span class="badge badge-cyan">Routing</span></span><h3>1:4 Demultiplexer</h3><p>Sends one data input to exactly one of four outputs.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="decoder-2-to-4"><span class="pg-example-card__head"><span class="pg-example-card__num">11</span><span class="badge badge-cyan">Routing</span></span><h3>2-to-4 Decoder with Enable</h3><p>Converts a two-bit address into one active output line, with an enable input.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="priority-encoder"><span class="pg-example-card__head"><span class="pg-example-card__num">12</span><span class="badge badge-cyan">Behavioural</span></span><h3>4-to-2 Priority Encoder</h3><p>Reports the highest-numbered active request as a two-bit code.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="d-flip-flop"><span class="pg-example-card__head"><span class="pg-example-card__num">13</span><span class="badge badge-cyan">Sequential</span></span><h3>D Flip-Flop with Enable and Reset</h3><p>Stores one bit on a rising clock edge, with an enable and an asynchronous reset.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+        <a class="pg-example-card panel" href="#workbench" data-select-example="alu-4-bit"><span class="pg-example-card__head"><span class="pg-example-card__num">14</span><span class="badge badge-cyan">Behavioural</span></span><h3>4-Bit Behavioural ALU</h3><p>Selects AND, OR, addition or subtraction from a two-bit operation code.</p><span class="pg-example-card__foot"><span class="pg-example-card__files"><code>design.v</code><span aria-hidden="true"> + </span><code>tb.v</code></span><span class="pg-example-card__open">Open project<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight pg-workflow" id="workflow">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">03 / The real workflow</span>
+        <h2>Download. Compile. Run. Compare.</h2>
+      </div>
+      <p>The page is honest about the boundary: it prepares files and shows verified reference output. The actual compilation and simulation happen in a terminal with Icarus Verilog. The same four steps work for every project in the library.</p>
+    </div>
+
+    <div class="pg-workflow-grid">
+      <ol class="pg-flow">
+        <li class="pg-flow__step">
+          <span class="pg-flow__num">01</span>
+          <div><h3>Choose and edit</h3><p>Select a project, open the Design or Testbench tab, and make your change. Drafts are optional and local.</p></div>
+        </li>
+        <li class="pg-flow__step">
+          <span class="pg-flow__num">02</span>
+          <div><h3>Download both files</h3><p>Use the two download controls. Keep <code>design.v</code> and <code>tb.v</code> in the same folder so the testbench can find the design module.</p></div>
+        </li>
+        <li class="pg-flow__step">
+          <span class="pg-flow__num">03</span>
+          <div><h3>Compile with Icarus</h3><p>Open a terminal in that folder and run <code>iverilog -g2001 -o simulation.out design.v tb.v</code>.</p></div>
+        </li>
+        <li class="pg-flow__step">
+          <span class="pg-flow__num">04</span>
+          <div><h3>Run and compare</h3><p>Run <code>vvp simulation.out</code>. Compare the transcript with the reference output, but remember that edited files have no verified transcript on this page.</p></div>
+        </li>
+      </ol>
+
+      <div class="panel pg-terminal-card">
+        <span class="panel-kicker">Terminal · after download</span>
+        <h3>Two commands, no online service.</h3>
+        <div class="code-block code-block--commands" data-copy-root>
+                <div class="code-block__header">
+                  <span class="code-block__file">Terminal</span>
+                  <button class="copy-btn" type="button" aria-label="Copy local compile and run commands">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+                    <span class="copy-label">Copy</span>
+                  </button>
+                </div>
+                <div class="code-block__body">
+                  <pre><code># Compile the downloaded files
+iverilog -g2001 -o simulation.out design.v tb.v
+
+# Run the simulation image
+vvp simulation.out</code></pre>
+                </div>
+              </div>
+        <p class="pg-terminal-note">The <code>.out</code> file is an Icarus simulation image, not a hardware bitstream. On Windows, run the commands in PowerShell or a MSYS2 terminal where <code>iverilog</code> and <code>vvp</code> are on <code>PATH</code>.</p>
+        <p class="pg-terminal-note"><strong>Different example?</strong> The downloaded names stay the same, so the commands do not change. If you rename the files, replace <code>design.v</code> and <code>tb.v</code> with your names in both commands.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight pg-guidance" id="guidance">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">04 / Reading the workbench</span>
+        <h2>What the code is doing.</h2>
+      </div>
+      <p>These notes are a bridge to the classroom and the laboratory, not a replacement for either. Use them to read the example, then follow the linked lesson when you need the full treatment.</p>
+    </div>
+
+    <div class="pg-guidance-grid">
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-cpu"></use></svg></span>
+        <h3>What is a Verilog module?</h3>
+        <p>A module is a hardware component with a name, a port list and a body. The ports declare what enters and leaves; the body describes the behaviour or structure. A design file can contain several modules, but only the modules named by the testbench are instantiated.</p>
+        <p><a class="text-link" href="../theory/modules-instances-ports.html">Read modules and ports</a></p>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-flask"></use></svg></span>
+        <h3>Design versus testbench</h3>
+        <p>The design is the hardware you want. The testbench is a simulation-only module that drives the design inputs, observes the outputs and decides whether the result is correct. A testbench is not synthesised into the circuit; it is the experiment around it.</p>
+        <p><a class="text-link" href="../labs/index.html">See the laboratory method</a></p>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-terminal"></use></svg></span>
+        <h3>Compilation and simulation</h3>
+        <p><code>iverilog</code> parses the Verilog, checks module and port connections, and writes a simulation image. <code>vvp</code> runs that image. A compile error means the source never reached simulation; a simulation mismatch means the design ran but disagreed with the testbench.</p>
+        <p><a class="text-link" href="../theory/vlsi-design-flow.html">Place simulation in the flow</a></p>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-waveform"></use></svg></span>
+        <h3>Reading simulator output</h3>
+        <p>The testbenches print a header, the important rows and a final <code>PASS</code> or <code>FAIL</code> summary. The <code>$finish called at ...</code> line is normal: it records when the testbench ended. Read the columns against the header rather than guessing what a number means.</p>
+        <p><a class="text-link" href="../theory/system-tasks-directives.html">Use display and finish correctly</a></p>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg></span>
+        <h3>Common Icarus errors</h3>
+        <dl class="pg-error-list">
+          <div><dt><code>syntax error</code></dt><dd>A missing semicolon, unmatched <code>begin</code>/<code>end</code>, or a misplaced port comma.</dd></div>
+          <div><dt><code>Unknown module type</code></dt><dd>The design file was not included in the compile command, or the module name is misspelled.</dd></div>
+          <div><dt><code>port ... is not a port</code></dt><dd>The testbench uses a port name that does not exist in the design.</dd></div>
+          <div><dt><code>warning: implicit declaration</code></dt><dd>A signal was used before it was declared; add the missing <code>wire</code> or <code>reg</code>.</dd></div>
+        </dl>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg></span>
+        <h3>Common Verilog mistakes</h3>
+        <ul class="pg-list pg-list--warning">
+          <li>Using <code>=</code> where <code>==</code> is intended, or <code>&&</code> where a bitwise gate is intended.</li>
+          <li>Forgetting a <code>default</code> branch in a combinational <code>case</code> and inferring a latch.</li>
+          <li>Mixing blocking and non-blocking assignments inside one clocked block.</li>
+          <li>Connecting module ports by position when named connections would be clearer and safer.</li>
+        </ul>
+        <p><a class="text-link" href="../theory/blocking-nonblocking.html">Review assignment rules</a></p>
+      </article>
+    </div>
+
+    <div class="pg-scope-note panel">
+      <div>
+        <span class="panel-kicker">Keep the boundary visible</span>
+        <h3>Preparation, not a replacement.</h3>
+        <p>The Playground helps you start, edit and download a design. It does not replace the EC-405 theory sequence, the EC-410 laboratory record or your own compiler output. The verified examples remain the reference; your custom code is unverified until you compile and run it yourself.</p>
+      </div>
+      <div class="button-row">
+        <a class="btn btn-secondary" href="../theory/index.html">Open EC-405 Theory</a>
+        <a class="btn btn-secondary" href="../labs/index.html">Open EC-410 Laboratory</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="../labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="../index.html#path">Learning path</a>
+              <a class="footer-link" href="../index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="../circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="../playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="../quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="../guides/index.html">Setup guides</a>
+              <a class="footer-link" href="../index.html#approach">The approach</a>
+              <a class="footer-link" href="../styleguide.html">Design system</a>
+              <a class="footer-link" href="../styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="../index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="../theory/index.html">Theory<span>01</span></a>
+        <a class="mobile-nav-link" href="../labs/index.html">Laboratory<span>02</span></a>
+        <a class="mobile-nav-link" href="../circuit-lab/index.html">Circuit Lab<span>03</span></a>
+        <a class="mobile-nav-link is-active" href="../playground/index.html" aria-current="page">Playground<span>04</span></a>
+        <a class="mobile-nav-link" href="../quizzes/index.html">Quizzes<span>05</span></a>
+        <a class="mobile-nav-link" href="../guides/index.html">Guides<span>06</span></a>
+        <a class="mobile-nav-link" href="../dashboard.html">Dashboard<span>07</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/playground.js"></script>
+</body>
+</html>

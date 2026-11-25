@@ -1,0 +1,90 @@
+<section class="lesson-section">
+  <h2 id="addition">Addition, carry and the missing fifth bit</h2>
+  <p class="lesson-lead">Adding two four-bit numbers can produce a five-bit result. If the destination is four bits, the top bit has to go somewhere. That "somewhere" is the carry output, and forgetting it is one of the oldest bugs in digital design.</p>
+  <p>The clean way to model it in Verilog is to perform the addition in a wider context, then split the result: the low bits become the sum, the extra bit becomes the carry. Doing the addition in four bits and trying to recover the carry afterwards is not possible — the information is already gone.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="subtraction">Subtraction is addition in disguise</h2>
+  <p>Two's complement represents <code>-b</code> as <code>~b + 1</code>. Therefore:</p>
+  <p><code>a - b = a + (~b) + 1</code></p>
+  <p>One adder, with an inverter on the second operand and a carry-in of 1, can perform both addition and subtraction. In the example, <code>bx = b ^ {4{sub}}</code> inverts every bit of <code>b</code> when <code>sub</code> is 1, and the same <code>sub</code> signal supplies the <code>+1</code> through the carry input.</p>
+  <p>In this shared adder, the carry output has a different meaning for subtraction: <code>cout = 1</code> means no borrow was needed, and <code>cout = 0</code> means the result went below zero and borrowed. That is a consequence of the <code>a + ~b + 1</code> formulation, not a separate borrow flag.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="carry-vs-overflow">Carry is not overflow</h2>
+  <p>The carry out and the overflow flag answer different questions:</p>
+  <ul>
+    <li><strong>Carry out</strong> is about unsigned range. It says the mathematical result did not fit in four unsigned bits.</li>
+    <li><strong>Overflow</strong> is about signed range. It says the signed result crossed from positive to negative or vice versa. Adding two positives cannot produce a negative signed result without overflow; adding two negatives cannot produce a positive one.</li>
+  </ul>
+  <p>For four-bit signed values the range is -8 to +7. <code>5 + 3 = 8</code> fits in five unsigned bits but not in four signed bits, so <code>cout = 0</code> while <code>overflow = 1</code>. The two flags are not redundant; neither can replace the other.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="comparators">Comparators and the signedness trap</h2>
+  <p>A comparator is a subtraction in disguise: <code>a &lt; b</code>, <code>a == b</code> and <code>a &gt; b</code> are relational operators on the same bits. The trap is interpretation. If the ports are unsigned, <code>1000</code> is 8. If the ports are signed, the same bits are -8. The comparison hardware differs because the sign bit must be handled differently.</p>
+  <p>In Verilog the declaration decides. <code>input wire [3:0] a</code> is unsigned; <code>input wire signed [3:0] a</code> is signed. Mixing a signed signal with an unsigned one makes the comparison unsigned, which is exactly the kind of silent conversion this unit keeps warning about.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">One add/subtract unit and two comparators</h2>
+  <p>The example contains an adder/subtractor with carry, zero and overflow flags, an unsigned comparator, and a signed comparator with identical logic but signed ports.</p>
+
+  {{CODE:examples/verilog/adders-subtractors-comparators/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>wire [3:0] bx = b ^ {4{sub}};</code> replicates <code>sub</code> four times and XORs it with <code>b</code>. With <code>sub = 0</code>, <code>bx = b</code>; with <code>sub = 1</code>, <code>bx = ~b</code>.</li>
+    <li><code>wire [4:0] wide = {1'b0, a} + {1'b0, bx} + sub;</code> zero-extends both operands to five bits before adding, so the carry is captured in <code>wide[4]</code>. The one-bit <code>sub</code> is zero-extended and acts as the carry-in.</li>
+    <li><code>assign sum = wide[3:0];</code> and <code>assign cout = wide[4];</code> split the five-bit result into the four-bit sum and the carry.</li>
+    <li><code>assign zero = (sum == 4'b0000);</code> is a combinational equality. It is true when the result is zero, which for subtraction also means <code>a == b</code>.</li>
+    <li><code>assign overflow = (a[3] &amp; bx[3] &amp; ~sum[3]) | (~a[3] &amp; ~bx[3] &amp; sum[3]);</code> detects same-sign operands producing an opposite-sign result. <code>bx</code> is the effective second operand, so the formula works for both addition and subtraction.</li>
+    <li><code>comparator4</code> uses unsigned ports, so <code>1000</code> is 8. <code>comparator4_signed</code> declares the same bits signed, so <code>1000</code> is -8. The expressions are identical; the declarations change the hardware.</li>
+  </ul>
+
+  {{CODE:examples/verilog/adders-subtractors-comparators/tb.v}}
+
+  <p>The testbench drives five arithmetic cases and then compares <code>1000</code> with <code>0001</code> through both comparators. The last line is the clearest evidence that signedness is a declaration, not a comment.</p>
+
+  {{COMMANDS:adders-subtractors-comparators}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/adders-subtractors-comparators/expected.txt}}
+
+  <p>Read the rows in order:</p>
+  <ul>
+    <li><strong>5 + 3:</strong> the sum is <code>1000</code> (8) and <code>cout</code> is 0 because the unsigned result fits in four bits. The signed result 8 is outside -8 to +7, so overflow is 1.</li>
+    <li><strong>7 + 1:</strong> the same signed overflow, with the same four-bit sum.</li>
+    <li><strong>4 - 2:</strong> the sum is <code>0010</code> and <code>cout</code> is 1, meaning no borrow. Overflow is 0.</li>
+    <li><strong>0 - 1:</strong> the sum is <code>1111</code> (-1) and <code>cout</code> is 0, meaning a borrow. The signed result is in range, so overflow is 0. The unsigned comparator sees 0 &lt; 1.</li>
+    <li><strong>-8 - 1:</strong> the sum is <code>0111</code> (7) with <code>cout</code> 1. Negative plus negative produced positive, so overflow is 1.</li>
+    <li><strong>Signed compare:</strong> the same bits <code>1000</code> and <code>0001</code> give <code>lt = 1</code> when the ports are signed, because -8 &lt; 1. The unsigned comparator in the table above gives <code>gt = 1</code> for the same bits, because 8 &gt; 1.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Adding in the destination width.</strong> A four-bit add discards the carry. Use a wider intermediate and slice it.</li>
+    <li><strong>Equating carry with overflow.</strong> They answer unsigned and signed questions respectively.</li>
+    <li><strong>Forgetting the <code>+1</code> in two's complement.</strong> <code>a + ~b</code> is <code>a - b - 1</code>.</li>
+    <li><strong>Inverting with unary minus.</strong> <code>-b</code> is two's complement negation; the adder needs the bitwise complement plus a carry-in of 1.</li>
+    <li><strong>Comparing signed data with unsigned ports.</strong> The comparison becomes unsigned and negative values compare as large positives.</li>
+    <li><strong>Assuming subtraction needs a separate subtractor.</strong> One adder with operand inversion and carry-in is the standard datapath structure.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Add in a wider context to capture the carry, then split sum and carry.</li>
+    <li><code>a - b = a + ~b + 1</code>; the same adder can do both operations.</li>
+    <li>In the shared adder, <code>cout = 1</code> means no borrow for subtraction.</li>
+    <li>Carry is unsigned range; overflow is signed range; both flags are needed.</li>
+    <li>Signedness is decided by the port declaration, not by the bit pattern.</li>
+  </ul>
+</section>

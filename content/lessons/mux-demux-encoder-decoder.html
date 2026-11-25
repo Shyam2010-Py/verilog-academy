@@ -1,0 +1,115 @@
+<section class="lesson-section">
+  <h2 id="selection">Selection and routing are most of a datapath</h2>
+  <p class="lesson-lead">Multiplexers choose, decoders select, demultiplexers route, and encoders compress a set of requests into a code. These four blocks appear in almost every datapath, memory interface and interrupt controller. They are small enough to describe completely and important enough to get exactly right.</p>
+  <p>All four are pure combinational logic. The dataflow style is a good fit because each block is one or two equations, and the equation makes the hardware structure visible.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mux">Multiplexer: one output, many inputs</h2>
+  <p>A 4:1 multiplexer selects one of four data bits using a two-bit select. In Verilog, a variable bit-select is the compact form:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Variable indexing</span></div>
+    <div class="code-block__body"><pre><code>assign y = d[sel];   // sel is 2 bits, d is 4 bits</code></pre></div>
+  </div>
+  <p>This is not "indexing an array in software". It describes a layer of 2:1 multiplexers: the select bits choose which data bit reaches the output. For small widths, synthesis maps it directly to a multiplexer tree. For large widths, the same idea becomes a bus structure, but the select must still be decoded.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="decoder">Decoder: one input code, one active output</h2>
+  <p>A binary-to-one-hot decoder drives exactly one output high for each input code. A 2-to-4 decoder with an enable can be written as a shift:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">One-hot decoder</span></div>
+    <div class="code-block__body"><pre><code>assign y = en ? (4'b0001 &lt;&lt; a) : 4'b0000;</code></pre></div>
+  </div>
+  <p>The left operand is four bits wide, so the shift result is four bits wide. Shifting by 0, 1, 2 or 3 produces the four one-hot patterns. Shifting by 4 or more would produce zero — useful to know, because an out-of-range select is silently absorbed rather than flagged.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="demux">Demultiplexer: one input, many outputs</h2>
+  <p>A demultiplexer is the reverse of a multiplexer: it routes one data bit to one of several outputs. The one-hot position is the select code, gated by the data:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">1-to-4 demultiplexer</span></div>
+    <div class="code-block__body"><pre><code>assign y = d ? (4'b0001 &lt;&lt; sel) : 4'b0000;</code></pre></div>
+  </div>
+  <p>The structure is identical to the decoder, with the data bit acting as an additional enable. That is not a coincidence: a demultiplexer is a decoder whose enable is the data.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="encoder">Priority encoder: many requests, one code</h2>
+  <p>An encoder converts a one-hot input into a binary code. A priority encoder accepts any pattern and returns the index of the highest-priority request. If bit 3 has priority, then:</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Priority encoder truth table (bit 3 highest)</caption>
+      <thead><tr><th scope="col"><code>req</code></th><th scope="col"><code>valid</code></th><th scope="col"><code>code</code></th></tr></thead>
+      <tbody>
+        <tr><td><code>0000</code></td><td>0</td><td>00</td></tr>
+        <tr><td><code>0001</code></td><td>1</td><td>00</td></tr>
+        <tr><td><code>0010</code></td><td>1</td><td>01</td></tr>
+        <tr><td><code>0100</code></td><td>1</td><td>10</td></tr>
+        <tr><td><code>1000</code></td><td>1</td><td>11</td></tr>
+        <tr><td><code>1010</code></td><td>1</td><td>11</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The dataflow equations can be written directly from the priority order: <code>code[1]</code> is high when request 3 or 2 is present; <code>code[0]</code> is high when request 3 is present, or request 1 is present without request 2. That is the equation used in the example, and it matches the table.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">All four blocks, one run</h2>
+  <p>The example puts a multiplexer, a decoder, a demultiplexer and a priority encoder in one file and instantiates each one in the testbench.</p>
+
+  {{CODE:examples/verilog/mux-demux-encoder-decoder/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>assign y = d[sel];</code> selects one bit. With <code>d = 1010</code>, selects 00 to 11 return 0, 1, 0, 1.</li>
+    <li><code>assign y = en ? (4'b0001 &lt;&lt; a) : 4'b0000;</code> decodes <code>a</code> into one-hot form. The enable forces all outputs low when it is 0.</li>
+    <li><code>assign y = d ? (4'b0001 &lt;&lt; sel) : 4'b0000;</code> routes the data bit to the selected output. With <code>d = 1</code>, the output is the same one-hot pattern as the decoder.</li>
+    <li><code>assign valid = |req;</code> is a reduction OR: valid is 1 if any request bit is set.</li>
+    <li><code>assign code[1] = req[3] | req[2];</code> and <code>assign code[0] = req[3] | (req[1] &amp; ~req[2]);</code> implement the priority table. The equations are written so bit 3 dominates bit 2, and bit 2 blocks bit 1.</li>
+    <li>The testbench drives <code>d = 1010</code>, <code>en = 1</code> and <code>din = 1</code>, then walks the select. It later walks six request patterns through the encoder.</li>
+  </ul>
+
+  {{COMMANDS:mux-demux-encoder-decoder}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/mux-demux-encoder-decoder/expected.txt}}
+
+  <p>The mux column follows the bits of <code>1010</code>. The decoder and demux columns are one-hot and move the active position with the select. The encoder returns <code>valid = 0</code> only for <code>0000</code>, and its code follows the highest set bit: <code>1010</code> returns 3 because bit 3 wins.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="applications">Where these blocks appear</h2>
+  <ul>
+    <li><strong>Multiplexers</strong> select ALU operands, register-file read ports, bus sources and pipeline results.</li>
+    <li><strong>Decoders</strong> turn an address into a chip select or a register write enable.</li>
+    <li><strong>Demultiplexers</strong> route a write data bit or a clock enable to one of several destinations.</li>
+    <li><strong>Priority encoders</strong> resolve interrupt requests, arbitrate bus grants and find the first set bit in a word.</li>
+  </ul>
+  <p>All four are also building blocks for larger structures: a barrel shifter is a tree of multiplexers, a register file is a decoder plus an array, and an arbiter is a priority encoder with state.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>An out-of-range select.</strong> A four-bit vector indexed by a value of 4 or more yields <code>x</code>. Widen the vector or guarantee the range.</li>
+    <li><strong>Forgetting the shift width.</strong> <code>4'b0001 &lt;&lt; a</code> is four bits wide. Shifting by 4 gives zero, not a five-bit result.</li>
+    <li><strong>Swapping encoder and decoder.</strong> A decoder expands a code to one-hot; an encoder compresses one-hot to a code. They are not inverse functions for arbitrary inputs.</li>
+    <li><strong>Getting the priority order backwards.</strong> The highest-priority bit determines the code. Test overlapping patterns such as <code>1010</code>, not only one-hot patterns.</li>
+    <li><strong>Driving the same net from two blocks.</strong> A mux and a decoder cannot both drive <code>y</code> unless the net is resolved deliberately.</li>
+    <li><strong>Assuming a decoder is a mux.</strong> A decoder has one input code and many outputs; a mux has many data inputs and one output.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>A multiplexer selects; a demultiplexer routes; a decoder expands a code to one-hot; an encoder compresses one-hot to a code.</li>
+    <li>Variable indexing describes a multiplexer; a left shift of a one-hot constant describes a decoder.</li>
+    <li>A priority encoder returns the index of the highest set bit and a valid flag.</li>
+    <li>Shift results keep the width of the left operand; out-of-range indices produce <code>x</code>.</li>
+    <li>Test overlapping patterns, not only one-hot inputs.</li>
+  </ul>
+</section>

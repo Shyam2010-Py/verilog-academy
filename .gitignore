@@ -1,0 +1,42 @@
+# Python build artefacts
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Local environments
+.venv/
+venv/
+env/
+node_modules/
+
+# Local preview and simulation output
+*.out
+*.vcd
+*.lxt
+*.lxt2
+*.fst
+*.ghw
+simulation.out
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.vscode/
+.idea/
+
+# Logs, backups and local scratch files
+*.log
+*.bak
+*.orig
+tmp/
+.tmp/
+
+# Secrets and local configuration
+.env
+.env.*
+*.pem
+*.key
+secrets/

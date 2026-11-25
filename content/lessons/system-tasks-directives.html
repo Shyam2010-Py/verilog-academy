@@ -1,0 +1,108 @@
+<section class="lesson-section">
+  <h2 id="boundary">Tasks for the simulator, not the chip</h2>
+  <p class="lesson-lead">Verilog has two syntax families that look similar but live on opposite sides of the synthesis boundary. <strong>System tasks</strong> start with <code>$</code> and run inside the simulator: printing, timing, dumping waveforms, finishing. <strong>Compiler directives</strong> start with a backtick and are processed before the design is elaborated: macros, includes, timescales, net-type rules.</p>
+  <p>Neither family describes hardware. A synthesis tool may ignore them, warn about them, or reject the file. Treating <code>$display</code> as part of the design is as wrong as treating a compiler flag as a gate.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="display-family">The display family</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Observation tasks used in testbenches</caption>
+      <thead><tr><th scope="col">Task</th><th scope="col">Behaviour</th></tr></thead>
+      <tbody>
+        <tr><td><code>$display(...)</code></td><td>Prints immediately, with a newline. Sees values before non-blocking updates in the same time step.</td></tr>
+        <tr><td><code>$write(...)</code></td><td>Prints immediately without a newline. Useful for building one line from several statements.</td></tr>
+        <tr><td><code>$strobe(...)</code></td><td>Prints at the end of the current time step, after all non-blocking updates have been applied.</td></tr>
+        <tr><td><code>$monitor(...)</code></td><td>Prints once at the start and again whenever any listed value changes. Only one monitor is active at a time.</td></tr>
+        <tr><td><code>$time</code></td><td>Current simulation time, scaled to the module's timescale unit.</td></tr>
+        <tr><td><code>$finish</code></td><td>Ends the simulation and returns control to the operating system.</td></tr>
+        <tr><td><code>$stop</code></td><td>Pauses an interactive simulator. Batch runs behave differently; do not rely on it.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Format specifiers follow the task name as a string: <code>%b</code> binary, <code>%o</code> octal, <code>%d</code> decimal, <code>%h</code> hexadecimal, <code>%s</code> string, <code>%t</code> time, <code>%m</code> hierarchical name. A zero between <code>%</code> and the letter (<code>%0d</code>) suppresses padding.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="directives">Compiler directives you will actually use</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Directives in this course</caption>
+      <thead><tr><th scope="col">Directive</th><th scope="col">Effect</th></tr></thead>
+      <tbody>
+        <tr><td><code>`timescale 1ns / 1ps</code></td><td>Sets the time unit and precision for delays and time formats in the modules that follow.</td></tr>
+        <tr><td><code>`define NAME value</code></td><td>Defines a textual macro. Use <code>`NAME</code> to expand it. Parenthesise macro bodies that contain operators.</td></tr>
+        <tr><td><code>`include "file.vh"</code></td><td>Inserts another file at compile time, typically for shared macros or definitions.</td></tr>
+        <tr><td><code>`ifdef NAME ... `else ... `endif</code></td><td>Conditional compilation. Useful for simulation-only debug blocks; easy to abuse.</td></tr>
+        <tr><td><code>`default_nettype none</code></td><td>Turns undeclared nets into errors. Restore with <code>`default_nettype wire</code> at the end of the file.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The timescale applies to the modules that follow the directive in compilation order. If different files disagree, delays in one file can mean something different from delays in another. Keep one timescale per project where possible, and state it in every file that uses delays.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Display, strobe, write, finish</h2>
+  <p>This testbench exercises the observation tasks and shows the difference between <code>$display</code> and <code>$strobe</code> around a non-blocking assignment.</p>
+
+  {{CODE:examples/verilog/system-tasks-directives/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>`define WIDTH 4</code> creates a macro. <code>`WIDTH-1</code> expands to <code>4-1</code>, so the vector range is <code>[3:0]</code>.</li>
+    <li><code>$display("start at t=%0t", $time);</code> prints the start time. <code>%0t</code> uses the timescale to format the value.</li>
+    <li>At <code>#5</code>, <code>count = 4'b0011;</code> is a blocking assignment, so the next <code>$display</code> sees the new value.</li>
+    <li><code>value &lt;= 1'b1;</code> is a non-blocking assignment. The right-hand side is evaluated now, but the update is scheduled for the non-blocking region at the end of the time step.</li>
+    <li><code>$display("display sees value=%b", value);</code> runs in the active region and therefore sees the old value, 0.</li>
+    <li><code>$strobe("strobe sees value=%b", value);</code> runs at the end of the time step, after the update, and sees 1. This is the clearest demonstration of the scheduling difference in the whole unit.</li>
+    <li><code>$write</code> twice builds one line: the first call prints without a newline, the second adds a newline inside its string.</li>
+    <li><code>always #2 clk = ~clk;</code> keeps a clock running. It does not print, but it shows that an <code>always</code> block runs concurrently with the <code>initial</code> block.</li>
+    <li><code>$finish</code> ends the run at 10 ns.</li>
+  </ul>
+
+  {{COMMANDS:system-tasks-directives}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/system-tasks-directives/expected.txt}}
+
+  <p>The pair <code>display sees value=0</code> and <code>strobe sees value=1</code> is not a simulator quirk. It is the scheduling model: non-blocking updates happen after the active statements in a time step. The last line shows the two <code>$write</code> calls joined into one line.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="waves">Dumping waves for GTKWave</h2>
+  <p>For anything larger than a truth table, a waveform is easier to inspect than printed text. The standard simulation tasks write a Value Change Dump:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Testbench fragment · VCD trace</span><span class="snippet-tag">not executed in this lesson</span></div>
+    <div class="code-block__body"><pre><code>initial begin
+    $dumpfile("wave.vcd");
+    $dumpvars(0, system_tasks_tb);
+end</code></pre></div>
+  </div>
+  <p>Run the simulation, then open the file with <code>gtkwave wave.vcd</code>. Dumping is a simulation feature; it has no hardware meaning and must not appear in synthesizable RTL.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Putting <code>$display</code> in RTL.</strong> It is not hardware. Keep observation in the testbench, or guard debug code with <code>`ifdef</code> and remove it from release builds.</li>
+    <li><strong>Using <code>$display</code> to check a non-blocking result.</strong> It sees the old value. Use <code>$strobe</code>, or check on the next time step.</li>
+    <li><strong>Confusing <code>$</code> and a backtick.</strong> <code>$display</code> is a task; <code>`define</code> is a directive. They are not interchangeable.</li>
+    <li><strong>Forgetting <code>$finish</code>.</strong> A testbench with no termination can run until the event queue is empty, which may be much later than intended, or never if a clock keeps running.</li>
+    <li><strong>Mismatched timescales.</strong> A <code>#5</code> in a file with <code>1ns/1ps</code> is 5 ns; in a file with <code>1ps/1ps</code> it is 5 ps. Check the directive at the top of each file.</li>
+    <li><strong>Leaving <code>`default_nettype none</code> active.</strong> Subsequent files that relied on implicit nets will fail. Restore the default.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>System tasks start with <code>$</code> and are simulation-only; compiler directives start with a backtick and are processed at compile time.</li>
+    <li><code>$display</code> runs immediately; <code>$strobe</code> runs after non-blocking updates at the end of the time step.</li>
+    <li><code>$write</code> does not add a newline; <code>$monitor</code> prints on change and is singular.</li>
+    <li><code>`timescale</code> sets delay units and time precision for the modules that follow it.</li>
+    <li><code>$dumpfile</code> and <code>$dumpvars</code> produce a VCD for waveform viewing; they are not synthesizable.</li>
+  </ul>
+</section>

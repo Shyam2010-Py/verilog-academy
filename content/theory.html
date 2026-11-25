@@ -1,0 +1,112 @@
+<section class="theory-hero">
+  <div class="theory-hero__atmosphere" aria-hidden="true"></div>
+  <div class="container theory-hero__grid">
+    <div class="theory-hero__copy" data-reveal>
+      <span class="eyebrow">EC-405 · Theory classroom</span>
+      <h1 class="display">Read the language.<br><span class="gradient-text">Prove the hardware.</span></h1>
+      <p class="lede">A complete classroom for EC-405 Units 1–3: {{THEORY_TOTAL_TOPICS}} topics that move from design flow and lexical rules to gates, dataflow, behavioural modelling and custom primitives. Every runnable example is compiled and simulated with Icarus Verilog 13.0 before it appears here.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="vlsi-design-flow.html" data-theory-continue>
+          <span data-theory-continue-label>Start with Topic 01</span>
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn-secondary btn-lg" href="{{ROOT}}dashboard.html">
+          Open dashboard
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+        </a>
+      </div>
+      <div class="hero-facts theory-facts" aria-label="Theory classroom scope">
+        <div><strong>03</strong><span>Available units</span></div>
+        <div><strong>{{THEORY_TOTAL_TOPICS}}</strong><span>Topics</span></div>
+        <div><strong>{{THEORY_AVAILABLE_PERIODS}}</strong><span>Taught periods</span></div>
+        <div><strong>13.0</strong><span>Icarus Verilog</span></div>
+      </div>
+    </div>
+
+    <aside class="theory-progress panel" aria-labelledby="theory-progress-title" data-reveal style="--reveal-delay: 100ms">
+      <div class="theory-progress__head">
+        <div>
+          <span class="panel-kicker">Local progress</span>
+          <h2 class="theory-progress__title" id="theory-progress-title"><span data-theory-count>0</span><span class="theory-progress__total">/ {{THEORY_TOTAL_TOPICS}}</span></h2>
+          <p class="theory-progress__label">topics complete</p>
+        </div>
+        <span class="badge badge-cyan" data-theory-percent>0%</span>
+      </div>
+      <div class="progress progress--lg" role="progressbar" aria-label="EC-405 theory progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-theory-bar>
+        <span class="progress-fill" data-theory-fill style="--progress: 0%"></span>
+      </div>
+
+      <div class="theory-progress__next">
+        <span class="panel-kicker">Next unfinished topic</span>
+        <h3 data-theory-next-title>VLSI IC Design Flow and the Role of HDL</h3>
+        <p data-theory-next-meta>Unit 1 · Topic 01</p>
+        <a class="btn btn-secondary btn-sm" href="vlsi-design-flow.html" data-theory-next>
+          <span data-theory-next-label>Open topic</span>
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+
+      <p class="theory-progress__note">Completion is explicit and reversible. It is stored only in this browser, using the same record as the dashboard.</p>
+    </aside>
+  </div>
+</section>
+
+<div class="container">
+  <div class="theory-alert" data-storage-alert hidden role="status">
+    <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+    <p data-storage-message></p>
+  </div>
+</div>
+
+<noscript>
+  <div class="container theory-noscript">
+    <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+    <p><strong>Progress needs JavaScript.</strong> Every lesson is readable without it, but completion states and the continue link cannot be updated. Enable JavaScript to track topics.</p>
+  </div>
+</noscript>
+
+<section class="section-tight theory-units" id="units">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">01 / The classroom</span>
+        <h2>Three units. {{THEORY_TOTAL_TOPICS}} connected topics.</h2>
+      </div>
+      <p>Each unit builds on the one before it. Start at Topic 01 if the language is new, or open any topic and let the completion record keep the dashboard honest.</p>
+    </div>
+
+    <div class="theory-unit-list">
+      {{THEORY_UNIT_CARDS}}
+    </div>
+  </div>
+</section>
+
+<section class="section-tight theory-roadmap" id="roadmap">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">02 / Roadmap</span>
+        <h2>What is not in this release.</h2>
+      </div>
+      <p>Units 4 and 5 belong to the official EC-405 syllabus but are not published yet. They are shown here so the boundary of the first release is explicit.</p>
+    </div>
+
+    <div class="theory-roadmap-grid">
+      {{THEORY_ROADMAP}}
+    </div>
+
+    <div class="theory-roadmap-note panel" data-reveal>
+      <div>
+        <span class="panel-kicker">Keep the boundary visible</span>
+        <h3>No placeholder lessons.</h3>
+        <p>Locked units are roadmap items only. Nothing in this classroom claims to teach Unit 4 or Unit 5, and no completion control exists for them.</p>
+      </div>
+      <a class="btn btn-secondary" href="{{ROOT}}dashboard.html">
+        View the dashboard
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="curriculum-data">{{CURRICULUM_JSON}}</script>

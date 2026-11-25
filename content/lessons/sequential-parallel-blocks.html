@@ -1,0 +1,94 @@
+<section class="lesson-section">
+  <h2 id="grouping">Grouping statements changes when they run</h2>
+  <p class="lesson-lead">A procedural block contains statements, and the language needs a way to group them. <code>begin</code>/<code>end</code> groups statements that run one after another. <code>fork</code>/<code>join</code> groups statements that run at the same time. The keywords look like block delimiters, but they encode a scheduling decision that is visible in the simulation output.</p>
+  <p>This topic is short but easy to get wrong. Sequential blocks are the everyday case; parallel blocks are a testbench tool that is rarely synthesizable and must be used deliberately.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="sequential">begin/end: statements in order</h2>
+  <p>Inside a <code>begin</code>/<code>end</code> block, each statement starts after the previous one finishes. If a statement contains a timing control, the whole block waits. That is why the example's sequential demonstration prints at 0, 2, 4 and 6 ns.</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Sequential timing</span></div>
+    <div class="code-block__body"><pre><code>begin
+    #2 a = 1'b1;   // t = 2
+    #2 b = 1'b1;   // t = 4
+    #2 c = 1'b1;   // t = 6
+end</code></pre></div>
+  </div>
+  <p>Sequential blocks can be named: <code>begin : sequential_demo ... end</code>. A named block creates a scope, which is useful for local declarations and for <code>disable</code>. The name also appears in hierarchical paths and in error messages, so naming a large testbench block is good practice.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="parallel">fork/join: statements together</h2>
+  <p><code>fork</code>/<code>join</code> starts every branch at the same simulation time and waits for all of them to finish before continuing past <code>join</code>.</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Parallel timing</span></div>
+    <div class="code-block__body"><pre><code>fork
+    begin #4 a = 1'b0; end   // t = 4 relative
+    begin #6 b = 1'b0; end   // t = 6 relative
+    begin #8 c = 1'b0; end   // t = 8 relative
+join
+// resumes at t = 8 relative, when the slowest branch finishes</code></pre></div>
+  </div>
+  <p>The delays are measured from the moment the fork starts, not from the previous branch. Branch 2 does not wait for branch 1. The block after <code>join</code> runs only when every branch has completed, so its time is the time of the slowest branch.</p>
+  <p>Verilog-2001 has only <code>join</code>. SystemVerilog adds <code>join_any</code> (resume when one branch finishes) and <code>join_none</code> (start the branches and continue immediately). Those are outside this course's language subset and toolchain.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">The same three assignments, two schedules</h2>
+  <p>The example is a testbench with two initial blocks. The first uses <code>begin</code>/<code>end</code>, the second uses <code>fork</code>/<code>join</code>. Both set <code>a</code>, <code>b</code> and <code>c</code> at different offsets, so the printed times reveal the scheduling directly.</p>
+
+  {{CODE:examples/verilog/sequential-parallel-blocks/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>initial begin : sequential_demo</code> names the block. The name is optional but useful in a testbench.</li>
+    <li><code>#2 a = 1'b1;</code> waits 2 ns then assigns. The next <code>$display</code> prints at 2 ns.</li>
+    <li>The next <code>#2</code> is relative to the current time, not to time zero, so <code>b</code> is set at 4 ns and <code>c</code> at 6 ns. Each delay accumulates.</li>
+    <li>The second <code>initial</code> block starts at time zero too, but its first statement is <code>#12;</code>, so its fork begins at 12 ns.</li>
+    <li><code>fork ... join</code> starts all three branches at 12 ns. Their delays are 4, 6 and 8, so the branches finish at 16, 18 and 20 ns.</li>
+    <li>The <code>$display</code> after <code>join</code> runs at 20 ns, when the last branch finishes, and shows all three values cleared.</li>
+    <li>Both <code>initial</code> blocks run concurrently. The sequential demo finishes at 6 ns without affecting the parallel demo, which is still waiting for its delay.</li>
+  </ul>
+
+  {{COMMANDS:sequential-parallel-blocks}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/sequential-parallel-blocks/expected.txt}}
+
+  <p>The first four lines increase by 2 ns each: 0, 2, 4, 6. That is the sequential schedule, with every delay measured from the previous statement.</p>
+  <p>The remaining lines start at 12 ns and then show 16, 18 and 20 ns. Those are 4, 6 and 8 ns after the fork, running concurrently. The final line at 20 ns proves that <code>join</code> waits for the slowest branch: <code>a</code> and <code>b</code> were already cleared, and <code>c</code> has just been cleared.</p>
+  <p>If the same three delays were written in a <code>begin</code>/<code>end</code> block, the times would be 4, 10 and 18 ns, because each delay would start after the previous one completed. The difference is entirely in the block keyword.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="synthesis">Parallel blocks and synthesis</h2>
+  <p><code>fork</code>/<code>join</code> is a simulation construct. Synthesis tools generally reject it, or accept only a restricted form with no timing controls, which is of little practical use. The reasons are structural: parallel branches imply concurrent processes with independent timing, and there is no general hardware mapping for that without a scheduler.</p>
+  <p>Hardware concurrency is expressed by separate <code>always</code> blocks or by instantiating several modules. Those are concurrent by construction, not by a <code>fork</code>. When you see <code>fork</code> in a design file rather than a testbench, treat it as a warning sign and check whether the file is really a testbench or a behavioural model.</p>
+  <p>Named blocks and <code>disable</code> have a legitimate testbench use: a watchdog can <code>disable</code> a named stimulus block that has hung. That is a verification technique, not a hardware description.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Assuming <code>fork</code> branches are sequential.</strong> They start together. Delays are relative to the fork, not to the previous branch.</li>
+    <li><strong>Assuming <code>join</code> returns after the first branch.</strong> It waits for all branches. <code>join_any</code> is SystemVerilog.</li>
+    <li><strong>Putting <code>fork</code> in synthesizable RTL.</strong> It has no general hardware mapping.</li>
+    <li><strong>Forgetting that separate <code>initial</code> blocks already run concurrently.</strong> A <code>fork</code> inside one block is not needed to get concurrency with another block.</li>
+    <li><strong>Relying on the order of two blocks that resume at the same time.</strong> The language does not define it.</li>
+    <li><strong>Naming a block and then declaring a signal with the same name.</strong> The block name introduces a scope; collisions produce confusing errors.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li><code>begin</code>/<code>end</code> runs statements in order; each timing control delays the rest of the block.</li>
+    <li><code>fork</code>/<code>join</code> starts branches together and resumes when the slowest finishes.</li>
+    <li>Delays inside a fork are all measured from the fork, not chained.</li>
+    <li>Verilog-2001 has only <code>join</code>; <code>join_any</code> and <code>join_none</code> are SystemVerilog.</li>
+    <li>Parallel blocks are testbench constructs; hardware concurrency comes from separate <code>always</code> blocks and instances.</li>
+  </ul>
+</section>

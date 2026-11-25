@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="{{ROBOTS}}">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{DESCRIPTION}}">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="{{ROOT}}assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="{{ROOT}}assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ROOT}}assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ROOT}}assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ROOT}}css/fonts.css">
+  <link rel="stylesheet" href="{{ROOT}}css/tokens.css">
+  <link rel="stylesheet" href="{{ROOT}}css/themes.css">
+  <link rel="stylesheet" href="{{ROOT}}css/base.css">
+  <link rel="stylesheet" href="{{ROOT}}css/layout.css">
+  <link rel="stylesheet" href="{{ROOT}}css/components.css">
+  <link rel="stylesheet" href="{{ROOT}}css/pages.css">
+  {{EXTRA_HEAD}}
+</head>
+<body class="{{PAGE_CLASS}}" id="top">
+  {{ICON_SPRITE}}
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="{{ROOT}}index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="{{ROOT}}assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          {{NAV}}
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      {{CONTENT}}
+    </main>
+
+    <footer class="site-footer">
+      {{FOOTER}}
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="{{ROOT}}index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="{{ROOT}}assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        {{MOBILE_NAV}}
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="{{ROOT}}js/app.js"></script>
+  {{EXTRA_SCRIPTS}}
+</body>
+</html>

@@ -1,0 +1,312 @@
+<section class="lesson-section">
+  <h2 id="aim">Aim and scope</h2>
+  <p class="lesson-lead">Design a half adder and a full adder in Verilog-2001 from their Boolean equations, then verify every input combination of both circuits with a self-checking testbench.</p>
+  <p>A half adder adds two one-bit operands and produces a sum and a carry. It cannot accept a carry from a previous stage. A full adder adds three one-bit operands — <code>a</code>, <code>b</code> and <code>cin</code> — so it can be chained to build wider adders. That difference is the whole point of the experiment: the half adder is the simpler circuit, the full adder is the reusable stage.</p>
+  <p>Both modules are combinational and are written with continuous assignments. The testbench instantiates both, applies 4 half-adder vectors and 8 full-adder vectors, and compares each result against an independently computed integer value.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="objectives">Learning objectives</h2>
+  <ul class="objective-list">
+    <li>Derive the sum and carry equations for a half adder from its truth table.</li>
+    <li>Extend the half adder to a full adder by introducing the propagate and generate terms.</li>
+    <li>Explain why the sum output is an XOR function while the carry output is a majority function.</li>
+    <li>Implement both circuits with dataflow assignments and named module ports.</li>
+    <li>Verify all 4 half-adder and all 8 full-adder input combinations.</li>
+    <li>Read a simulator transcript and distinguish a sum bit from the arithmetic value it represents.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="tools">Required tools and files</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Experiment 02 bench inventory</caption>
+      <thead><tr><th scope="col">Item</th><th scope="col">Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Icarus Verilog 13.0</td><td>Compiles and runs the two-module design and its testbench in Verilog-2001 mode.</td></tr>
+        <tr><td><code>design.v</code></td><td>Contains <code>half_adder</code> and <code>full_adder</code>.</td></tr>
+        <tr><td><code>tb.v</code></td><td>Drives 12 vectors and counts mismatches.</td></tr>
+        <tr><td>Terminal</td><td>Runs <code>iverilog</code> and <code>vvp</code> from the directory holding both files.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>No additional library is used. The design is pure Verilog-2001 and contains no SystemVerilog constructs.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="theory">Theory and working principle</h2>
+  <p>Binary addition follows the same column rules as decimal addition. Adding two bits produces a one-bit sum and a one-bit carry:</p>
+  <ul>
+    <li><code>0 + 0 = 00</code> — sum 0, carry 0.</li>
+    <li><code>0 + 1 = 01</code> and <code>1 + 0 = 01</code> — sum 1, carry 0.</li>
+    <li><code>1 + 1 = 10</code> — sum 0, carry 1.</li>
+  </ul>
+  <p>The sum column is 1 exactly when the inputs differ, which is XOR. The carry column is 1 only when both inputs are 1, which is AND. Those two observations give the half adder directly: <code>sum = a ^ b</code> and <code>carry = a &amp; b</code>.</p>
+  <p>A full adder adds a third input, the carry from the less significant column. One way to reason about it is to add <code>a</code> and <code>b</code> first, producing an intermediate sum <code>p = a ^ b</code> and an intermediate carry <code>g = a &amp; b</code>. Then add <code>cin</code> to <code>p</code>. The final sum is <code>p ^ cin</code>. A carry is produced either by the first addition (<code>g</code>) or by the second addition (<code>p &amp; cin</code>), so <code>carry = g | (p &amp; cin)</code>.</p>
+  <p>The names <code>p</code> and <code>g</code> are conventional: <code>p</code> is the propagate term because a carry-in propagates through when <code>p</code> is 1, and <code>g</code> is the generate term because the stage generates a carry regardless of <code>cin</code>. This formulation is exactly what the design file implements, and it is what makes the full adder reusable in Experiment 04.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="diagram">Logic diagram</h2>
+  <p>The left half of the figure is the half adder. The right half is the full adder, drawn with the intermediate nodes <code>p</code>, <code>g</code> and <code>pc</code> that appear in the Verilog. The final OR gate combines the two ways a carry can be produced.</p>
+
+  <figure class="lab-figure">
+    <div class="lab-figure__scroll" tabindex="0" role="group" aria-label="Logic diagram of the half adder and the full adder. The figure scrolls horizontally on narrow screens.">
+      <svg class="lab-svg" viewBox="0 0 960 310" role="img" aria-labelledby="fig-adders-title fig-adders-desc">
+        <title id="fig-adders-title">Half adder and full adder logic diagram</title>
+        <desc id="fig-adders-desc">The half adder uses one XOR gate for sum and one AND gate for carry. The full adder uses two XOR gates, two AND gates and one OR gate, with intermediate signals p, g and pc.</desc>
+        <defs>
+          <g id="fa-xor"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 Q18 0 32 16 Q18 32 0 32 Q8 16 0 0 Z"/><path style="fill:none;stroke:var(--text-soft);stroke-width:1.5" d="M-7 0 Q1 16 -7 32"/></g>
+          <g id="fa-and"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 H14 A16 16 0 0 1 14 32 H0 Z"/></g>
+          <g id="fa-or"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 Q18 0 32 16 Q18 32 0 32 Q8 16 0 0 Z"/></g>
+        </defs>
+
+        <text class="lab-svg__label" x="24" y="26">HALF ADDER</text>
+        <text class="lab-svg__note" x="24" y="286">sum = a ^ b     carry = a &amp; b</text>
+
+        <text class="lab-svg__value" x="24" y="68">a</text>
+        <text class="lab-svg__value" x="24" y="84">b</text>
+        <path class="lab-svg__wire" d="M36 64 H130 M36 80 H130"/>
+        <use href="#fa-xor" x="130" y="56"/>
+        <circle class="lab-svg__dot" cx="70" cy="64" r="3"/>
+        <path class="lab-svg__wire" d="M70 64 V144 H130"/>
+        <circle class="lab-svg__dot" cx="100" cy="80" r="3"/>
+        <path class="lab-svg__wire" d="M100 80 V160 H130"/>
+        <use href="#fa-and" x="130" y="136"/>
+        <path class="lab-svg__wire" d="M162 72 H210"/>
+        <path class="lab-svg__wire" d="M162 152 H210"/>
+        <text class="lab-svg__value" x="218" y="76">sum</text>
+        <text class="lab-svg__value" x="218" y="156">carry</text>
+
+        <path class="lab-svg__wire" d="M390 20 V285"/>
+
+        <text class="lab-svg__label" x="424" y="26">FULL ADDER</text>
+        <text class="lab-svg__note" x="424" y="286">p = a ^ b     g = a &amp; b     pc = p &amp; cin     carry = g | pc</text>
+
+        <text class="lab-svg__value" x="424" y="68">a</text>
+        <text class="lab-svg__value" x="424" y="84">b</text>
+        <path class="lab-svg__wire" d="M436 64 H520 M436 80 H520"/>
+        <use href="#fa-xor" x="520" y="56"/>
+        <use href="#fa-and" x="520" y="136"/>
+        <circle class="lab-svg__dot" cx="470" cy="64" r="3"/>
+        <path class="lab-svg__wire" d="M470 64 V144 H520"/>
+        <circle class="lab-svg__dot" cx="490" cy="80" r="3"/>
+        <path class="lab-svg__wire" d="M490 80 V160 H520"/>
+
+        <path class="lab-svg__wire" d="M552 72 H580"/>
+        <path class="lab-svg__wire" d="M552 152 H604"/>
+        <circle class="lab-svg__dot" cx="580" cy="72" r="3"/>
+        <path class="lab-svg__wire" d="M580 72 V178 H620"/>
+        <path class="lab-svg__wire" d="M604 152 V228 H620"/>
+        <text class="lab-svg__value" x="584" y="66">p</text>
+        <text class="lab-svg__value" x="610" y="146">g</text>
+
+        <text class="lab-svg__value" x="424" y="248">cin</text>
+        <path class="lab-svg__wire" d="M448 244 H620"/>
+        <circle class="lab-svg__dot" cx="594" cy="244" r="3"/>
+        <path class="lab-svg__wire" d="M594 244 V194 H620"/>
+
+        <use href="#fa-xor" x="620" y="170"/>
+        <use href="#fa-and" x="620" y="220"/>
+        <path class="lab-svg__wire" d="M652 186 H700"/>
+        <path class="lab-svg__wire" d="M652 236 H700"/>
+        <text class="lab-svg__value" x="708" y="190">sum</text>
+        <text class="lab-svg__value" x="668" y="230">pc</text>
+
+        <path class="lab-svg__wire" d="M700 236 H720 V228 H760"/>
+        <path class="lab-svg__wire" d="M604 152 H740 V244 H760"/>
+        <use href="#fa-or" x="760" y="220"/>
+        <path class="lab-svg__wire" d="M792 236 H820"/>
+        <text class="lab-svg__value" x="828" y="240">carry</text>
+      </svg>
+    </div>
+    <figcaption><strong>Figure 1.</strong> Half adder on the left; full adder on the right. The full adder's <code>carry</code> is the OR of the generate term <code>g</code> and the propagated carry <code>pc</code>, matching <code>assign carry = g | pc;</code> in <code>design.v</code>.</figcaption>
+  </figure>
+</section>
+
+<section class="lesson-section">
+  <h2 id="truth-table">Truth tables</h2>
+  <h3>Half adder</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Half adder: all four input combinations</caption>
+      <thead><tr><th scope="col">a</th><th scope="col">b</th><th scope="col">sum</th><th scope="col">carry</th><th scope="col">Value</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>2</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Full adder</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Full adder: all eight input combinations</caption>
+      <thead><tr><th scope="col">a</th><th scope="col">b</th><th scope="col">cin</th><th scope="col">sum</th><th scope="col">carry</th><th scope="col">Value</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>2</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>2</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>2</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>3</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The final column is the arithmetic value <code>a + b + cin</code>. It is not a Verilog output; it is the quantity the two outputs encode when read as <code>{carry, sum}</code>. The value is 2 or 3 only when a carry is produced.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="equations">Boolean equations</h2>
+  <h3>Half adder</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Sum</span><code>sum = a ^ b</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Carry</span><code>carry = a &amp; b</code></div>
+  </div>
+  <h3>Full adder</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Propagate</span><code>p = a ^ b</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Generate</span><code>g = a &amp; b</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Sum</span><code>sum = p ^ cin</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Carry</span><code>carry = g | (p &amp; cin)</code></div>
+  </div>
+  <p>The full adder equations are not an arbitrary rewrite. Substituting <code>p</code> and <code>g</code> gives the standard form <code>sum = a ^ b ^ cin</code> and <code>carry = (a &amp; b) | (cin &amp; (a ^ b))</code>. Experiment 04 uses that observation to build a four-bit adder from four copies of this module.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="design">Verilog design code</h2>
+  <p>Both modules are in one file because the experiment compares them side by side. The intermediate wires are declared explicitly, which is required by <code>`default_nettype none</code> and also makes the diagram easy to follow.</p>
+  {{CODE:examples/labs/experiment-02/design.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="testbench">Testbench</h2>
+  <p>The testbench applies all 12 vectors. It does not hard-code a table of expected output bits for every row; instead it computes the arithmetic value and compares the two outputs against that value. This is an independent model of addition, so a wrong equation in the design cannot make the test pass.</p>
+  {{CODE:examples/labs/experiment-02/tb.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="explanation">Line-by-line explanation</h2>
+  <h3>Design</h3>
+  <ul>
+    <li><code>half_adder</code> declares two inputs and two outputs. <code>sum</code> and <code>carry</code> are wires because both are driven by <code>assign</code>.</li>
+    <li><code>assign sum = a ^ b;</code> implements the XOR column of the truth table.</li>
+    <li><code>assign carry = a &amp; b;</code> implements the AND column. At this point the half adder is complete.</li>
+    <li><code>full_adder</code> adds <code>cin</code> and declares three internal wires. <code>p</code> and <code>g</code> hold the first-stage results.</li>
+    <li><code>assign sum = p ^ cin;</code> adds the carry-in to the propagate term.</li>
+    <li><code>assign pc = p &amp; cin;</code> is the carry produced by the second stage.</li>
+    <li><code>assign carry = g | pc;</code> merges both carry sources. A stage carries if it generated a carry or if it propagated an incoming one.</li>
+  </ul>
+  <h3>Testbench</h3>
+  <ul>
+    <li>The testbench declares separate <code>reg</code> drivers for each module, so the half adder and full adder can be exercised independently.</li>
+    <li><code>integer ha_value;</code> and <code>integer fa_value;</code> hold the arithmetic result. An integer is used because the sum of three one-bit values can be 3, which needs two bits.</li>
+    <li><code>for (i = 0; i &lt; 4; i = i + 1)</code> covers the half adder; <code>{ha_a, ha_b} = i[1:0]</code> assigns the four input pairs in binary order.</li>
+    <li><code>for (i = 0; i &lt; 8; i = i + 1)</code> covers the full adder; <code>{fa_a, fa_b, fa_cin} = i[2:0]</code> walks 000 to 111.</li>
+    <li><code>ha_value = ha_a + ha_b;</code> computes the expected value after the inputs are applied. Using an integer avoids the one-bit truncation that would make 1 + 1 print as 0.</li>
+    <li><code>if (ha_result !== ha_value)</code> uses a four-state comparison, so an unknown output is counted as a failure.</li>
+    <li><code>#1</code> gives the continuous assignments one time unit to settle before the result is sampled.</li>
+    <li><code>$display</code> prints one row per vector. The final line reports the mismatch count, and <code>$finish</code> ends the run.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="commands">Compilation and simulation commands</h2>
+  <p>Run both commands from the example directory. The compile step must finish without errors before the simulation can produce a meaningful transcript.</p>
+  {{COMMANDS:experiment-02}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">Actual simulator output</h2>
+  <p>This is the captured Icarus Verilog 13.0 transcript, unedited. The last two lines are the mismatch summary and the simulator's <code>$finish</code> notice.</p>
+  {{OUTPUT:examples/labs/experiment-02/expected.txt}}
+  <p>The <code>a+b</code> and <code>a+b+cin</code> columns are arithmetic values, not bit patterns. In the half adder, <code>1 + 1</code> correctly prints 2 while the outputs are <code>sum = 0</code> and <code>carry = 1</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="waveform">Waveform and timing</h2>
+  <p>There is no clock. Each vector is held for 1 ns, so the half-adder inputs change at 0, 1, 2 and 3 ns, and the full-adder inputs continue at 4 through 11 ns. The final <code>$finish</code> at 12,000 ps is 12 ns, not 12,000 ns.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Stimulus order and settling times</caption>
+      <thead><tr><th scope="col">Interval</th><th scope="col">Circuit</th><th scope="col">Inputs</th><th scope="col">Outputs to check</th></tr></thead>
+      <tbody>
+        <tr><td>0–4 ns</td><td>Half adder</td><td>00, 01, 10, 11</td><td>sum, carry</td></tr>
+        <tr><td>4–12 ns</td><td>Full adder</td><td>000 through 111</td><td>sum, carry</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A waveform viewer would show the outputs changing immediately after each stimulus edge. Because the model has no gate delays, the change happens in the same simulation time step as the input update; the <code>#1</code> exists so the testbench samples after that delta.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="result">Result</h2>
+  <div class="lab-result">
+    <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+    <div>
+      <h3>Both adders matched their truth tables.</h3>
+      <p>The testbench checked <strong>4 half-adder</strong> and <strong>8 full-adder</strong> input combinations, <strong>12 in total</strong>, and reported <strong>0 mismatches</strong>. Every sum and carry output agrees with the equations and the diagram.</p>
+    </div>
+  </div>
+  <p>Because 4 and 8 vectors exhaust the input space of a two-input and a three-input circuit respectively, this is complete combinational verification. The result does not say anything about propagation delay or fan-out; those are timing questions, not logic questions.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes and troubleshooting</h2>
+  <div class="concept-grid">
+    <article class="concept-card">
+      <h3>Using OR for the carry</h3>
+      <p><code>carry = a | b</code> is wrong: it produces a carry for <code>0 + 1</code> and <code>1 + 0</code> as well as <code>1 + 1</code>. The carry of a half adder is AND.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Forgetting the second carry source</h3>
+      <p>In a full adder, <code>carry = a &amp; b</code> misses the case where <code>cin</code> is added to a propagated 1. The OR with <code>p &amp; cin</code> is required.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Truncating the arithmetic value</h3>
+      <p><code>$display("%0d", a + b)</code> with one-bit operands can print 0 for <code>1 + 1</code>. Compute the expected value in an integer or wider vector.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Reusing one driver for both modules</h3>
+      <p>If both modules share the same input regs, the half-adder and full-adder rows interfere. Keep separate drivers, as the testbench does.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Declaring outputs as <code>reg</code></h3>
+      <p>A <code>reg</code> cannot be the target of a continuous assignment. Use <code>wire</code> when every output is assigned with <code>assign</code>.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Misreading the finish time</h3>
+      <p>Icarus prints the finish time in the precision unit. With <code>`timescale 1ns / 1ps</code>, 12000 means 12 ns.</p>
+    </article>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 id="viva">Viva questions</h2>
+  <ol class="lab-viva">
+    <li>Why can a half adder not be used directly as the most significant stage of a multi-bit adder?</li>
+    <li>Derive <code>carry = (a &amp; b) | (cin &amp; (a ^ b))</code> from the full-adder truth table.</li>
+    <li>What do the terms propagate and generate mean?</li>
+    <li>How many full adders are needed for an 8-bit ripple-carry adder?</li>
+    <li>If <code>a = 1</code>, <code>b = 1</code> and <code>cin = 1</code>, what are <code>sum</code> and <code>carry</code>, and what arithmetic value do they encode?</li>
+    <li>Why is the sum output an XOR rather than an OR?</li>
+    <li>What would change if the design used gate primitives instead of continuous assignments?</li>
+  </ol>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Half adder: <code>sum = a ^ b</code>, <code>carry = a &amp; b</code>.</li>
+    <li>Full adder: <code>sum = a ^ b ^ cin</code>, <code>carry = (a &amp; b) | (cin &amp; (a ^ b))</code>.</li>
+    <li>The propagate/generate form exposes the structure that makes wide adders possible.</li>
+    <li>Four vectors exhaust a two-input circuit; eight vectors exhaust a three-input circuit.</li>
+    <li>An integer expected value prevents width truncation in the transcript.</li>
+    <li><code>!==</code> catches unknown outputs that <code>!=</code> might miss.</li>
+  </ul>
+</section>

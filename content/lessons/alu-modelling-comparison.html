@@ -1,0 +1,121 @@
+<section class="lesson-section">
+  <h2 id="same-hardware">One ALU, three descriptions</h2>
+  <p class="lesson-lead">An arithmetic logic unit is the block that makes a processor a processor: it takes two operands and an operation code and produces a result. The interesting lesson is not the ALU itself, but the fact that the same ALU can be written as gates, as equations, or as a procedural case statement — and that synthesis must produce equivalent hardware from all three.</p>
+  <p>This topic closes Unit 2 by comparing the modelling styles you have learned. It is also the first place where a design is verified by <strong>equivalence</strong> rather than by a handful of examples: two independent descriptions are driven with every possible input and compared.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="specification">Specify before you model</h2>
+  <p>A four-bit ALU with a two-bit operation code has a small, complete specification:</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Operation encoding used in the example</caption>
+      <thead><tr><th scope="col"><code>op</code></th><th scope="col">Function</th><th scope="col">Expression</th></tr></thead>
+      <tbody>
+        <tr><td><code>00</code></td><td>Bitwise AND</td><td><code>a &amp; b</code></td></tr>
+        <tr><td><code>01</code></td><td>Bitwise OR</td><td><code>a | b</code></td></tr>
+        <tr><td><code>10</code></td><td>Addition</td><td><code>a + b</code>, low four bits</td></tr>
+        <tr><td><code>11</code></td><td>Subtraction</td><td><code>a - b</code>, low four bits</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Two consequences follow immediately. First, addition and subtraction produce four-bit results here, so the carry out and the borrow are discarded; a real ALU would expose them as status flags. Second, the operation code is fully decoded, so there is no "undefined" encoding — but a defensive description still needs a default branch for the simulator's <code>x</code> and <code>z</code> states.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="three-styles">The three modelling styles</h2>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h4>Gate level</h4>
+      <p>Primitive gates and instances wired into an adder and a multiplexer tree. It mirrors a netlist and makes the gate count visible, but it is slow to write and hard to change.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Dataflow</h4>
+      <p>Continuous assignments with nested conditional operators or arithmetic. It reads like a datapath equation and maps directly onto multiplexers and an adder.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Behavioural</h4>
+      <p>An <code>always @*</code> block with a <code>case</code> statement. It reads like the specification table and is the easiest to extend with new operations.</p>
+    </div>
+  </div>
+  <p>All three describe the same combinational function, and all three are synthesizable. The difference is in how directly the source expresses intent. For an ALU with four operations, the behavioural <code>case</code> wins on readability; for a leaf adder inside it, dataflow is compact; for a library cell, gate level is the only option.</p>
+  <p>The executed example contains the dataflow and behavioural descriptions and proves them equivalent. The gate-level description is what synthesis builds from either of them — a multiplexer tree selecting between an AND plane, an OR plane, an adder and a subtractor. Writing that netlist by hand would add pages of code and no information.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Two descriptions, one exhaustive check</h2>
+  <p>The design file contains both modules. The testbench instantiates both, drives them with identical inputs, and compares the outputs with the case-equality operator.</p>
+
+  {{CODE:examples/verilog/alu-modelling-comparison/design.v}}
+
+  <h3>Line by line: the design</h3>
+  <ul>
+    <li><code>alu4_dataflow</code> has a <code>wire</code> output because it is driven by <code>assign</code>. <code>alu4_behavioural</code> has an <code>output reg</code> because the output is assigned inside an <code>always</code> block. The port type follows the driver, not the intended hardware.</li>
+    <li><code>assign y = (op == 2'b00) ? (a &amp; b) : ...</code> is a chain of 2:1 multiplexers. The conditional operator is right-associative, so the nesting reads top to bottom: test <code>00</code>, then <code>01</code>, then <code>10</code>, and fall through to subtraction.</li>
+    <li>The final branch needs no comparison. If <code>op</code> is not <code>00</code>, <code>01</code> or <code>10</code>, it must be <code>11</code> for a two-bit value — or <code>x</code>/<code>z</code>, in which case the subtraction result is also unknown. That is acceptable for this specification but should be a conscious choice.</li>
+    <li><code>case (op)</code> tests the four encodings in order and assigns <code>y</code> on every branch. <code>default: y = 4'b0000;</code> covers the <code>x</code>/<code>z</code> case and guarantees that <code>y</code> is assigned on every path.</li>
+    <li>Every branch assigns <code>y</code>, so the block describes pure combinational logic. Remove the <code>default</code> and synthesis may infer a latch to hold the previous value — the classic incomplete-assignment bug from the previous topic.</li>
+  </ul>
+
+  {{CODE:examples/verilog/alu-modelling-comparison/tb.v}}
+
+  <h3>Line by line: the testbench</h3>
+  <ul>
+    <li>Two instances receive the same <code>a</code>, <code>b</code> and <code>op</code> signals. Only the outputs are separate wires.</li>
+    <li>Three nested <code>for</code> loops cover 16 values of <code>a</code>, 16 of <code>b</code> and 4 values of <code>op</code> — 1024 combinations, which is every possible input.</li>
+    <li><code>a = ai[3:0];</code> slices the 32-bit loop counter down to the four bits the port expects. Assigning <code>a = ai;</code> would also work, but the slice documents the width conversion.</li>
+    <li><code>if (y_flow !== y_beh)</code> uses case inequality, so an <code>x</code> in either output counts as a mismatch instead of being ignored. A comparison that cannot decide is not a pass.</li>
+    <li><code>checks = checks + 1;</code> counts the compared vectors. Printing the count is part of the evidence: 1024 means the loops really covered the space.</li>
+    <li>The second half prints four representative results for <code>a = 1010</code> and <code>b = 0101</code>, so the reader can check the arithmetic by hand.</li>
+  </ul>
+
+  {{COMMANDS:alu-modelling-comparison}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/alu-modelling-comparison/expected.txt}}
+
+  <p>The first line is the important one: <strong>1024 combinations, 0 mismatches</strong>. That is a complete proof of equivalence for this input space, not a sample. The remaining rows are a spot check that the functions are the intended ones:</p>
+  <ul>
+    <li><code>1010 AND 0101 = 0000</code>: no bit position has both inputs set.</li>
+    <li><code>1010 OR 0101 = 1111</code>: the operands are complementary, so every bit is covered.</li>
+    <li><code>1010 + 0101 = 1111</code> (10 + 5 = 15), which fits in four bits.</li>
+    <li><code>1010 - 0101 = 0101</code> (10 - 5 = 5).</li>
+  </ul>
+  <p>Ten plus five is exactly 15, so this particular addition does not exercise the carry loss. The exhaustive loop does: it compares every operand pair, including those that overflow, and both descriptions discard the carry in the same way.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="equivalence">Why equivalence checking matters</h2>
+  <p>Comparing two descriptions sounds like academic exercise, but it is the core of real verification:</p>
+  <ul>
+    <li><strong>Refactoring:</strong> when a block is rewritten for clarity or timing, the old and new versions can be simulated side by side. Equal outputs on exhaustive or constrained-random stimulus give confidence that the rewrite preserved behaviour.</li>
+    <li><strong>Synthesis:</strong> formal equivalence checking proves that the gate netlist implements the RTL for all inputs, not just the simulated ones. That is stronger than any testbench and is a standard signoff step.</li>
+    <li><strong>Optimisation:</strong> a synthesis tool may restructure logic aggressively. Equivalence checking catches the rare case where an optimisation changes behaviour, for example around <code>x</code> handling.</li>
+  </ul>
+  <p>Note the limit of this example: two descriptions that agree may both be wrong with respect to the specification. Equivalence proves consistency, not correctness. The specification table and the hand-checked rows are what tie the pair to the intended ALU.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Comparing with <code>==</code> in the checker.</strong> If either output is <code>x</code>, <code>==</code> returns <code>x</code>, the <code>if</code> does not fire, and the mismatch is silently ignored. Use <code>!==</code>.</li>
+    <li><strong>Leaving a branch unassigned in the <code>case</code>.</strong> Synthesis infers a latch. Always assign the output on every path, with a <code>default</code>.</li>
+    <li><strong>Forgetting the carry.</strong> A four-bit ALU that adds in four bits silently wraps. If the design needs a carry flag, compute in five bits and expose the extra bit.</li>
+    <li><strong>Treating the two descriptions as equally efficient.</strong> Synthesis may map them differently. Equivalence of behaviour does not guarantee identical area or timing.</li>
+    <li><strong>Assuming a passing comparison proves the specification.</strong> It proves the two models agree. Check the function against the table separately.</li>
+    <li><strong>Using a behavioural ALU as a synthesizable block without checking the inferred hardware.</strong> A large <code>case</code> with arithmetic can infer several adders unless the tool shares them.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>An ALU is a multiplexer over several functions sharing the same operands; the operation code selects the function.</li>
+    <li>Gate-level, dataflow and behavioural descriptions can all be synthesizable; they differ in readability and in how directly they express structure.</li>
+    <li>The conditional operator chain and the <code>case</code> statement describe the same priority multiplexer.</li>
+    <li>Assign every output on every path, or synthesis infers a latch.</li>
+    <li>Exhaustive comparison with <code>!==</code> proves equivalence over the tested space; formal equivalence checking extends that to all inputs and to the netlist.</li>
+  </ul>
+</section>

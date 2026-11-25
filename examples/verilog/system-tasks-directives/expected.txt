@@ -1,0 +1,7 @@
+start at t=0
+count=0011 (3) at t=5000
+display sees value=0
+strobe sees value=1
+write keeps the line open
+finish at t=10000
+example.v:28: $finish called at 10000 (1ps)

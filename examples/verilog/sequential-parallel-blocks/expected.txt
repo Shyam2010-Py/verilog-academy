@@ -1,0 +1,10 @@
+t=0 sequential: block starts
+t=2000 sequential: a set
+t=4000 sequential: b set
+t=6000 sequential: c set, block ends
+t=12000 parallel: fork starts
+t=16000 parallel: a cleared
+t=18000 parallel: b cleared
+t=20000 parallel: c cleared
+t=20000 parallel: join complete a=0 b=0 c=0
+example.v:40: $finish called at 20000 (1ps)

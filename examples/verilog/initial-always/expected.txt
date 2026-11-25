@@ -1,0 +1,6 @@
+t=0 initial: clk=0 reset=1 count=0
+t=12000 initial: reset released
+t=26000 sample: count=2
+t=36000 sample: count=3
+t=46000 sample: count=4
+example.v:34: $finish called at 46000 (1ps)

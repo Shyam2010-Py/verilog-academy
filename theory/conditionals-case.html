@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="index, follow">
+  <title>Conditionals, case, casex and casez — EC-405 Unit 3 | Verilog Academy</title>
+  <meta name="description" content="Choose between if/else, case, casez and casex, and avoid the latches and masked bugs they can introduce.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Conditionals, case, casex and casez — EC-405 Unit 3 | Verilog Academy">
+  <meta property="og:description" content="Choose between if/else, case, casez and casex, and avoid the latches and masked bugs they can introduce.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="../assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="../assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <link rel="stylesheet" href="../css/theory.css">
+</head>
+<body class="page-theory page-lesson" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="../index.html">Homepage</a>
+          <a class="nav-link is-active" href="../theory/index.html" aria-current="page">Theory</a>
+          <a class="nav-link" href="../labs/index.html">Laboratory</a>
+          <a class="nav-link" href="../circuit-lab/index.html">Circuit Lab</a>
+          <a class="nav-link" href="../playground/index.html">Playground</a>
+          <a class="nav-link" href="../quizzes/index.html">Quizzes</a>
+          <a class="nav-link" href="../guides/index.html">Guides</a>
+          <a class="nav-link" href="../dashboard.html">Dashboard</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <div class="lesson">
+  <header class="lesson-hero">
+    <div class="lesson-hero__atmosphere" aria-hidden="true"></div>
+    <div class="container">
+      <nav class="lesson-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">EC-405 Theory</a>
+        <span aria-hidden="true">/</span>
+        <a href="index.html#unit-03">Unit 3</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Topic 04</span>
+      </nav>
+
+      <div class="lesson-hero__grid">
+        <div class="lesson-hero__copy">
+          <span class="eyebrow">Unit 3 · Topic 04</span>
+          <h1 id="lesson-title">Conditionals, case, casex and casez</h1>
+          <p class="lede">Choose between if/else, case, casez and casex, and avoid the latches and masked bugs they can introduce.</p>
+          <div class="lesson-meta">
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-book"></use></svg> 6 min read</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-code"></use></svg> Verilog-2001</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-terminal"></use></svg> Verified in Icarus 13.0</span>
+          </div>
+        </div>
+
+        <aside class="lesson-hero__card panel" aria-label="Topic progress">
+          <span class="panel-kicker">Your progress</span>
+          <p class="lesson-hero__unit">Unit 3 · <span data-lesson-unit-count>0 / 7</span> topics</p>
+          <div class="progress" role="progressbar" aria-label="Unit 3 progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-lesson-unit-bar>
+            <span class="progress-fill" data-lesson-unit-fill style="--progress: 0%"></span>
+          </div>
+          <button class="btn btn-primary lesson-toggle" type="button" data-topic-toggle aria-pressed="false" aria-describedby="lesson-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-topic-toggle-label>Mark topic complete</span>
+          </button>
+          <p class="lesson-status" data-topic-status>Reading progress is stored in this browser.</p>
+          <a class="text-link lesson-hero__dashboard" href="../dashboard.html">
+            Learning dashboard
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+          </a>
+        </aside>
+      </div>
+
+      <div class="theory-alert" data-storage-alert hidden role="status">
+        <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+        <p data-storage-message></p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container lesson-layout">
+    <aside class="lesson-aside">
+      <div class="lesson-aside__card panel">
+        <span class="panel-kicker">On this page</span>
+        <nav aria-label="On this page">
+          <ol class="toc-list">
+            <li><a href="#decisions"><span class="toc-num">01</span><span>Decision logic is where behaviour becomes hardware</span></a></li>
+            <li><a href="#if"><span class="toc-num">02</span><span>if/else: a priority chain</span></a></li>
+            <li><a href="#case"><span class="toc-num">03</span><span>case, casez, casex</span></a></li>
+            <li><a href="#latch"><span class="toc-num">04</span><span>Incomplete assignment infers a latch</span></a></li>
+            <li><a href="#example"><span class="toc-num">05</span><span>Two encoders and one deliberate latch</span></a></li>
+            <li><a href="#output"><span class="toc-num">06</span><span>The actual run</span></a></li>
+            <li><a href="#pragmas"><span class="toc-num">07</span><span>Pragmas and SystemVerilog</span></a></li>
+            <li><a href="#mistakes"><span class="toc-num">08</span><span>Common mistakes</span></a></li>
+            <li><a href="#revision"><span class="toc-num">09</span><span>Revision points</span></a></li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="lesson-aside__card lesson-aside__unit panel">
+        <span class="panel-kicker">Unit 3 · 7 topics</span>
+        <p>Behavioural Modelling</p>
+        <a class="text-link" href="index.html#unit-03">
+          Unit overview
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+    </aside>
+
+    <article class="lesson-article" data-lesson-id="conditionals-case">
+      <section class="lesson-section">
+  <h2 data-index="01" id="decisions">Decision logic is where behaviour becomes hardware</h2>
+  <p class="lesson-lead">Most behavioural Verilog is decision logic: choose an output based on inputs. Verilog offers two constructs for it, <code>if</code>/<code>else</code> and <code>case</code>, plus two wildcard variants, <code>casez</code> and <code>casex</code>. They look interchangeable and are not. Each encodes a different priority structure, and each has a characteristic failure mode.</p>
+  <p>The example writes the same priority encoder three ways — <code>if</code>/<code>else</code>, <code>casez</code>, and an intentionally incomplete block that infers a latch — and proves that the first two agree on all sixteen inputs.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="02" id="if">if/else: a priority chain</h2>
+  <p>An <code>if</code>/<code>else if</code> chain tests conditions in order and executes the first true branch. In hardware it becomes a chain of multiplexers with the first condition at the highest priority. That is the natural description of a priority encoder, where the highest-numbered request wins.</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Priority by ordering</span><span class="snippet-tag">illustrative fragment · not a complete module</span><button class="copy-btn" type="button" aria-label="Copy Priority by ordering"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div>
+    <div class="code-block__body"><pre><code>if      (req[3]) code = 3;
+else if (req[2]) code = 2;
+else if (req[1]) code = 1;
+else if (req[0]) code = 0;</code></pre></div>
+  </div>
+  <p>Order is meaning. Swap two branches and the priority changes, silently. This is why a priority chain should be arranged in a deliberate order and commented, not left in whatever order the conditions were typed.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="03" id="case">case, casez, casex</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Comparison of the case family</caption>
+      <thead><tr><th scope="col">Form</th><th scope="col">Matching rule</th><th scope="col">Use</th></tr></thead>
+      <tbody>
+        <tr><td><code>case</code></td><td>Exact four-state match. <code>x</code> matches only <code>x</code>, <code>z</code> only <code>z</code>.</td><td>Instruction decode, state machines with fully specified encodings.</td></tr>
+        <tr><td><code>casez</code></td><td><code>z</code> and <code>?</code> in either the expression or an item are don't-cares.</td><td>Priority decoding, opcode matching with ignored bits.</td></tr>
+        <tr><td><code>casex</code></td><td><code>x</code>, <code>z</code> and <code>?</code> are all don't-cares.</td><td>Rarely. It hides unknown values that should have been caught.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><code>casez</code> is the useful wildcard form. <code>casex</code> is dangerous in verification because an <code>x</code> on an input — which usually means something is wrong — is treated as a match instead of a red flag. Many coding standards ban <code>casex</code> outright.</p>
+  <p>All three evaluate the items in order and execute the first match. So <code>casez</code> is also a priority structure: the first pattern that matches wins. In the example, <code>4'b1???</code> is placed before <code>4'b01??</code> precisely so that bit 3 dominates.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="04" id="latch">Incomplete assignment infers a latch</h2>
+  <p>A combinational <code>always @*</code> block must assign every output on every path. If some path leaves an output unassigned, the only way the circuit can reproduce the simulation's "keep the old value" behaviour is to store it. Synthesis therefore inserts a latch:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Latch inferred</span><span class="snippet-tag">illustrative fragment · not a complete module</span><button class="copy-btn" type="button" aria-label="Copy Latch inferred"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button></div>
+    <div class="code-block__body"><pre><code>always @* begin
+    if (en)
+        q = d;      // when en = 0, q keeps its previous value
+end</code></pre></div>
+  </div>
+  <p>Latches are not automatically wrong — a transparent latch is a legitimate element — but an <em>unintended</em> latch is a bug. It is level-sensitive, it complicates timing analysis, and it usually means the designer forgot an <code>else</code>. The example includes this block deliberately so the behaviour can be observed rather than described.</p>
+  <p>The standard fix is a default assignment before the conditional structure, or a complete <code>else</code> and a <code>default</code>. Assigning a default at the top of the block guarantees that every output has a value on every path, which removes the storage requirement.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="05" id="example">Two encoders and one deliberate latch</h2>
+  <p>The design contains a priority encoder written with <code>if</code>/<code>else</code>, the same encoder written with <code>casez</code>, and a latch-inferring block.</p>
+
+  <div class="code-block" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span class="code-block__file">example.v</span>
+    <button class="copy-btn" type="button" aria-label="Copy example.v">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code><span class="tok-directive">`default_nettype</span> none
+<span class="tok-comment">// Same priority encoder, two ways.</span>
+<span class="tok-keyword">module</span> prio_if (
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> [<span class="tok-number">3</span>:<span class="tok-number">0</span>] req,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">reg</span>  [<span class="tok-number">1</span>:<span class="tok-number">0</span>] code,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">reg</span>        valid
+);
+    <span class="tok-keyword">always</span> @* <span class="tok-keyword">begin</span>
+        valid = <span class="tok-number">1&#x27;b1</span>;
+        <span class="tok-keyword">if</span>      (req[<span class="tok-number">3</span>]) code = <span class="tok-number">2&#x27;d3</span>;
+        <span class="tok-keyword">else</span> <span class="tok-keyword">if</span> (req[<span class="tok-number">2</span>]) code = <span class="tok-number">2&#x27;d2</span>;
+        <span class="tok-keyword">else</span> <span class="tok-keyword">if</span> (req[<span class="tok-number">1</span>]) code = <span class="tok-number">2&#x27;d1</span>;
+        <span class="tok-keyword">else</span> <span class="tok-keyword">if</span> (req[<span class="tok-number">0</span>]) code = <span class="tok-number">2&#x27;d0</span>;
+        <span class="tok-keyword">else</span> <span class="tok-keyword">begin</span>
+            code  = <span class="tok-number">2&#x27;d0</span>;
+            valid = <span class="tok-number">1&#x27;b0</span>;
+        <span class="tok-keyword">end</span>
+    <span class="tok-keyword">end</span>
+<span class="tok-keyword">endmodule</span>
+
+<span class="tok-keyword">module</span> prio_casez (
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> [<span class="tok-number">3</span>:<span class="tok-number">0</span>] req,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">reg</span>  [<span class="tok-number">1</span>:<span class="tok-number">0</span>] code,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">reg</span>        valid
+);
+    <span class="tok-keyword">always</span> @* <span class="tok-keyword">begin</span>
+        valid = |req;
+        <span class="tok-keyword">casez</span> (req)
+            <span class="tok-number">4&#x27;b1???</span>: code = <span class="tok-number">2&#x27;d3</span>;
+            <span class="tok-number">4&#x27;b01??</span>: code = <span class="tok-number">2&#x27;d2</span>;
+            <span class="tok-number">4&#x27;b001?</span>: code = <span class="tok-number">2&#x27;d1</span>;
+            <span class="tok-number">4&#x27;b0001</span>: code = <span class="tok-number">2&#x27;d0</span>;
+            <span class="tok-keyword">default</span>: code = <span class="tok-number">2&#x27;d0</span>;
+        <span class="tok-keyword">endcase</span>
+    <span class="tok-keyword">end</span>
+<span class="tok-keyword">endmodule</span>
+
+<span class="tok-comment">// Deliberate latch: q is not assigned on every path.</span>
+<span class="tok-keyword">module</span> latch_risk (
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> en,
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> d,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">reg</span>  q
+);
+    <span class="tok-keyword">always</span> @* <span class="tok-keyword">begin</span>
+        <span class="tok-keyword">if</span> (en)
+            q = d;
+    <span class="tok-keyword">end</span>
+<span class="tok-keyword">endmodule</span>
+<span class="tok-directive">`default_nettype</span> <span class="tok-keyword">wire</span>
+</code></pre>
+  </div>
+</div>
+
+  <h3>Line by line: the <code>if</code>/<code>else</code> encoder</h3>
+  <ul>
+    <li><code>valid = 1'b1;</code> is the default. It is overwritten in the final <code>else</code> when no request is present. Setting a default first is the habit that prevents latches.</li>
+    <li><code>if (req[3]) code = 2'd3;</code> gives bit 3 the highest priority. Every later test only runs if this one failed.</li>
+    <li>The final <code>else</code> handles <code>req == 0000</code>, setting <code>code</code> to 0 and <code>valid</code> to 0. That is the only case in which <code>valid</code> is 0.</li>
+  </ul>
+
+  <h3>Line by line: the <code>casez</code> encoder</h3>
+  <ul>
+    <li><code>valid = |req;</code> uses a reduction OR, so <code>valid</code> needs no branch logic at all.</li>
+    <li><code>4'b1???</code> matches any pattern whose top bit is 1. Because it is first, it wins over every lower request.</li>
+    <li><code>4'b01??</code>, <code>4'b001?</code> and <code>4'b0001</code> form the descending priority chain. The patterns are mutually exclusive in their leading-1 position, so the first-match rule is unambiguous.</li>
+    <li><code>default: code = 2'd0;</code> covers <code>0000</code>. Without it, <code>code</code> would be unassigned for that pattern and synthesis would infer a latch.</li>
+  </ul>
+
+  <div class="code-block" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span class="code-block__file">tb.v</span>
+    <button class="copy-btn" type="button" aria-label="Copy tb.v">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code><span class="tok-directive">`default_nettype</span> none
+<span class="tok-directive">`timescale</span> 1ns / 1ps
+
+<span class="tok-keyword">module</span> case_tb;
+    <span class="tok-keyword">reg</span>  [<span class="tok-number">3</span>:<span class="tok-number">0</span>] req;
+    <span class="tok-keyword">wire</span> [<span class="tok-number">1</span>:<span class="tok-number">0</span>] code_if;
+    <span class="tok-keyword">wire</span> [<span class="tok-number">1</span>:<span class="tok-number">0</span>] code_cz;
+    <span class="tok-keyword">wire</span>       valid_if;
+    <span class="tok-keyword">wire</span>       valid_cz;
+    <span class="tok-keyword">reg</span>        en;
+    <span class="tok-keyword">reg</span>        d_latch;
+    <span class="tok-keyword">wire</span>       q_latch;
+    <span class="tok-keyword">integer</span>    i;
+    <span class="tok-keyword">integer</span>    mismatches;
+
+    prio_if    u_if  (.req(req), .code(code_if), .valid(valid_if));
+    prio_casez u_cz  (.req(req), .code(code_cz), .valid(valid_cz));
+    latch_risk u_lat (.en(en), .d(d_latch), .q(q_latch));
+
+    <span class="tok-keyword">initial</span> <span class="tok-keyword">begin</span>
+        mismatches = <span class="tok-number">0</span>;
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;req  | if: code valid | casez: code valid&quot;</span>);
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;-----+----------------+-------------------&quot;</span>);
+        <span class="tok-keyword">for</span> (i = <span class="tok-number">0</span>; i &lt; <span class="tok-number">16</span>; i = i + <span class="tok-number">1</span>) <span class="tok-keyword">begin</span>
+            req = i[<span class="tok-number">3</span>:<span class="tok-number">0</span>];
+            #<span class="tok-number">1</span>;
+            <span class="tok-keyword">if</span> (code_if !== code_cz || valid_if !== valid_cz)
+                mismatches = mismatches + <span class="tok-number">1</span>;
+            <span class="tok-system">$display</span>(<span class="tok-string">&quot;%b |      %0d     %b   |        %0d     %b&quot;</span>,
+                     req, code_if, valid_if, code_cz, valid_cz);
+        <span class="tok-keyword">end</span>
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;mismatches between if/else and casez: %0d&quot;</span>, mismatches);
+
+        en      = <span class="tok-number">1&#x27;b1</span>;
+        d_latch = <span class="tok-number">1&#x27;b1</span>;
+        #<span class="tok-number">1</span>;
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;latch: en=%b d=%b -&gt; q=%b&quot;</span>, en, d_latch, q_latch);
+
+        en      = <span class="tok-number">1&#x27;b0</span>;
+        d_latch = <span class="tok-number">1&#x27;b0</span>;
+        #<span class="tok-number">1</span>;
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;latch: en=%b d=%b -&gt; q=%b (held)&quot;</span>, en, d_latch, q_latch);
+
+        en      = <span class="tok-number">1&#x27;b1</span>;
+        d_latch = <span class="tok-number">1&#x27;b0</span>;
+        #<span class="tok-number">1</span>;
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;latch: en=%b d=%b -&gt; q=%b&quot;</span>, en, d_latch, q_latch);
+
+        <span class="tok-system">$finish</span>;
+    <span class="tok-keyword">end</span>
+<span class="tok-keyword">endmodule</span>
+<span class="tok-directive">`default_nettype</span> <span class="tok-keyword">wire</span>
+</code></pre>
+  </div>
+</div>
+
+  <p>The testbench walks all sixteen request patterns, compares the two encoders with case inequality, counts mismatches, and then exercises the latch block through enable, hold and transparent states.</p>
+
+  <div class="code-block code-block--commands" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__file">Terminal</span>
+    <button class="copy-btn" type="button" aria-label="Copy build commands">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code>iverilog -g2001 -o conditionals-case.out example.v tb.v
+vvp conditionals-case.out</code></pre>
+  </div>
+</div>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="06" id="output">The actual run</h2>
+  <div class="code-block code-block--output" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__file">Simulator output</span>
+    <span class="output-tag">actual run · Icarus 13.0</span>
+    <button class="copy-btn" type="button" aria-label="Copy simulator output">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code>req  | if: code valid | casez: code valid
+-----+----------------+-------------------
+0000 |      0     0   |        0     0
+0001 |      0     1   |        0     1
+0010 |      1     1   |        1     1
+0011 |      1     1   |        1     1
+0100 |      2     1   |        2     1
+0101 |      2     1   |        2     1
+0110 |      2     1   |        2     1
+0111 |      2     1   |        2     1
+1000 |      3     1   |        3     1
+1001 |      3     1   |        3     1
+1010 |      3     1   |        3     1
+1011 |      3     1   |        3     1
+1100 |      3     1   |        3     1
+1101 |      3     1   |        3     1
+1110 |      3     1   |        3     1
+1111 |      3     1   |        3     1
+mismatches between if/else and casez: 0
+latch: en=1 d=1 -&gt; q=1
+latch: en=0 d=0 -&gt; q=1 (held)
+latch: en=1 d=0 -&gt; q=0
+tb.v:49: $finish called at 19000 (1ps)
+</code></pre>
+  </div>
+</div>
+
+  <p>The first sixteen rows are the truth table. The <code>if</code> and <code>casez</code> columns agree on every pattern, which is what the <code>mismatches: 0</code> line confirms. The code follows the highest set bit: <code>0001</code> gives 0, <code>0010</code> gives 1, <code>0100</code> gives 2, <code>1000</code> gives 3, and mixed patterns such as <code>1010</code> give 3 because bit 3 wins.</p>
+  <p>The last three lines show the latch:</p>
+  <ul>
+    <li><code>en=1 d=1 -&gt; q=1</code>: the latch is transparent and follows the data.</li>
+    <li><code>en=0 d=0 -&gt; q=1 (held)</code>: the enable is low, so the output ignores the new data and holds the previous value. This is storage, created by an incomplete assignment.</li>
+    <li><code>en=1 d=0 -&gt; q=0</code>: the latch reopens and follows the data again.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="07" id="pragmas">Pragmas and SystemVerilog</h2>
+  <p>You may see <code>// synopsys full_case</code> or <code>// synopsys parallel_case</code> in older code. These are comments interpreted by some synthesis tools, not part of Verilog-2001. <code>full_case</code> tells the tool that all cases are covered, so it need not infer a latch; <code>parallel_case</code> tells it that the items are mutually exclusive, so it need not build a priority chain. Both can change behaviour when the assumption is false, and both are unnecessary if the Verilog is written completely and unambiguously.</p>
+  <p>SystemVerilog adds <code>unique</code>, <code>priority</code> and <code>inside</code>, which express these intents as language features with simulation checks. They are not available in Verilog-2001 and are outside this course's toolchain. In Verilog-2001, the safe approach is: assign defaults, cover every branch, and test overlapping patterns.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="08" id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Forgetting the default assignment.</strong> One unassigned path is enough to infer a latch. Assign a default at the top of every combinational block.</li>
+    <li><strong>Relying on <code>case</code> order without saying so.</strong> <code>case</code> is a priority structure. If the items overlap, the first match wins, and a reader may assume otherwise.</li>
+    <li><strong>Using <code>casex</code> on data that can be <code>x</code>.</strong> An unknown input silently matches a wildcard instead of failing loudly.</li>
+    <li><strong>Assuming <code>casez</code> ignores <code>x</code>.</strong> It does not; only <code>z</code> and <code>?</code> are wildcards. An <code>x</code> in the expression does not match a <code>?</code> item.</li>
+    <li><strong>Writing overlapping <code>casez</code> items in the wrong order.</strong> The wildcard patterns must be ordered from most specific priority to least, or the wrong branch wins.</li>
+    <li><strong>Using <code>full_case</code> to silence a latch warning.</strong> The latch was telling you the truth: a path was unassigned.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="09" id="revision">Revision points</h2>
+  <ul>
+    <li><code>if</code>/<code>else</code> and <code>case</code> both build priority structures; the first true or first matching item wins.</li>
+    <li><code>casez</code> treats <code>z</code> and <code>?</code> as don't-cares; <code>casex</code> also treats <code>x</code>, which hides errors.</li>
+    <li>Every output must be assigned on every path of a combinational block, or synthesis infers a latch.</li>
+    <li>A default assignment at the top of the block is the simplest defence against latches.</li>
+    <li><code>full_case</code> and <code>parallel_case</code> are tool pragmas, not Verilog-2001 features.</li>
+  </ul>
+</section>
+
+
+      <footer class="lesson-footer">
+        <div class="lesson-finish panel">
+          <div>
+            <span class="panel-kicker">Topic 04 · completion</span>
+            <h2>Finished this topic?</h2>
+            <p>Marking is your own record that you have studied and understood the material. It is reversible, and it updates the dashboard immediately.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-topic-toggle aria-pressed="false" aria-describedby="lesson-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-topic-toggle-label>Mark topic complete</span>
+          </button>
+        </div>
+
+        <nav class="lesson-pager" aria-label="Topic navigation">
+          <a class="pager-card pager-card--prev" href="timing-controls.html"><span class="pager-kicker">← Previous · Unit 3 · Topic 03</span><strong>Delay-Based and Event-Based Timing Controls</strong></a>
+          <a class="pager-card pager-card--next" href="loops.html"><span class="pager-kicker">→ Next · Unit 3 · Topic 05</span><strong>Looping Statements</strong></a>
+        </nav>
+      </footer>
+    </article>
+  </div>
+</div>
+
+<script type="application/json" id="curriculum-data">{"version":1,"updated":"2026-11-24","courses":[{"id":"ec405","code":"EC-405","title":"Digital Logic Design Through Verilog HDL","kind":"Theory","periodsPerWeek":5,"totalPeriods":75,"formativeMarks":20,"summativeMarks":80,"status":"available","units":[{"id":"unit-01","number":1,"title":"Introduction to Verilog HDL, Language Constructs and Conventions","periods":20,"status":"available","topics":[{"id":"vlsi-design-flow","number":1,"title":"VLSI IC Design Flow and the Role of HDL","slug":"01-vlsi-design-flow"},{"id":"vhdl-vs-verilog","number":2,"title":"VHDL vs Verilog, Features and Abstraction Levels","slug":"02-vhdl-vs-verilog"},{"id":"modules-instances-ports","number":3,"title":"Modules, Instances, Ports and Connection Rules","slug":"03-modules-instances-ports"},{"id":"hierarchical-modelling","number":4,"title":"Hierarchical Modelling and Design Methodologies","slug":"04-hierarchical-modelling"},{"id":"lexical-conventions","number":5,"title":"Lexical Conventions and Number Specification","slug":"05-lexical-conventions"},{"id":"data-types","number":6,"title":"Data Types: Nets, Registers and Vectors","slug":"06-data-types"},{"id":"arrays-memories-strings","number":7,"title":"Arrays, Memories, Strings and Vectors vs Arrays","slug":"07-arrays-memories-strings"},{"id":"parameters","number":8,"title":"Parameters: defparam and localparam","slug":"08-parameters"},{"id":"system-tasks-directives","number":9,"title":"System Tasks and Compiler Directives","slug":"09-system-tasks-directives"},{"id":"expressions-operators","number":10,"title":"Expressions, Operands and Operators","slug":"10-expressions-operators"}]},{"id":"unit-02","number":2,"title":"Gate Level and Data Flow Modelling","periods":10,"status":"available","topics":[{"id":"gate-primitives","number":1,"title":"Gate Primitives, Symbols and Truth Tables","slug":"01-gate-primitives"},{"id":"gate-delays","number":2,"title":"Gate Instantiation and Delay Modelling","slug":"02-gate-delays"},{"id":"dataflow-modelling","number":3,"title":"Dataflow Modelling and Continuous Assignments","slug":"03-dataflow-modelling"},{"id":"adders-subtractors-comparators","number":4,"title":"Adders, Subtractors and Comparators","slug":"04-adders-subtractors-comparators"},{"id":"mux-demux-encoder-decoder","number":5,"title":"Multiplexers, Demultiplexers, Encoders and Decoders","slug":"05-mux-demux-encoder-decoder"},{"id":"alu-modelling-comparison","number":6,"title":"ALU Design and Modelling Comparison","slug":"06-alu-and-modelling-comparison"}]},{"id":"unit-03","number":3,"title":"Behavioural Modelling","periods":15,"status":"available","topics":[{"id":"initial-always","number":1,"title":"Initial and Always Procedures","slug":"01-initial-always"},{"id":"blocking-nonblocking","number":2,"title":"Blocking and Non-Blocking Assignments","slug":"02-blocking-nonblocking"},{"id":"timing-controls","number":3,"title":"Delay-Based and Event-Based Timing Controls","slug":"03-timing-controls"},{"id":"conditionals-case","number":4,"title":"Conditionals, case, casex and casez","slug":"04-conditionals-case"},{"id":"loops","number":5,"title":"Looping Statements","slug":"05-loops"},{"id":"sequential-parallel-blocks","number":6,"title":"Sequential and Parallel Blocks","slug":"06-sequential-parallel-blocks"},{"id":"udp","number":7,"title":"User-Defined Primitives","slug":"07-udp"}]},{"id":"unit-04","number":4,"title":"Modelling of Combinational and Sequential Logic Circuits","periods":15,"status":"locked","topics":[]},{"id":"unit-05","number":5,"title":"System Design Concepts","periods":15,"status":"locked","topics":[]}]},{"id":"ec410","code":"EC-410","title":"Digital Logic Design Through Verilog HDL Lab","kind":"Laboratory","periodsPerWeek":3,"totalPeriods":45,"formativeMarks":40,"summativeMarks":60,"status":"available","experiments":[{"id":"experiment-01","number":1,"title":"Implementation of Basic Logic Gates","slug":"experiment-01","status":"available"},{"id":"experiment-02","number":2,"title":"Implementation of Adders","slug":"experiment-02","status":"available"},{"id":"experiment-03","number":3,"title":"Implementation of Subtractors","slug":"experiment-03","status":"available"},{"id":"experiment-04","number":4,"title":"Implementation of 4-Bit Parallel Adder","slug":"experiment-04","status":"available"},{"id":"experiment-05","number":5,"title":"Implementation of Multiplexers","slug":"experiment-05","status":"available"},{"id":"experiment-06","number":6,"title":"Implementation of Demultiplexers","slug":"experiment-06","status":"available"},{"id":"experiment-07","number":7,"title":"Future practical","slug":"experiment-07","status":"locked"},{"id":"experiment-08","number":8,"title":"Future practical","slug":"experiment-08","status":"locked"},{"id":"experiment-09","number":9,"title":"Future practical","slug":"experiment-09","status":"locked"},{"id":"experiment-10","number":10,"title":"Future practical","slug":"experiment-10","status":"locked"},{"id":"experiment-11","number":11,"title":"Future practical","slug":"experiment-11","status":"locked"},{"id":"experiment-12","number":12,"title":"Future practical","slug":"experiment-12","status":"locked"},{"id":"experiment-13","number":13,"title":"Future practical","slug":"experiment-13","status":"locked"},{"id":"experiment-14","number":14,"title":"Future practical","slug":"experiment-14","status":"locked"},{"id":"experiment-15","number":15,"title":"Future practical","slug":"experiment-15","status":"locked"}]}],"toolchain":{"primary":"Xilinx ISE / Vivado or similar","verification":"Icarus Verilog 13.0 + GTKWave","language":"Verilog-2001"}}</script>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="../labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="../index.html#path">Learning path</a>
+              <a class="footer-link" href="../index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="../circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="../playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="../quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="../guides/index.html">Setup guides</a>
+              <a class="footer-link" href="../index.html#approach">The approach</a>
+              <a class="footer-link" href="../styleguide.html">Design system</a>
+              <a class="footer-link" href="../styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="../index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="../index.html">Homepage<span>01</span></a>
+        <a class="mobile-nav-link is-active" href="../theory/index.html" aria-current="page">Theory<span>02</span></a>
+        <a class="mobile-nav-link" href="../labs/index.html">Laboratory<span>03</span></a>
+        <a class="mobile-nav-link" href="../circuit-lab/index.html">Circuit Lab<span>04</span></a>
+        <a class="mobile-nav-link" href="../playground/index.html">Playground<span>05</span></a>
+        <a class="mobile-nav-link" href="../quizzes/index.html">Quizzes<span>06</span></a>
+        <a class="mobile-nav-link" href="../guides/index.html">Guides<span>07</span></a>
+        <a class="mobile-nav-link" href="../dashboard.html">Dashboard<span>08</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/theory.js"></script>
+</body>
+</html>

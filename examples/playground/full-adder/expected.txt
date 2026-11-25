@@ -1,0 +1,13 @@
+Full adder truth table
+a b cin | sum carry | a+b+cin
+--------+-----------+--------
+0 0  0  |  0    0   |    0
+0 0  1  |  1    0   |    1
+0 1  0  |  1    0   |    1
+0 1  1  |  0    1   |    2
+1 0  0  |  1    0   |    1
+1 0  1  |  0    1   |    2
+1 1  0  |  0    1   |    2
+1 1  1  |  1    1   |    3
+PASS: 8/8 rows match
+tb.v:37: $finish called at 8000 (1ps)

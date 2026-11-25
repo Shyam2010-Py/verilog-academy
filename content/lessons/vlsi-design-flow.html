@@ -1,0 +1,135 @@
+<section class="lesson-section">
+  <h2 id="why">Why the flow matters more than the syntax</h2>
+  <p class="lesson-lead">Verilog looks like a programming language, but it is a description language for hardware. A line of Verilog does not execute on a processor; it describes a connection, a gate, a register or a block of logic that must eventually exist as physical silicon. The design flow is the sequence of transformations that turns that description into a tested chip.</p>
+  <p>Engineers who skip the flow usually learn Verilog as a set of syntax rules and then wonder why a design that simulates perfectly fails timing, consumes unexpected area, or behaves differently after synthesis. Every construct you will meet in Units 1–3 has a place in the flow: some describe hardware that synthesis accepts, and some exist only to observe or stimulate a simulation. Knowing which is which is the first professional skill.</p>
+  <p>This topic establishes the map. The rest of EC-405 fills in the territory.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="objectives">What you should be able to do</h2>
+  <ul>
+    <li>Name the stages of a VLSI design flow and state the input and output of each one.</li>
+    <li>Explain where RTL, testbenches, synthesis and gate-level simulation appear in that flow.</li>
+    <li>Distinguish simulation-only constructs from synthesizable hardware descriptions.</li>
+    <li>Read a small design and testbench and say which lines become hardware and which lines only drive the simulator.</li>
+    <li>Describe what a synthesis tool does with an <code>assign</code> statement and with a <code>#1</code> delay.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="flow">The design flow, stage by stage</h2>
+  <p>The exact names differ between companies and between ASIC and FPGA projects, but the logical sequence is stable. Each stage produces an artefact that the next stage consumes, and each stage has its own verification step.</p>
+
+  <ol class="flow-list">
+    <li class="flow-step"><strong>Specification</strong><span>Functional requirements, interfaces, clock frequencies, power budget and process technology. The output is a document that can be tested against.</span></li>
+    <li class="flow-step"><strong>Architecture</strong><span>Partition the system into blocks, choose pipelines, memories and bus widths. The output is a block diagram with timing and area estimates.</span></li>
+    <li class="flow-step"><strong>RTL design</strong><span>Describe each block in Verilog at register-transfer level: registers, combinational logic and the connections between them. The output is synthesizable RTL.</span></li>
+    <li class="flow-step"><strong>Functional verification</strong><span>Simulate the RTL against testbenches, reference models and assertions. Bugs found here are cheap to fix; the same bug after tapeout is not.</span></li>
+    <li class="flow-step"><strong>Synthesis</strong><span>Map the RTL onto standard cells or FPGA primitives from a technology library. The output is a gate-level netlist and a report of area, timing and inferred hardware.</span></li>
+    <li class="flow-step"><strong>Design for test</strong><span>Insert scan chains and test logic so the manufactured die can be exercised by automatic test equipment.</span></li>
+    <li class="flow-step"><strong>Place and route</strong><span>Decide where each cell sits and how the wires run. The output is a physical layout plus extracted parasitics.</span></li>
+    <li class="flow-step"><strong>Signoff analysis</strong><span>Static timing analysis, power, noise, design-rule checks and equivalence checking. Nothing proceeds until every check passes.</span></li>
+    <li class="flow-step"><strong>Tapeout, fabrication, test</strong><span>The layout becomes masks, the foundry builds the die, and packaged parts are tested and brought up on a bench.</span></li>
+  </ol>
+
+  <div class="lesson-note">
+    <strong>FPGA shortcut</strong>
+    <p>An FPGA project still synthesises and places-and-routes, but the result is a configuration bitstream instead of masks. There is no fabrication stage, which is why FPGA iteration takes hours rather than months.</p>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 id="verilog-in-the-flow">Where Verilog appears</h2>
+  <p>Verilog is not used at one point in the flow; it is the working language at several points. The same source file can be read by different tools for different purposes, so the <em>subset</em> of the language being used matters as much as the file extension.</p>
+
+  <div class="table-wrap">
+    <table>
+      <caption>Verilog artefacts by stage</caption>
+      <thead>
+        <tr><th scope="col">Stage</th><th scope="col">What the Verilog contains</th><th scope="col">Tool</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>RTL design</td><td>Synthesizable modules: ports, continuous assignments, always blocks, instances</td><td>Editor, linter</td></tr>
+        <tr><td>Functional verification</td><td>Testbenches, stimulus, checks, assertions, coverage</td><td>Simulator</td></tr>
+        <tr><td>Synthesis</td><td>RTL in, gate-level netlist out; the netlist is itself Verilog</td><td>Synthesis tool</td></tr>
+        <tr><td>Gate-level simulation</td><td>Netlist plus cell models and timing annotations (SDF)</td><td>Simulator</td></tr>
+        <tr><td>Place and route</td><td>The netlist is the starting database; physical data is not written in Verilog</td><td>P&amp;R tool</td></tr>
+        <tr><td>Signoff</td><td>Timing constraints (SDC), not Verilog behaviour; equivalence is checked against RTL</td><td>STA, formal</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The important boundary is between <strong>RTL</strong> and the <strong>testbench</strong>. RTL is written to become hardware. A testbench is written to exercise that hardware inside a simulator; it has no ports, no physical existence, and is never synthesised. Mixing the two is one of the most common beginner errors, and it is exactly the error that the example below makes visible.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">A half adder, from RTL to simulation</h2>
+  <p>Two files are enough to show the boundary. The design describes a combinational circuit; the testbench applies all four input combinations, waits for the outputs to settle, and prints a table.</p>
+
+  {{CODE:examples/verilog/vlsi-design-flow/design.v}}
+
+  <h3>Line by line: the design</h3>
+  <ul>
+    <li><code>`default_nettype none</code> makes any undeclared net an error. Without it, a misspelled signal silently becomes an implicit one-bit wire and the design simulates with an unintended connection. The last line restores the default so the directive does not leak into other files.</li>
+    <li><code>module half_adder (</code> starts a module and opens an ANSI-style port list. The ports are directions plus names plus net types, all in one place.</li>
+    <li><code>input wire a</code> declares an input net. Inputs are driven from outside the module, so a net type is the natural choice.</li>
+    <li><code>output wire sum</code> declares an output net. Inside the module it must be driven by something; here it is driven by a continuous assignment.</li>
+    <li><code>assign sum = a ^ b;</code> is a continuous assignment. It is not executed once: it describes a wire permanently driven by the XOR of <code>a</code> and <code>b</code>. Whenever either input changes, the simulator re-evaluates the expression.</li>
+    <li><code>endmodule</code> closes the module. Nothing after it belongs to this design unit.</li>
+  </ul>
+
+  {{CODE:examples/verilog/vlsi-design-flow/tb.v}}
+
+  <h3>Line by line: the testbench</h3>
+  <ul>
+    <li><code>`timescale 1ns / 1ps</code> sets the unit and precision used by delays and by time formats. A delay written as <code>#1</code> therefore means 1 ns, and time is tracked to 1 ps.</li>
+    <li><code>module half_adder_tb;</code> has no port list. A testbench is a top-level module with nothing outside it to connect to.</li>
+    <li><code>reg a;</code> and <code>reg b;</code> are variables that procedural code can assign. In a testbench they hold the stimulus. <code>wire sum;</code> and <code>wire carry;</code> observe the outputs; the design drives them.</li>
+    <li><code>half_adder dut (...)</code> instantiates the design under test and connects ports by name. Named connections make the mapping readable and immune to port-order changes.</li>
+    <li><code>initial begin ... end</code> runs once at time zero. This is the correct place for one-shot stimulus.</li>
+    <li><code>for (i = 0; i &lt; 4; i = i + 1)</code> is a procedural loop. In a testbench it simply repeats the stimulus four times; it is not describing four copies of hardware.</li>
+    <li><code>{a, b} = i[1:0];</code> uses concatenation on the left-hand side. Bit 1 of <code>i</code> goes to <code>a</code>, bit 0 goes to <code>b</code>, so the loop walks 00, 01, 10, 11.</li>
+    <li><code>#1;</code> advances simulation time by 1 ns. Combinational outputs would settle in the same time step anyway, but the delay makes the printed table and any waveform unambiguous.</li>
+    <li><code>$display</code> is a simulation system task, not hardware. <code>$finish</code> stops the simulation.</li>
+  </ul>
+
+  <h3>Compile and run</h3>
+  <p>Both files are compiled together. The simulator elaborates the testbench as the top level and finds the design through the instance.</p>
+  {{COMMANDS:vlsi-design-flow}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="reading-output">Reading the actual output</h2>
+  <p>This is the exact output of the run on Icarus Verilog 13.0, not a hand-written expectation. The truth table is the AND/XOR definition of a half adder: <code>sum</code> is 1 when exactly one input is 1, and <code>carry</code> is 1 only when both are 1.</p>
+
+  {{OUTPUT:examples/verilog/vlsi-design-flow/expected.txt}}
+
+  <p>The final line, <code>tb.v:21: $finish called at 4000 (1ps)</code>, is printed by the simulator itself when it executes <code>$finish</code>. The time is shown in the simulation precision, 1 ps, so 4000 means 4 ns: four iterations of <code>#1</code>. It is not part of your design's output and it is not synthesizable.</p>
+
+  <div class="lesson-note lesson-note--key">
+    <strong>What this run proves</strong>
+    <p>The RTL matches the half-adder truth table for all four input combinations, and the testbench observes the outputs correctly. It does not prove that the design meets timing, that synthesis will produce the expected gates, or that the silicon will work. Those are separate checks at later stages of the flow.</p>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Treating Verilog as sequential software.</strong> Continuous assignments and <code>always</code> blocks are concurrent. Source order does not mean execution order; it only matters inside a procedural block, and even there the assignment type changes the meaning.</li>
+    <li><strong>Assuming a clean simulation means working hardware.</strong> Simulation checks functional intent. Synthesis, timing and physical checks are separate, and they can all fail on RTL that simulates perfectly.</li>
+    <li><strong>Putting testbench code into RTL.</strong> <code>$display</code>, <code>#delay</code> and free-running stimulus do not describe hardware. Keep them in the testbench.</li>
+    <li><strong>Relying on implicit nets.</strong> Without <code>`default_nettype none</code>, a typo creates a new wire and the error becomes a silent functional bug.</li>
+    <li><strong>Confusing RTL with a gate netlist.</strong> RTL describes behaviour at registers and combinational logic; synthesis decides which cells implement it. Reading a netlist is a different skill from writing RTL.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>The flow runs specification → architecture → RTL → verification → synthesis → DFT → place and route → signoff → fabrication and test.</li>
+    <li>Verilog is used for RTL, testbenches, gate-level netlists and timing models at different stages; the acceptable language subset depends on the stage.</li>
+    <li>RTL is written to become hardware. A testbench is written to exercise hardware in simulation and is never synthesised.</li>
+    <li><code>assign</code> describes a permanent combinational connection. <code>initial</code>, <code>$display</code> and <code>#delay</code> are simulation constructs.</li>
+    <li>Simulation success is necessary but not sufficient: synthesis, timing and physical verification are separate gates.</li>
+  </ul>
+</section>

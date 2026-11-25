@@ -1,0 +1,97 @@
+<section class="lesson-section">
+  <h2 id="two-operators">Two assignment operators, two meanings</h2>
+  <p class="lesson-lead"><code>=</code> is the blocking assignment. <code>&lt;=</code> is the non-blocking assignment. Both put a value into a variable, but they schedule that update differently, and the difference is the single most consequential rule in behavioural Verilog.</p>
+  <p>Inside an <code>always @(posedge clk)</code> block, the choice decides whether you have described a shift register or a single register copied to itself. The two versions compile without warnings, simulate differently, and synthesise to different hardware. There is no way to tell them apart by looking at the port list.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="scheduling">What the simulator actually does</h2>
+  <p>A simulation time step is divided into regions. The two that matter here are the <strong>active</strong> region, where procedural statements execute, and the <strong>non-blocking update</strong> region, where updates scheduled by <code>&lt;=</code> are applied.</p>
+  <ol class="flow-list">
+    <li class="flow-step"><strong>Blocking assignment</strong><span>The right-hand side is evaluated and the left-hand side is updated immediately. The next statement in the block sees the new value.</span></li>
+    <li class="flow-step"><strong>Non-blocking assignment</strong><span>The right-hand side is evaluated immediately, but the update is queued. Every other statement in the block continues with the <em>old</em> value. The queued updates are applied at the end of the current time step.</span></li>
+  </ol>
+  <p>That is the whole model. "Blocking" means it blocks the following statements until the value is stored. "Non-blocking" means it does not: the statement schedules an update and moves on.</p>
+  <p>For combinational logic the difference is usually invisible, because there is only one assignment per signal and no shared state. For sequential logic it is decisive: hardware registers all sample their inputs at the same clock edge, so every right-hand side must be read before any left-hand side is updated. Non-blocking assignment is exactly that behaviour.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="shift">A three-stage shift register, both ways</h2>
+  <p>The design contains two modules with identical ports. One shifts with blocking assignments, the other with non-blocking assignments.</p>
+
+  {{CODE:examples/verilog/blocking-nonblocking/design.v}}
+
+  <h3>Line by line: the blocking version</h3>
+  <ul>
+    <li><code>q0 = d;</code> updates <code>q0</code> immediately. The next statement sees the new <code>q0</code>.</li>
+    <li><code>q1 = q0;</code> therefore copies the value that <code>d</code> just wrote into <code>q0</code>, not the old <code>q0</code>.</li>
+    <li><code>q2 = q1;</code> copies that same value again.</li>
+    <li>The result is that all three outputs receive <code>d</code> simultaneously. The hardware is <strong>one register</strong> whose output fans out to three ports, not three registers in series.</li>
+  </ul>
+
+  <h3>Line by line: the non-blocking version</h3>
+  <ul>
+    <li><code>q0 &lt;= d;</code> queues <code>q0 = d</code> for the end of the time step.</li>
+    <li><code>q1 &lt;= q0;</code> reads the <em>old</em> <code>q0</code>, because the queued update has not been applied yet, and queues <code>q1 = old q0</code>.</li>
+    <li><code>q2 &lt;= q1;</code> reads the old <code>q1</code> and queues it.</li>
+    <li>At the end of the edge all three updates land together. Each stage receives the value its predecessor held before the edge, which is exactly a three-stage shift register.</li>
+  </ul>
+  <p>The order of the three statements does not matter in the non-blocking version. Reversing them produces identical hardware, because every right-hand side is sampled before any update. That is precisely why non-blocking assignment is required for registers: it makes the description independent of statement order, matching the parallel nature of clocked hardware.</p>
+
+  {{CODE:examples/verilog/blocking-nonblocking/tb.v}}
+
+  <p>The testbench clocks both modules with the same signal and drives a six-bit pattern, one bit per cycle. It prints the three outputs of each as a binary vector in the order <code>q2 q1 q0</code>.</p>
+
+  {{COMMANDS:blocking-nonblocking}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/blocking-nonblocking/expected.txt}}
+
+  <p>Read the two output columns against the <code>d</code> column.</p>
+  <p><strong>Blocking column:</strong> <code>q2q1q0</code> is <code>111</code> when <code>d</code> is 1 and <code>000</code> when <code>d</code> is 0. All three bits change together, one cycle after <code>d</code>. The three names are three views of one storage element.</p>
+  <p><strong>Non-blocking column:</strong> the bit pattern moves one position per cycle. Cycle 0 shows <code>x01</code>; cycle 1 shows <code>011</code>; cycle 2 shows <code>110</code>. The <code>1</code> enters at <code>q0</code>, reaches <code>q1</code> on the next edge, and <code>q2</code> on the edge after that.</p>
+  <p>The first row deserves a note because it contains an <code>x</code>. At time 5 ns the clock produces a rising edge before the loop has driven any data, with <code>d</code> still 0. That edge loads <code>q0 &lt;= 0</code> and shifts the uninitialised values right. By the time the loop takes its first sample at 15 ns, <code>q0</code> is 1, <code>q1</code> holds the earlier 0, and <code>q2</code> still holds the initial <code>x</code>. The <code>x</code> is not a bug in the design; it is an uninitialised register being shifted through. Real hardware needs a reset for exactly this reason.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="rules">Rules that survive review</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Which operator belongs where</caption>
+      <thead><tr><th scope="col">Context</th><th scope="col">Use</th><th scope="col">Why</th></tr></thead>
+      <tbody>
+        <tr><td><code>always @(posedge clk)</code></td><td><code>&lt;=</code></td><td>All registers sample together at the edge.</td></tr>
+        <tr><td><code>always @*</code> combinational</td><td><code>=</code></td><td>Statements model logic that settles immediately; a blocking update lets later statements see the result.</td></tr>
+        <tr><td>Testbench stimulus</td><td><code>=</code></td><td>You want the stimulus applied before the next statement, and there is no hardware to model.</td></tr>
+        <tr><td>Testbench sampling a design</td><td><code>&lt;=</code> or a delay</td><td>Sampling right at the edge races with the design's own updates.</td></tr>
+        <tr><td>Mixing both in one clocked block</td><td>Avoid</td><td>Relies on intra-block ordering and is a reliable source of simulation/synthesis mismatch.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A practical rule taught in most design guides: <strong>non-blocking for sequential, blocking for combinational, and never both in the same block</strong>. It is not a superstition. It follows directly from the event model.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Using blocking assignments in a clocked block.</strong> The shift register collapses into one register, or an accumulator updates mid-block. Both simulate plausibly and are wrong.</li>
+    <li><strong>Mixing <code>=</code> and <code>&lt;=</code> for the same variable.</strong> The result depends on statement order in a way that is hard to reason about and that synthesis may not reproduce.</li>
+    <li><strong>Sampling a design output with a blocking read at the clock edge.</strong> The testbench races the design. Sample after a small delay, or on the opposite edge.</li>
+    <li><strong>Assuming non-blocking means "slower".</strong> It does not. It means "update at the end of the time step". The hardware is the same speed.</li>
+    <li><strong>Using non-blocking assignment for combinational logic.</strong> It can create simulation-only pipelines and mismatches at the clock edge; use blocking there.</li>
+    <li><strong>Forgetting that <code>&lt;=</code> in Verilog is not the same as VHDL's signal assignment.</strong> The punctuation is similar; the scheduling model is not interchangeable across languages.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li><code>=</code> updates immediately; <code>&lt;=</code> evaluates now and updates at the end of the time step.</li>
+    <li>Clocked blocks use <code>&lt;=</code>; combinational blocks use <code>=</code>; do not mix them in one block.</li>
+    <li>Blocking assignments in a shift register make all stages load the same value; non-blocking assignments make a real pipeline.</li>
+    <li>Non-blocking assignment makes register descriptions independent of statement order.</li>
+    <li>An uninitialised register shifts <code>x</code> through the pipeline until a reset or enough cycles clear it.</li>
+  </ul>
+</section>

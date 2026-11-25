@@ -1,0 +1,21 @@
+HALF SUBTRACTOR
+x y | diff borrow | x-y
+----+-------------+----
+ 0 0 |  0     0    | 0
+ 0 1 |  1     1    | -1
+ 1 0 |  1     0    | 1
+ 1 1 |  0     0    | 0
+
+FULL SUBTRACTOR
+x y bin | diff borrow | result
+--------+-------------+-------
+ 0 0  0  |  0     0    |  0
+ 0 0  1  |  1     1    |  -1
+ 0 1  0  |  1     1    |  -1
+ 0 1  1  |  0     1    |  -2
+ 1 0  0  |  1     0    |  1
+ 1 0  1  |  0     0    |  0
+ 1 1  0  |  0     0    |  0
+ 1 1  1  |  1     1    |  -1
+checked 12 input combinations, mismatches = 0
+tb.v:63: $finish called at 12000 (1ps)

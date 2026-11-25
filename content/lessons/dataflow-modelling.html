@@ -1,0 +1,91 @@
+<section class="lesson-section">
+  <h2 id="continuous">A continuous assignment is a permanent connection</h2>
+  <p class="lesson-lead">Dataflow modelling describes combinational hardware as equations. <code>assign y = (a &amp; b) | c;</code> does not execute once; it declares that the net <code>y</code> is permanently driven by that expression. Whenever an input changes, the simulator re-evaluates the right-hand side and updates the net.</p>
+  <p>All continuous assignments in a module are concurrent. Their textual order has no meaning. This is the cleanest way to describe arithmetic, selection and routing logic, and it is the level at which many synthesis reports describe the resulting circuit.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="rules">Rules of the dataflow style</h2>
+  <ul>
+    <li>The left-hand side must be a net, not a <code>reg</code>. <code>assign</code> drives a connection.</li>
+    <li>The right-hand side may be any expression of nets, variables and constants. It may include the conditional operator, concatenation and function calls.</li>
+    <li>Every assignment is evaluated whenever any signal on its right-hand side changes. There is no "next statement".</li>
+    <li>Two continuous assignments to the same net create multiple drivers. If they disagree, the net becomes <code>x</code>.</li>
+    <li>A delay on the assignment (<code>assign #5 y = ...</code>) is a simulation model only and is ignored by synthesis.</li>
+  </ul>
+  <p>Dataflow describes <strong>combinational</strong> logic. It cannot store a value; there is no state in a continuous assignment. If a design needs memory, that memory lives in a procedural block or in an inferred RAM, not in an <code>assign</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mux">The conditional operator is a multiplexer</h2>
+  <p><code>sel ? a : b</code> is the natural dataflow description of a 2:1 multiplexer. Nesting the operator builds wider multiplexers, but the nesting must be read carefully: the conditional operator is right-associative, so <code>a ? b : c ? d : e</code> means <code>a ? b : (c ? d : e)</code>. Parenthesise nested selections so a reader does not have to know that rule.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">A 4:1 multiplexer</h2>
+  <p>The example selects one bit from a four-bit input using a two-bit select. The testbench holds the data constant and walks all four select values.</p>
+
+  {{CODE:examples/verilog/dataflow-modelling/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>assign y = sel[1] ? (sel[0] ? d[3] : d[2]) : (sel[0] ? d[1] : d[0]);</code> is a tree of three 2:1 multiplexers. The outer select chooses the upper or lower pair; the inner select chooses one bit of that pair.</li>
+    <li><code>d[3]</code> is bit 3, the most significant bit of <code>d</code>. When <code>sel = 11</code>, the output is <code>d[3]</code>.</li>
+    <li>The testbench sets <code>d = 4'b1010</code>, so the bits from 0 to 3 are 0, 1, 0, 1. The expected output for selects 00, 01, 10, 11 is therefore 0, 1, 0, 1.</li>
+    <li><code>#1</code> after each select change lets the combinational logic settle before printing. The logic is zero-delay, but the delay makes the sample unambiguous.</li>
+  </ul>
+
+  {{COMMANDS:dataflow-modelling}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/dataflow-modelling/expected.txt}}
+
+  <p>The output follows the bits of <code>1010</code> exactly. A wiring mistake in the nested ternary — for example swapping <code>d[2]</code> and <code>d[3]</code> — would still compile and would only be caught by a test that walks the select values, as this one does.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="when">Dataflow, behavioural or gates?</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Choosing a style for combinational logic</caption>
+      <thead><tr><th scope="col">Style</th><th scope="col">Best for</th><th scope="col">Main risk</th></tr></thead>
+      <tbody>
+        <tr><td>Dataflow</td><td>Short equations, arithmetic, multiplexers, decoders</td><td>Unreadable nested expressions; multiple drivers</td></tr>
+        <tr><td>Behavioural</td><td>Priority logic, case tables, complex conditions</td><td>Accidental latches; incomplete assignments</td></tr>
+        <tr><td>Gate level</td><td>Leaf cells, netlists, exact gate mapping</td><td>Verbosity; obscures intent</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A common professional mix is behavioural <code>always @*</code> for decision logic and dataflow <code>assign</code> for the datapath underneath it. The two styles can coexist in one module as long as each signal has exactly one driver.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="latch">A note on latches and loops</h2>
+  <p>Dataflow assignments cannot infer a latch, because a latch is storage and <code>assign</code> has no state. What can go wrong instead is a <strong>combinational loop</strong>: <code>assign a = ~a;</code> or a cycle of assignments with no register in it. The simulator will evaluate the loop until it settles or reports oscillation; synthesis will reject it or produce a circuit that does not match the simulation.</p>
+  <p>Accidental latches belong to procedural code, where an <code>if</code> without an <code>else</code> leaves a variable unassigned on some paths. That is covered in the behavioural unit; do not look for it in <code>assign</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Assigning to a <code>reg</code>.</strong> <code>assign</code> drives nets. Use <code>wire</code>, or move the logic into an <code>always</code> block.</li>
+    <li><strong>Expecting source order to matter.</strong> Continuous assignments are concurrent. Reordering them changes nothing.</li>
+    <li><strong>Driving one net from two <code>assign</code> statements.</strong> The result is contention and <code>x</code>, not a priority encoder.</li>
+    <li><strong>Misreading a nested conditional.</strong> Add parentheses and, if the tree is deeper than two levels, consider a <code>case</code> statement instead.</li>
+    <li><strong>Using <code>#delay</code> in synthesizable dataflow.</strong> It is ignored or rejected; timing is not created by annotation.</li>
+    <li><strong>Building a combinational loop.</strong> Feedback must pass through a register, or the circuit has no stable state.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li><code>assign</code> creates a permanent combinational connection and re-evaluates on input changes.</li>
+    <li>Continuous assignments are concurrent and order-independent.</li>
+    <li>The conditional operator <code>? :</code> describes a multiplexer; nested uses are right-associative.</li>
+    <li>Dataflow cannot store state and cannot infer a latch; feedback without a register is a combinational loop.</li>
+    <li>One driver per net; two drivers produce contention.</li>
+  </ul>
+</section>

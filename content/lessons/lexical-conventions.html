@@ -1,0 +1,101 @@
+<section class="lesson-section">
+  <h2 id="tokens">The smallest pieces of a Verilog file</h2>
+  <p class="lesson-lead">Before modules, ports or assignments can make sense, a Verilog compiler has to split the file into tokens: identifiers, keywords, numbers, strings, operators and punctuation. Most "mysterious" syntax errors are lexical errors — a number whose width was misunderstood, an identifier that starts with an illegal character, or a comment that swallowed half a file.</p>
+  <p>This lesson covers the lexical layer only. Semantics such as blocking versus non-blocking assignment come later; here the question is simply what each piece of text means.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="identifiers">Identifiers, keywords and comments</h2>
+  <ul>
+    <li><strong>Identifiers</strong> start with a letter or an underscore, then may contain letters, digits, underscores and <code>$</code>. They are case-sensitive: <code>value</code> and <code>VALUE</code> are two different signals.</li>
+    <li><strong>System task and function names</strong> start with <code>$</code>, for example <code>$display</code> and <code>$time</code>. The <code>$</code> is not part of an ordinary identifier's first character.</li>
+    <li><strong>Keywords</strong> are lowercase and reserved. <code>module</code>, <code>always</code> and <code>wire</code> cannot be used as signal names. Verilog is case-sensitive, so <code>Module</code> is an ordinary identifier — but using it is a bad idea.</li>
+    <li><strong>Escaped identifiers</strong> begin with a backslash and end at whitespace: <code>\bus[0]</code> is a single identifier. They are rarely needed and easy to misread; prefer legal names.</li>
+    <li><strong>Comments</strong> are <code>// to end of line</code> or <code>/* block */</code>. Block comments do not nest, so a <code>/*</code> inside a block comment does not open a second one. A stray <code>*/</code> can silently comment out code.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="numbers">Number literals</h2>
+  <p>The general form is <code>&lt;size&gt;'&lt;base&gt;&lt;digits&gt;</code>, with an optional <code>s</code> before the base for a signed value:</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Literal forms used in the example</caption>
+      <thead><tr><th scope="col">Literal</th><th scope="col">Meaning</th><th scope="col">Stored value</th></tr></thead>
+      <tbody>
+        <tr><td><code>8'b1010_1010</code></td><td>8-bit binary; underscores are ignored</td><td><code>10101010</code> (0xAA)</td></tr>
+        <tr><td><code>8'hA5</code></td><td>8-bit hexadecimal</td><td><code>10100101</code> (165)</td></tr>
+        <tr><td><code>8'd165</code></td><td>8-bit decimal</td><td><code>10100101</code> (0xA5)</td></tr>
+        <tr><td><code>4'd18</code></td><td>4-bit decimal; 18 does not fit</td><td><code>0010</code> (2) — truncated</td></tr>
+        <tr><td><code>8'shFB</code></td><td>8-bit signed hexadecimal</td><td><code>-5</code></td></tr>
+        <tr><td><code>-5</code></td><td>Unsized decimal, 32-bit signed</td><td><code>-5</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Rules that follow from the grammar:</p>
+  <ul>
+    <li>If the size is omitted, the literal is 32 bits wide. An unsized decimal such as <code>5</code> is a signed 32-bit integer; in a wider context it is extended, and in a narrower context it is truncated.</li>
+    <li>Bases are <code>b</code> (binary), <code>o</code> (octal), <code>d</code> (decimal) and <code>h</code> (hexadecimal), in either case. <code>x</code> and <code>z</code> digits are allowed in binary, octal and hexadecimal, not in decimal.</li>
+    <li>A minus sign is a unary operator applied to the literal, not part of the literal itself. This matters for signedness and width.</li>
+    <li><code>{n{...}}</code> replicates a concatenation <code>n</code> times; <code>{a, b}</code> concatenates without replication.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Literals and identifiers, executed</h2>
+  <p>The example prints each literal through a different format so the stored bits and the printed value can be compared. It also declares two identifiers that differ only in case.</p>
+
+  {{CODE:examples/verilog/lexical-conventions/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>reg [7:0] byte_a;</code> declares an eight-bit variable. The range <code>[7:0]</code> means bit 7 is the most significant bit.</li>
+    <li><code>8'b1010_1010</code> groups the bits for readability; the underscores do not affect the value.</li>
+    <li><code>%b</code> prints binary and <code>%h</code> prints hexadecimal. The same eight bits appear as <code>10101010</code> and <code>aa</code>.</li>
+    <li><code>8'hA5</code> is 165 in decimal, so <code>%0d</code> prints 165. <code>%0d</code> suppresses leading spaces; <code>%d</code> would pad the field.</li>
+    <li><code>4'd18</code> does not fit in four bits. The low four bits of 18 (<code>10010</code>) are <code>0010</code>, so the value is 2. The simulator warns about the truncation; the warning is useful, not noise.</li>
+    <li><code>8'shFB</code> is a signed 8-bit value. <code>0xFB</code> is 251 unsigned, which is <code>-5</code> in two's complement.</li>
+    <li><code>-5</code> is an unsized signed decimal. It is printed as -5 because the expression keeps its 32-bit signed interpretation.</li>
+    <li><code>{4{2'b10}}</code> repeats <code>10</code> four times, producing <code>10101010</code>. The inner braces are required.</li>
+    <li><code>{4'b1100, 4'b1010}</code> joins two four-bit values into eight bits, most significant part first.</li>
+    <li><code>legal_name_1</code>, <code>value</code> and <code>VALUE</code> are all legal identifiers. The last two are distinct variables, so assigning <code>4'hA</code> to <code>value</code> does not change <code>VALUE</code>.</li>
+  </ul>
+
+  {{COMMANDS:lexical-conventions}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/lexical-conventions/expected.txt}}
+
+  <p>The compiler also emits <code>warning: Numeric constant truncated to 4 bits</code> for the <code>4'd18</code> literal. That warning is part of the evidence: the truncation is real, deliberate and visible, not a formatting trick.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="strings">Strings and directives</h2>
+  <p>A string is a double-quoted sequence of bytes, one byte per character. <code>"HELLO"</code> is five bytes; assigning it to a wider vector pads on the left with zeros, and assigning it to a narrower vector truncates. There is no separate string type in Verilog-2001; a string is just a packed vector with a convenient literal syntax.</p>
+  <p>Compiler directives begin with a backtick, not a dollar sign: <code>`define</code>, <code>`include</code>, <code>`timescale</code>, <code>`default_nettype</code>. They are processed before elaboration and are not system tasks. A macro is textual substitution, so parentheses matter: <code>`define WIDTH 4</code> followed by <code>`WIDTH-1</code> expands to <code>4-1</code>, which is fine here, but expressions with operators need care.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Forgetting the size.</strong> <code>5</code> is a 32-bit signed value, not a 4-bit one. Use <code>4'd5</code> when the width is part of the intent.</li>
+    <li><strong>Expecting decimal literals to saturate.</strong> They truncate. <code>4'd18</code> is 2, and the simulator may only warn.</li>
+    <li><strong>Using a hyphen in an identifier.</strong> <code>half-adder</code> parses as <code>half</code> minus <code>adder</code>. Use an underscore.</li>
+    <li><strong>Nesting block comments.</strong> A <code>/*</code> inside a block comment does not nest; the first <code>*/</code> closes the comment.</li>
+    <li><strong>Confusing <code>'d</code> with a decimal point.</strong> <code>4'd2</code> is a four-bit decimal 2; <code>4.2</code> is a real number and is not synthesizable.</li>
+    <li><strong>Treating <code>x</code> and <code>z</code> as ordinary digits.</strong> They are simulation states. Synthesis treats them as don't-cares or rejects them, depending on context.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Identifiers are case-sensitive and may contain letters, digits, underscores and <code>$</code> after the first character.</li>
+    <li>A sized literal is <code>&lt;size&gt;'&lt;base&gt;&lt;digits&gt;</code>; an optional <code>s</code> makes it signed; underscores are ignored.</li>
+    <li>Unsized decimals are 32-bit signed; sized literals truncate silently apart from simulator warnings.</li>
+    <li>Concatenation uses <code>{a, b}</code>; replication uses <code>{n{...}}</code>.</li>
+    <li>Compiler directives start with a backtick; system tasks start with <code>$</code>.</li>
+  </ul>
+</section>

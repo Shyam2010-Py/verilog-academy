@@ -1,0 +1,5 @@
+t=7000 delay: start raised
+t=15000 event: first posedge after start
+t=25000 wait: state reached 2
+t=28000 delay: three time units later
+example.v:32: $finish called at 28000 (1ps)

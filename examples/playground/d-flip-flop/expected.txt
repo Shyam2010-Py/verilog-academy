@@ -1,0 +1,13 @@
+D flip-flop: asynchronous reset, enable and rising edge
+RST EN D CLK     | Q Qbar
+-----------------+-------
+ 1  0 0  async   | 0  1
+ 0  1 1  no edge | 0  1
+ 0  1 1  rising  | 1  0
+ 0  1 0  no edge | 1  0
+ 0  1 0  rising  | 0  1
+ 0  0 1  rising  | 0  1
+ 0  1 1  rising  | 1  0
+ 1  1 1  async   | 0  1
+PASS: 8/8 state checks match
+tb.v:87: $finish called at 49000 (1ps)

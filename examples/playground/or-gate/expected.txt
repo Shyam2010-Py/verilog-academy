@@ -1,0 +1,9 @@
+OR gate truth table
+a b | y
+----+--
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 1
+PASS: 4/4 rows match
+tb.v:28: $finish called at 4000 (1ps)

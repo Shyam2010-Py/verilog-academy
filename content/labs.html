@@ -1,0 +1,227 @@
+<section class="theory-hero lab-hero">
+  <div class="theory-hero__atmosphere" aria-hidden="true"></div>
+  <div class="container theory-hero__grid">
+    <div class="theory-hero__copy" data-reveal>
+      <span class="eyebrow">EC-410 · Practical laboratory</span>
+      <h1 class="display">Six experiments.<br><span class="gradient-text">Real evidence.</span></h1>
+      <p class="lede">The first six EC-410 experiments, built as complete Verilog-2001 designs with testbenches and captured simulator transcripts. Every truth table, equation and diagram matches the code that produced it. Nothing in this laboratory is marked verified until Icarus Verilog 13.0 has compiled and run it.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="experiment-01.html" data-lab-continue>
+          <span data-lab-continue-label>Start with Experiment 01</span>
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn-secondary btn-lg" href="{{ROOT}}dashboard.html">
+          Open dashboard
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+        </a>
+      </div>
+      <div class="hero-facts theory-facts" aria-label="Practical laboratory scope">
+        <div><strong>{{LAB_TOTAL}}</strong><span>Experiments</span></div>
+        <div><strong>{{LAB_PERIODS}}</strong><span>Laboratory periods</span></div>
+        <div><strong>{{LAB_CHECK_TOTAL}}</strong><span>Recorded checks</span></div>
+        <div><strong>{{LAB_TOOL_VERSION}}</strong><span>Icarus Verilog</span></div>
+      </div>
+    </div>
+
+    <aside class="theory-progress panel" aria-labelledby="lab-progress-title" data-reveal style="--reveal-delay: 100ms">
+      <div class="theory-progress__head">
+        <div>
+          <span class="panel-kicker">Local progress</span>
+          <h2 class="theory-progress__title" id="lab-progress-title"><span data-lab-count>0</span><span class="theory-progress__total">/ {{LAB_TOTAL}}</span></h2>
+          <p class="theory-progress__label">experiments complete</p>
+        </div>
+        <span class="badge badge-cyan" data-lab-percent>0%</span>
+      </div>
+      <div class="progress progress--lg" role="progressbar" aria-label="EC-410 practical progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-lab-bar>
+        <span class="progress-fill" data-lab-fill style="--progress: 0%"></span>
+      </div>
+
+      <div class="theory-progress__next">
+        <span class="panel-kicker">Next unfinished experiment</span>
+        <h3 data-lab-next-title>Implementation of Basic Logic Gates</h3>
+        <p data-lab-next-meta>Experiment 01 · 4 combinations</p>
+        <a class="btn btn-secondary btn-sm" href="experiment-01.html" data-lab-next>
+          <span data-lab-next-label>Open experiment</span>
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+
+      <p class="theory-progress__note">An experiment becomes complete only when you select the control on its page. The same reversible record feeds this overview and the learning dashboard.</p>
+    </aside>
+  </div>
+</section>
+
+<div class="container">
+  <div class="theory-alert" data-storage-alert hidden role="status">
+    <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+    <p data-storage-message></p>
+  </div>
+</div>
+
+<noscript>
+  <div class="container theory-noscript">
+    <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+    <p><strong>Progress needs JavaScript.</strong> Every experiment is readable without it, but completion states and the continue link cannot be updated. Enable JavaScript to track experiments.</p>
+  </div>
+</noscript>
+
+<section class="section-tight lab-bench" id="experiments">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">01 / The bench</span>
+        <h2>Six circuits. Six verified transcripts.</h2>
+      </div>
+      <p>Each experiment is a complete bench record: aim, theory, diagram, equations, truth table, design, testbench, commands, actual output and viva preparation. Work through them in order, or open any experiment whose circuit you already understand.</p>
+    </div>
+
+    <div class="lab-objectives panel" id="objectives" data-reveal>
+      <div class="lab-objectives__head">
+        <span class="panel-kicker">Laboratory objectives</span>
+        <h3>What these six experiments build</h3>
+      </div>
+      <ul class="lab-objectives__list">
+        <li>Derive a truth table and Boolean equations before writing any Verilog.</li>
+        <li>Implement combinational circuits in Verilog-2001 using gate primitives, dataflow assignments and <code>always @*</code>.</li>
+        <li>Write a self-checking testbench that drives every required input combination.</li>
+        <li>Compile with <code>iverilog -g2001</code> and run the simulation image with <code>vvp</code>.</li>
+        <li>Compare the simulator transcript against the expected truth table and explain every column.</li>
+        <li>Diagnose mismatches, undriven outputs, inferred latches and reversed bus order.</li>
+      </ul>
+    </div>
+
+    <div class="lab-grid">
+      {{LAB_CARDS}}
+    </div>
+  </div>
+</section>
+
+<section class="section-tight lab-method" id="method">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">02 / The method</span>
+        <h2>Write it. Compile it. Compare it.</h2>
+      </div>
+      <p>A laboratory result is not a screenshot of code. It is a design, a stimulus, a simulator transcript and a comparison against the expected behaviour. Every experiment here follows the same four steps.</p>
+    </div>
+
+    <div class="lab-method__grid">
+      <ol class="flow-list lab-method__steps" data-reveal>
+        <li class="flow-step"><strong>Derive</strong><span>Write the Boolean behaviour or the structural connection before writing Verilog.</span></li>
+        <li class="flow-step"><strong>Describe</strong><span>Implement the circuit in Verilog-2001 and keep the module ports aligned with the diagram.</span></li>
+        <li class="flow-step"><strong>Stimulate</strong><span>Drive every required input combination from a testbench, not by hand-editing values.</span></li>
+        <li class="flow-step"><strong>Compare</strong><span>Read the transcript against the truth table and record the mismatch count.</span></li>
+      </ol>
+
+      <div class="lab-command-card panel" data-reveal style="--reveal-delay: 80ms">
+        <span class="panel-kicker">Exact workflow · Experiment 01</span>
+        <h3 class="lab-command-card__title">Compile and run from the example directory</h3>
+        {{COMMANDS:experiment-01}}
+        <p class="lab-command-card__note">The build uses <code>-g2001</code>, so the source is checked against Verilog-2001 rather than a newer language mode. The <code>.out</code> file is an Icarus simulation image, not a hardware bitstream.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight lab-tools" id="tools">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">03 / Required tools</span>
+        <h2>A small, free toolchain.</h2>
+      </div>
+      <p>No online simulator and no account are required. The laboratory needs a text editor, a terminal, and Icarus Verilog. Waveform viewing is optional because every experiment records its result as text.</p>
+    </div>
+
+    <div class="lab-tool-grid">
+      <article class="lab-tool panel" data-reveal>
+        <span class="lab-tool__icon"><svg class="icon" aria-hidden="true"><use href="#icon-terminal"></use></svg></span>
+        <h3>Icarus Verilog {{LAB_TOOL_VERSION}}</h3>
+        <p>The compiler <code>iverilog</code> checks and elaborates the design; <code>vvp</code> runs the resulting simulation image. Every transcript on this site was produced with this toolchain in {{LAB_TOOL_MODE}} mode.</p>
+        <span class="lab-tool__meta">Required · installed and used for verification</span>
+      </article>
+
+      <article class="lab-tool panel" data-reveal style="--reveal-delay: 60ms">
+        <span class="lab-tool__icon"><svg class="icon" aria-hidden="true"><use href="#icon-code"></use></svg></span>
+        <h3>Text editor</h3>
+        <p>Any editor that saves plain UTF-8 text works. Keep <code>design.v</code> and <code>tb.v</code> in the same working directory so the command lines in each experiment apply without changes.</p>
+        <span class="lab-tool__meta">Required · no plugin or extension</span>
+      </article>
+
+      <article class="lab-tool panel" data-reveal style="--reveal-delay: 120ms">
+        <span class="lab-tool__icon"><svg class="icon" aria-hidden="true"><use href="#icon-keyboard"></use></svg></span>
+        <h3>Terminal</h3>
+        <p>PowerShell, Command Prompt, Bash or any shell that can find <code>iverilog</code> and <code>vvp</code>. If the commands are not on <code>PATH</code>, call them with their full install path.</p>
+        <span class="lab-tool__meta">Required · same directory as the sources</span>
+      </article>
+
+      <article class="lab-tool panel" data-reveal style="--reveal-delay: 180ms">
+        <span class="lab-tool__icon"><svg class="icon" aria-hidden="true"><use href="#icon-waveform"></use></svg></span>
+        <h3>GTKWave (optional)</h3>
+        <p>The experiments use <code>$display</code> transcripts, so a waveform viewer is not needed to complete them. If you add <code>$dumpfile</code> and <code>$dumpvars</code>, GTKWave is a convenient way to inspect the result.</p>
+        <span class="lab-tool__meta">Optional · not required by any experiment</span>
+      </article>
+    </div>
+
+    <div class="lesson-note lab-tool-note" data-reveal>
+      <strong>Version honesty.</strong>
+      <p>The commands use Verilog-2001 syntax. A different simulator may accept the same files and print a different transcript layout; compare the values, not the spacing. The outputs shown on each experiment page are the actual Icarus 13.0 outputs captured for this release.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight lab-roadmap" id="roadmap">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">04 / Roadmap</span>
+        <h2>Experiments {{LAB_LOCKED_FIRST}}–{{LAB_LOCKED_LAST}} are not published.</h2>
+      </div>
+      <p>The practical paper reserves {{LAB_LOCKED_COUNT}} further experiments. They appear here only as locked roadmap rows: there is no page, no design and no completion control for them in this release.</p>
+    </div>
+
+    <div class="lab-roadmap-panel panel" data-reveal>
+      <div class="lab-roadmap-panel__head">
+        <span class="unit-index">EC-410 · later release</span>
+        <span class="badge badge-violet"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-lock"></use></svg> Locked</span>
+      </div>
+      <ol class="lab-roadmap-list">
+        {{LAB_ROADMAP}}
+      </ol>
+    </div>
+
+    <div class="theory-roadmap-note panel" data-reveal>
+      <div>
+        <span class="panel-kicker">Keep the boundary visible</span>
+        <h3>No placeholder experiments.</h3>
+        <p>Locked experiments are named only to show the official scope. Nothing in this laboratory claims to teach them, and no completion record can be created for them.</p>
+      </div>
+      <a class="btn btn-secondary" href="{{ROOT}}dashboard.html">
+        View the dashboard
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight lab-links">
+  <div class="container">
+    <div class="lab-links__grid">
+      <a class="lab-link-card panel" href="{{ROOT}}theory/index.html" data-reveal>
+        <span class="panel-kicker">EC-405 · Theory</span>
+        <h2>Review the language behind the bench.</h2>
+        <p>Gate primitives, dataflow assignments, behavioural blocks and testbench timing are all explained with their own verified examples.</p>
+        <span class="text-link">Open the theory classroom <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span>
+      </a>
+      <a class="lab-link-card panel" href="{{ROOT}}dashboard.html" data-reveal style="--reveal-delay: 80ms">
+        <span class="panel-kicker">Progress · Dashboard</span>
+        <h2>See both tracks in one place.</h2>
+        <p>The dashboard combines EC-405 topics and EC-410 experiments, calculates totals from the curriculum, and exports a local backup.</p>
+        <span class="text-link">Open the learning dashboard <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="curriculum-data">{{CURRICULUM_JSON}}</script>

@@ -1,0 +1,103 @@
+<section class="lesson-section">
+  <h2 id="nets-and-variables">Nets and variables are different things</h2>
+  <p class="lesson-lead">Verilog has two families of signal objects. A <strong>net</strong> is a connection: it does not hold a value, it carries whatever its driver puts on it. A <strong>variable</strong> holds a value between procedural assignments. Confusing the two is the source of a large fraction of beginner compile errors — and of the false belief that <code>reg</code> always means a flip-flop.</p>
+  <p>The distinction is about <em>how a signal is driven</em>. It is not about whether the final hardware stores a bit.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="families">The two families</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Nets and variables in Verilog-2001</caption>
+      <thead><tr><th scope="col">Family</th><th scope="col">Examples</th><th scope="col">Driven by</th><th scope="col">Typical role</th></tr></thead>
+      <tbody>
+        <tr><td>Net</td><td><code>wire</code>, <code>tri</code>, <code>wand</code>, <code>wor</code>, <code>supply0</code>, <code>supply1</code></td><td>Continuous assignment, primitive output, module output</td><td>Wires between hardware</td></tr>
+        <tr><td>Variable</td><td><code>reg</code>, <code>integer</code>, <code>real</code>, <code>time</code>, <code>realtime</code></td><td>Procedural assignment inside <code>initial</code> or <code>always</code></td><td>Values updated by procedural code</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><code>wire</code> is the default net type. <code>reg</code> is the general-purpose variable type: it is the only type that can be assigned in an <code>always</code> block and then connected to a module output in Verilog-2001. <code>integer</code> is a 32-bit signed variable used for loop counters and arithmetic in testbenches; <code>time</code> is a 64-bit unsigned variable for simulation time; <code>real</code> is a double-precision floating-point value and is not synthesizable.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="four-states">Four values, not two</h2>
+  <p>Every bit in a Verilog simulation can be <code>0</code>, <code>1</code>, <code>x</code> or <code>z</code>:</p>
+  <ul>
+    <li><code>0</code> and <code>1</code> are the logic levels.</li>
+    <li><code>x</code> means unknown: an uninitialised variable, a conflict between drivers, or an undriven input.</li>
+    <li><code>z</code> means high impedance: no active driver. It appears on tri-state buses and on unconnected nets.</li>
+  </ul>
+  <p>These states are a simulation model, not a synthesis promise. A synthesis tool must decide what <code>x</code> means in the hardware it builds; usually it treats it as a don't-care, which can produce a circuit that behaves differently from the simulation. That is why an <code>x</code> in a waveform is a warning, not a value to design around.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="vectors">Vectors, bit-selects and part-selects</h2>
+  <p>A vector is a named group of bits with a declared range: <code>reg [3:0] nibble;</code> or <code>wire [7:0] bus;</code>. The left number is the most significant bit by convention, but the language only requires a consistent range. <code>[0:7]</code> is legal and reverses the significance; mixing ascending and descending ranges in one design is a reliable way to create confusion.</p>
+  <ul>
+    <li><code>bus[0]</code> selects one bit.</li>
+    <li><code>bus[7:4]</code> selects a fixed part. The result is four bits wide.</li>
+    <li><code>bus[base +: 4]</code> is a Verilog-2001 indexed part-select: four bits starting at <code>base</code> and counting upward. It is useful when the slice position is a signal.</li>
+  </ul>
+  <p>Assignment adjusts width automatically. A narrower right-hand side is zero-extended (or sign-extended if signed); a wider right-hand side is truncated to the destination width, keeping the least significant bits. Both are legal, and both are common sources of silent bugs.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">One of each type, observed</h2>
+  <p>The example declares a net, two variables of different widths, an integer, a real and a time variable, then prints each one and a couple of slices.</p>
+
+  {{CODE:examples/verilog/data-types/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>wire [7:0] bus;</code> is a net. It is driven by the continuous assignment <code>assign bus = 8'hA5;</code>.</li>
+    <li><code>reg [3:0] nibble;</code> and <code>reg [7:0] byte_reg;</code> are variables assigned inside <code>initial</code>. They are not automatically flip-flops; here they are simply procedural storage that holds a value for the print.</li>
+    <li><code>integer count;</code> is a 32-bit signed variable. <code>-3</code> fits comfortably.</li>
+    <li><code>real voltage;</code> holds <code>1.8</code>; <code>%0.2f</code> prints two decimal places. Reals are simulation-only.</li>
+    <li><code>time stamp;</code> is 64 bits wide and unsigned. <code>stamp = $time</code> captures the current simulation time.</li>
+    <li><code>#5;</code> advances to 5 ns. With <code>`timescale 1ns / 1ps</code>, <code>$time</code> returns 5 in nanosecond units, but <code>%t</code> prints in the simulation precision, so the output shows 5000 (1 ps units).</li>
+    <li><code>bus[7:4]</code> selects the high nibble of <code>10100101</code>, which is <code>1010</code>. <code>bus[0]</code> selects the low bit, which is 1.</li>
+  </ul>
+
+  {{COMMANDS:data-types}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/data-types/expected.txt}}
+
+  <p>Two details are worth pausing on. The <code>stamp</code> line prints 5000, not 5, because <code>%t</code> uses the precision from the timescale. The <code>real</code> prints with a decimal point while the integer does not; they are different types, not different widths of the same type.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="reg-myth">The <code>reg</code> myth</h2>
+  <p>Despite the name, <code>reg</code> does not mean "register". A <code>reg</code> assigned inside a combinational <code>always @*</code> block describes combinational logic, and synthesis will build gates, not flip-flops. A <code>reg</code> assigned on a clock edge describes a register. The type only says that the value is assigned procedurally.</p>
+  <p>The practical rule is mechanical:</p>
+  <ul>
+    <li>Driven by <code>assign</code>, a primitive, or an instance output → declare a <code>wire</code>.</li>
+    <li>Driven inside <code>always</code> or <code>initial</code> → declare a <code>reg</code> (or another variable type).</li>
+    <li>Module output driven procedurally → <code>output reg</code> in the ANSI port list.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Assigning a <code>wire</code> inside <code>always</code>.</strong> Procedural assignment requires a variable. The compiler rejects it.</li>
+    <li><strong>Using <code>assign</code> on a <code>reg</code>.</strong> Continuous assignment drives nets. Again, the compiler rejects it.</li>
+    <li><strong>Reading a <code>reg</code> before it has been assigned.</strong> It is <code>x</code> at time zero unless initialised. In hardware there is no "uninitialised"; there is a reset strategy.</li>
+    <li><strong>Assuming <code>reg</code> means a flip-flop.</strong> Combinational <code>always</code> blocks produce combinational hardware from <code>reg</code> variables all the time.</li>
+    <li><strong>Ignoring width conversion.</strong> A 9-bit expression assigned to an 8-bit vector loses the top bit without an error.</li>
+    <li><strong>Multiple drivers on one net.</strong> Two continuous assignments to the same <code>wire</code> resolve to <code>x</code> when they disagree. That is contention, not a wired-OR unless you deliberately use <code>wand</code>/<code>wor</code>.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Nets carry, variables hold. <code>wire</code> is driven continuously; <code>reg</code> is assigned procedurally.</li>
+    <li><code>reg</code> is not a hardware register; the <code>always</code> block around it decides the hardware.</li>
+    <li>Verilog simulates four states: <code>0</code>, <code>1</code>, <code>x</code>, <code>z</code>.</li>
+    <li>Vectors support bit-select and part-select; assignment truncates or extends silently.</li>
+    <li><code>integer</code> is 32-bit signed, <code>time</code> is 64-bit unsigned, <code>real</code> is simulation-only.</li>
+  </ul>
+</section>

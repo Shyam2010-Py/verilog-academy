@@ -1,0 +1,94 @@
+<section class="lesson-section">
+  <h2 id="when">When gates are the right level</h2>
+  <p class="lesson-lead">Gate-level modelling describes a circuit as a netlist of primitive gates. It is the level of a cell library, a post-synthesis netlist, and a small amount of glue logic where the exact gate matters. It is a poor level for a 32-bit datapath, where thousands of gates would bury the intent.</p>
+  <p>Verilog provides a fixed set of built-in primitives, so a gate-level design needs no library and no package. That makes primitives useful for teaching, for quick experiments and for models that must be independent of a technology library.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="syntax">Primitive syntax</h2>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Gate instantiation</span></div>
+    <div class="code-block__body"><pre><code>and  g1 (y, a, b);        // output first, then inputs
+not  g2 (yn, a);          // one input
+bufif1 g3 (y_tri, a, en); // output, data, enable
+and  (y1, a, b), (y2, c, d); // two anonymous instances</code></pre></div>
+  </div>
+  <ul>
+    <li>The <strong>output comes first</strong>. This is the opposite of a module port list convention and the most common source of wiring errors.</li>
+    <li>The instance name is optional. Naming instances makes waveforms and hierarchical references readable; anonymous instances are legal but hard to debug.</li>
+    <li>One statement may contain several instances separated by commas.</li>
+    <li>Gate primitives can take an optional drive strength and an optional delay. Delays are the subject of the next topic.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="truth-tables">The primitive set</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Common gate primitives</caption>
+      <thead><tr><th scope="col">Primitive</th><th scope="col">Function</th><th scope="col">Inputs</th></tr></thead>
+      <tbody>
+        <tr><td><code>and</code>, <code>nand</code></td><td>AND, NAND</td><td>Two or more</td></tr>
+        <tr><td><code>or</code>, <code>nor</code></td><td>OR, NOR</td><td>Two or more</td></tr>
+        <tr><td><code>xor</code>, <code>xnor</code></td><td>Exclusive-OR, exclusive-NOR</td><td>Two or more</td></tr>
+        <tr><td><code>not</code>, <code>buf</code></td><td>Inverter, buffer</td><td>One input; one or more outputs</td></tr>
+        <tr><td><code>bufif1</code>, <code>bufif0</code></td><td>Tri-state buffer, active-high or active-low enable</td><td>Data and enable</td></tr>
+        <tr><td><code>notif1</code>, <code>notif0</code></td><td>Tri-state inverter</td><td>Data and enable</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A tri-state buffer drives its data input when enabled and <code>z</code> when disabled. That <code>z</code> is what allows several buffers to share a bus: at most one may be enabled at a time, and the rest must present high impedance. If two enable at once with opposite data, the bus resolves to <code>x</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Seven outputs from four input combinations</h2>
+  <p>The example instantiates one of each common gate and a tri-state buffer, then sweeps all input combinations.</p>
+
+  {{CODE:examples/verilog/gate-primitives/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>and g_and (y_and, a, b);</code> drives <code>y_and</code> with <code>a AND b</code>. The first port is the output.</li>
+    <li><code>not g_not (y_not, a);</code> has one input and one output. The inverter ignores <code>b</code>.</li>
+    <li><code>bufif1 g_tri (y_tri, a, b);</code> drives <code>a</code> onto <code>y_tri</code> when <code>b</code> is 1. When <code>b</code> is 0 the output is <code>z</code>.</li>
+    <li><code>nand</code>, <code>nor</code> and <code>xor</code> follow the same output-first pattern. Their results are the complement or exclusive forms of the basic gates.</li>
+    <li>The testbench instantiates the design and loops <code>i</code> from 0 to 3, driving <code>{a, b}</code> with the two bits of <code>i</code>. The <code>#1</code> gives the zero-delay gates a clean sample point.</li>
+  </ul>
+
+  {{COMMANDS:gate-primitives}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/gate-primitives/expected.txt}}
+
+  <p>Check the last column. The tri-state output is <code>z</code> whenever <code>b</code> is 0 and follows <code>a</code> whenever <code>b</code> is 1. The <code>not</code> column depends only on <code>a</code>, which is why it repeats in pairs. Every other column is the expected gate function of both inputs.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="strengths">Strengths and multiple drivers</h2>
+  <p>Primitives may specify drive strength, for example <code>buf (strong1, weak0) (y, a);</code>. Strengths matter in switch-level and board-level models where several drivers can contend; they are largely irrelevant to synthesizable RTL. What matters at every level is that a net with two active drivers resolves according to the net type: a plain <code>wire</code> with conflicting drivers becomes <code>x</code>, while <code>wand</code> and <code>wor</code> implement wired-AND and wired-OR resolution.</p>
+  <p>Gate-level models are synthesizable in the sense that synthesis can read a netlist, but writing a large design as primitives is not productive. Use them for leaf cells, technology models and teaching; use RTL for the design itself.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Putting inputs before the output.</strong> <code>and (a, b, y);</code> drives <code>a</code> from <code>b AND y</code>. It compiles and is wrong.</li>
+    <li><strong>Expecting <code>z</code> from an ordinary gate.</strong> <code>and</code> and <code>or</code> never produce <code>z</code>; only tri-state primitives and undriven nets do.</li>
+    <li><strong>Enabling two tri-state drivers at once.</strong> The shared net becomes <code>x</code> when the data disagree. Tri-state buses need mutually exclusive enables.</li>
+    <li><strong>Using an unnamed instance in a design you must debug.</strong> Waveforms show anonymous gates poorly, and hierarchical references need names.</li>
+    <li><strong>Modelling a whole datapath as primitives.</strong> The netlist becomes unreadable and unmaintainable; use dataflow or behavioural code instead.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Gate primitives are built in and need no library; the output port comes first.</li>
+    <li><code>and</code>, <code>or</code>, <code>xor</code> and their complements take two or more inputs; <code>not</code> and <code>buf</code> take one.</li>
+    <li><code>bufif1</code> drives data when the enable is 1 and <code>z</code> when it is 0.</li>
+    <li>Multiple drivers resolve according to the net type; conflicting plain wires become <code>x</code>.</li>
+    <li>Gate level is right for leaf cells and netlists, not for large behavioural designs.</li>
+  </ul>
+</section>

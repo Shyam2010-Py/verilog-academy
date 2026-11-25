@@ -1,0 +1,907 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="index, follow">
+  <title>Implementation of Subtractors — EC-410 Experiment 03 | Verilog Academy</title>
+  <meta name="description" content="Implement half and full subtractors with borrow logic, then verify every input combination against independent difference and borrow expectations.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Implementation of Subtractors — EC-410 Experiment 03 | Verilog Academy">
+  <meta property="og:description" content="Implement half and full subtractors with borrow logic, then verify every input combination against independent difference and borrow expectations.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="../assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="../assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <link rel="stylesheet" href="../css/theory.css"><link rel="stylesheet" href="../css/labs.css">
+</head>
+<body class="page-lab page-lab-lesson" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="../index.html">Homepage</a>
+          <a class="nav-link" href="../theory/index.html">Theory</a>
+          <a class="nav-link is-active" href="../labs/index.html" aria-current="page">Laboratory</a>
+          <a class="nav-link" href="../circuit-lab/index.html">Circuit Lab</a>
+          <a class="nav-link" href="../playground/index.html">Playground</a>
+          <a class="nav-link" href="../quizzes/index.html">Quizzes</a>
+          <a class="nav-link" href="../guides/index.html">Guides</a>
+          <a class="nav-link" href="../dashboard.html">Dashboard</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <div class="lesson lab-lesson">
+  <header class="lesson-hero">
+    <div class="lesson-hero__atmosphere" aria-hidden="true"></div>
+    <div class="container">
+      <nav class="lesson-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">EC-410 Laboratory</a>
+        <span aria-hidden="true">/</span>
+        <span>Experiments</span>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Experiment 03</span>
+      </nav>
+
+      <div class="lesson-hero__grid">
+        <div class="lesson-hero__copy">
+          <span class="eyebrow">EC-410 · Experiment 03</span>
+          <h1 id="experiment-title">Implementation of Subtractors</h1>
+          <p class="lede">Implement half and full subtractors with borrow logic, then verify every input combination against independent difference and borrow expectations.</p>
+          <div class="lesson-meta">
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-book"></use></svg> 9 min read</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-circuit"></use></svg> 2 subtractors · 12 input vectors</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-code"></use></svg> Verilog-2001</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-terminal"></use></svg> Verified in Icarus 13.0</span>
+          </div>
+        </div>
+
+        <aside class="lesson-hero__card panel" aria-label="Experiment progress">
+          <span class="panel-kicker">Your progress</span>
+          <p class="lesson-hero__unit">EC-410 · <span data-lab-unit-count>0 / 6</span> experiments</p>
+          <div class="progress" role="progressbar" aria-label="EC-410 practical progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-lab-bar>
+            <span class="progress-fill" data-lab-fill style="--progress: 0%"></span>
+          </div>
+          <button class="btn btn-primary lesson-toggle" type="button" data-experiment-toggle aria-pressed="false" aria-describedby="experiment-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-experiment-toggle-label>Mark experiment complete</span>
+          </button>
+          <p class="lesson-status" data-experiment-status>Reading progress is stored in this browser.</p>
+          <a class="text-link lesson-hero__dashboard" href="../dashboard.html">
+            Learning dashboard
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+          </a>
+        </aside>
+      </div>
+
+      <div class="theory-alert" data-storage-alert hidden role="status">
+        <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+        <p data-storage-message></p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container lesson-layout">
+    <aside class="lesson-aside">
+      <div class="lesson-aside__card panel">
+        <span class="panel-kicker">On this page</span>
+        <nav aria-label="On this page">
+          <ol class="toc-list">
+            <li><a href="#aim"><span class="toc-num">01</span><span>Aim and scope</span></a></li>
+            <li><a href="#objectives"><span class="toc-num">02</span><span>Learning objectives</span></a></li>
+            <li><a href="#tools"><span class="toc-num">03</span><span>Required tools and files</span></a></li>
+            <li><a href="#theory"><span class="toc-num">04</span><span>Theory and working principle</span></a></li>
+            <li><a href="#diagram"><span class="toc-num">05</span><span>Logic diagram</span></a></li>
+            <li><a href="#truth-table"><span class="toc-num">06</span><span>Truth tables</span></a></li>
+            <li><a href="#equations"><span class="toc-num">07</span><span>Boolean equations</span></a></li>
+            <li><a href="#design"><span class="toc-num">08</span><span>Verilog design code</span></a></li>
+            <li><a href="#testbench"><span class="toc-num">09</span><span>Testbench</span></a></li>
+            <li><a href="#explanation"><span class="toc-num">10</span><span>Line-by-line explanation</span></a></li>
+            <li><a href="#commands"><span class="toc-num">11</span><span>Compilation and simulation commands</span></a></li>
+            <li><a href="#output"><span class="toc-num">12</span><span>Actual simulator output</span></a></li>
+            <li><a href="#waveform"><span class="toc-num">13</span><span>Waveform and timing</span></a></li>
+            <li><a href="#result"><span class="toc-num">14</span><span>Result</span></a></li>
+            <li><a href="#mistakes"><span class="toc-num">15</span><span>Common mistakes and troubleshooting</span></a></li>
+            <li><a href="#viva"><span class="toc-num">16</span><span>Viva questions</span></a></li>
+            <li><a href="#revision"><span class="toc-num">17</span><span>Revision points</span></a></li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="lesson-aside__card lesson-aside__unit panel">
+        <span class="panel-kicker">EC-410 · Experiment 03</span>
+        <p>2 subtractors · 12 input vectors</p>
+        <a class="text-link" href="index.html">
+          Laboratory overview
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="text-link lab-aside-link" href="../theory/index.html">
+          EC-405 theory
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+        </a>
+      </div>
+    </aside>
+
+    <article class="lesson-article" data-experiment-id="experiment-03">
+      <section class="lesson-section">
+  <h2 data-index="01" id="aim">Aim and scope</h2>
+  <p class="lesson-lead">Implement a half subtractor and a full subtractor in Verilog-2001, then verify every difference and borrow output for all input combinations.</p>
+  <p>Subtraction is not merely addition with a different operator at the gate level. A subtractor needs a borrow path, and the direction of that borrow is the detail most often written backwards. This experiment isolates the borrow logic: the half subtractor subtracts two bits, the full subtractor also subtracts an incoming borrow and produces an outgoing borrow for the next more significant stage.</p>
+  <p>Both modules are combinational and use continuous assignments. The testbench computes the signed arithmetic difference independently and checks the two outputs against it, so a reversed borrow equation fails immediately.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="02" id="objectives">Learning objectives</h2>
+  <ul class="objective-list">
+    <li>Derive the difference and borrow equations of a half subtractor.</li>
+    <li>Explain why the borrow is <code>~x &amp; y</code> and not <code>x &amp; ~y</code>.</li>
+    <li>Build a full subtractor from two half subtractors and an OR gate.</li>
+    <li>Distinguish the incoming borrow <code>bin</code> from the outgoing borrow.</li>
+    <li>Verify all 4 half-subtractor and all 8 full-subtractor input combinations.</li>
+    <li>Interpret a negative arithmetic result alongside its two's-complement difference bit.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="03" id="tools">Required tools and files</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Experiment 03 bench inventory</caption>
+      <thead><tr><th scope="col">Item</th><th scope="col">Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Icarus Verilog 13.0</td><td>Compiles and runs both subtractor modules and the testbench in Verilog-2001 mode.</td></tr>
+        <tr><td><code>design.v</code></td><td>Contains <code>half_subtractor</code> and <code>full_subtractor</code>.</td></tr>
+        <tr><td><code>tb.v</code></td><td>Applies 12 vectors and compares outputs with a signed arithmetic model.</td></tr>
+        <tr><td>Terminal</td><td>Runs the two commands from the directory containing the sources.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>No gate-level library or external package is required. The design is portable Verilog-2001.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="04" id="theory">Theory and working principle</h2>
+  <p>Subtracting one bit from another gives a difference bit and a borrow bit. The four cases are:</p>
+  <ul>
+    <li><code>0 − 0 = 0</code> with no borrow.</li>
+    <li><code>1 − 0 = 1</code> with no borrow.</li>
+    <li><code>1 − 1 = 0</code> with no borrow.</li>
+    <li><code>0 − 1</code> cannot be represented in one unsigned bit, so the result is 1 with a borrow of 1. Read as a two-bit value, the answer is <code>10</code>, which is 2; in signed arithmetic the difference is −1.</li>
+  </ul>
+  <p>The difference column is 1 when the inputs differ, so <code>diff = x ^ y</code>. The borrow column is 1 only in the last case, where <code>x</code> is 0 and <code>y</code> is 1, so <code>borrow = ~x &amp; y</code>. The negation applies to <code>x</code> alone; parentheses are unnecessary here because unary NOT binds tighter than AND.</p>
+  <p>A full subtractor computes <code>x − y − bin</code>. It can be decomposed into two half subtractions: first <code>x − y</code> produces an intermediate difference <code>d</code> and borrow <code>b1</code>; then <code>d − bin</code> produces the final difference and borrow <code>b2</code>. The stage borrows out if either half subtraction borrowed, so <code>borrow = b1 | b2</code>. The final difference is <code>diff = d ^ bin</code>.</p>
+  <p>This decomposition is exactly what the design writes out: <code>d = x ^ y</code>, <code>b1 = ~x &amp; y</code>, <code>b2 = ~d &amp; bin</code>, <code>diff = d ^ bin</code> and <code>borrow = b1 | b2</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="05" id="diagram">Logic diagram</h2>
+  <p>The half subtractor is drawn with its two gates, including the inversion bubble on the <code>x</code> input of the borrow AND gate. The full subtractor is drawn as two half-subtractor blocks and a borrow OR, which is the decomposition used by the equations.</p>
+
+  <figure class="lab-figure">
+    <div class="lab-figure__scroll" tabindex="0" role="group" aria-label="Logic diagram of the half subtractor and full subtractor. The figure scrolls horizontally on narrow screens.">
+      <svg class="lab-svg" viewBox="0 0 1000 300" role="img" aria-labelledby="fig-sub-title fig-sub-desc">
+        <title id="fig-sub-title">Half subtractor and full subtractor logic diagram</title>
+        <desc id="fig-sub-desc">The half subtractor uses an XOR gate for the difference and an AND gate with an inverted x input for the borrow. The full subtractor connects two half subtractors and ORs their borrow outputs.</desc>
+        <defs>
+          <g id="fs-xor"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 Q18 0 32 16 Q18 32 0 32 Q8 16 0 0 Z"/><path style="fill:none;stroke:var(--text-soft);stroke-width:1.5" d="M-7 0 Q1 16 -7 32"/></g>
+          <g id="fs-and"><path style="fill:var(--surface-2);stroke:var(--cyan);stroke-width:1.6" d="M0 0 H14 A16 16 0 0 1 14 32 H0 Z"/></g>
+        </defs>
+
+        <text class="lab-svg__label" x="24" y="26">HALF SUBTRACTOR</text>
+        <text class="lab-svg__note" x="24" y="272">diff = x ^ y     borrow = ~x &amp; y</text>
+
+        <text class="lab-svg__value" x="24" y="68">x</text>
+        <text class="lab-svg__value" x="24" y="84">y</text>
+        <path class="lab-svg__wire" d="M36 64 H140 M36 80 H140"/>
+        <use href="#fs-xor" x="140" y="56"/>
+        <use href="#fs-and" x="140" y="136"/>
+        <circle class="lab-svg__dot" cx="78" cy="64" r="3"/>
+        <path class="lab-svg__wire" d="M78 64 V144 H132"/>
+        <circle class="lab-svg__bubble" cx="136" cy="144" r="3.4"/>
+        <circle class="lab-svg__dot" cx="106" cy="80" r="3"/>
+        <path class="lab-svg__wire" d="M106 80 V160 H140"/>
+        <path class="lab-svg__wire" d="M172 72 H216"/>
+        <path class="lab-svg__wire" d="M172 152 H216"/>
+        <text class="lab-svg__value" x="224" y="76">diff</text>
+        <text class="lab-svg__value" x="224" y="156">borrow</text>
+
+        <path class="lab-svg__wire" d="M400 20 V270"/>
+
+        <text class="lab-svg__label" x="432" y="26">FULL SUBTRACTOR</text>
+        <text class="lab-svg__note" x="432" y="272">d = x ^ y     b1 = ~x &amp; y     b2 = ~d &amp; bin     borrow = b1 | b2</text>
+
+        <text class="lab-svg__value" x="432" y="84">x</text>
+        <text class="lab-svg__value" x="432" y="114">y</text>
+        <path class="lab-svg__wire" d="M444 80 H490 M444 110 H490"/>
+        <rect class="lab-svg__block" x="490" y="55" width="110" height="72" rx="5"/>
+        <text x="545" y="84" text-anchor="middle">HS1</text>
+        <text class="lab-svg__note" x="545" y="104" text-anchor="middle">x − y</text>
+        <path class="lab-svg__wire" d="M600 80 H640 V180 H672"/>
+        <text class="lab-svg__value" x="610" y="74">d</text>
+        <path class="lab-svg__wire" d="M600 110 H800 V170 H850"/>
+        <text class="lab-svg__value" x="612" y="120">b1</text>
+
+        <text class="lab-svg__value" x="432" y="212">bin</text>
+        <path class="lab-svg__wire" d="M468 208 H672"/>
+        <rect class="lab-svg__block" x="672" y="145" width="110" height="72" rx="5"/>
+        <text x="727" y="174" text-anchor="middle">HS2</text>
+        <text class="lab-svg__note" x="727" y="194" text-anchor="middle">d − bin</text>
+        <path class="lab-svg__wire" d="M782 180 H810"/>
+        <text class="lab-svg__value" x="818" y="184">diff</text>
+        <path class="lab-svg__wire" d="M782 208 H806 V190 H850"/>
+        <text class="lab-svg__value" x="790" y="220">b2</text>
+
+        <rect class="lab-svg__block" x="850" y="145" width="58" height="60" rx="5"/>
+        <text x="879" y="180" text-anchor="middle">OR</text>
+        <path class="lab-svg__wire" d="M908 175 H930"/>
+        <text class="lab-svg__value" x="938" y="179">borrow</text>
+      </svg>
+    </div>
+    <figcaption><strong>Figure 1.</strong> The bubble before the borrow AND gate is the <code>~x</code> in <code>~x &amp; y</code>. In the full subtractor, <code>b1</code> and <code>b2</code> are the borrows from the two half subtractions, and the OR produces the outgoing borrow.</figcaption>
+  </figure>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="06" id="truth-table">Truth tables</h2>
+  <h3>Half subtractor</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Half subtractor: all four input combinations</caption>
+      <thead><tr><th scope="col">x</th><th scope="col">y</th><th scope="col">diff</th><th scope="col">borrow</th><th scope="col">x − y</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>1</td><td>−1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Full subtractor</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Full subtractor: all eight input combinations</caption>
+      <thead><tr><th scope="col">x</th><th scope="col">y</th><th scope="col">bin</th><th scope="col">diff</th><th scope="col">borrow</th><th scope="col">x − y − bin</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>−1</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>−1</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>−2</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>−1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The last column is a signed arithmetic value, not a Verilog output. A negative value always corresponds to <code>borrow = 1</code>. For example, <code>0 − 1 − 1 = −2</code>, encoded by <code>diff = 0</code> and <code>borrow = 1</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="07" id="equations">Boolean equations</h2>
+  <h3>Half subtractor</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Difference</span><code>diff = x ^ y</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Borrow</span><code>borrow = ~x &amp; y</code></div>
+  </div>
+  <h3>Full subtractor</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">First difference</span><code>d = x ^ y</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">First borrow</span><code>b1 = ~x &amp; y</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Second borrow</span><code>b2 = ~d &amp; bin</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Difference</span><code>diff = d ^ bin</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Borrow</span><code>borrow = b1 | b2</code></div>
+  </div>
+  <p>Expanding the full subtractor gives <code>diff = x ^ y ^ bin</code> and <code>borrow = (~x &amp; y) | (~(x ^ y) &amp; bin)</code>. The expanded borrow is 1 when <code>y &gt; x</code>, or when <code>y = x</code> and <code>bin = 1</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="08" id="design">Verilog design code</h2>
+  <p>The intermediate wires in <code>full_subtractor</code> are named after the two half-subtractor stages. That naming is what lets the diagram and the code be read side by side.</p>
+  <div class="code-block" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span class="code-block__file">design.v</span>
+    <button class="copy-btn" type="button" aria-label="Copy design.v">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code><span class="tok-directive">`default_nettype</span> none
+<span class="tok-directive">`timescale</span> 1ns / 1ps
+
+<span class="tok-comment">// EC-410 Experiment 03 - half subtractor and full subtractor.</span>
+<span class="tok-comment">// Borrow is asserted when the value being subtracted is larger than x.</span>
+
+<span class="tok-keyword">module</span> half_subtractor (
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> x,
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> y,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">wire</span> diff,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">wire</span> borrow
+);
+
+    <span class="tok-keyword">assign</span> diff   = x ^ y;
+    <span class="tok-keyword">assign</span> borrow = ~x &amp; y;
+
+<span class="tok-keyword">endmodule</span>
+
+
+<span class="tok-keyword">module</span> full_subtractor (
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> x,
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> y,
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> bin,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">wire</span> diff,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">wire</span> borrow
+);
+
+    <span class="tok-keyword">wire</span> d;    <span class="tok-comment">// x XOR y from the first half subtractor</span>
+    <span class="tok-keyword">wire</span> b1;   <span class="tok-comment">// borrow out of the first half subtractor</span>
+    <span class="tok-keyword">wire</span> b2;   <span class="tok-comment">// borrow from subtracting bin from d</span>
+
+    <span class="tok-keyword">assign</span> d      = x ^ y;
+    <span class="tok-keyword">assign</span> b1     = ~x &amp; y;
+    <span class="tok-keyword">assign</span> b2     = ~d &amp; bin;
+    <span class="tok-keyword">assign</span> diff   = d ^ bin;
+    <span class="tok-keyword">assign</span> borrow = b1 | b2;
+
+<span class="tok-keyword">endmodule</span>
+
+<span class="tok-directive">`default_nettype</span> <span class="tok-keyword">wire</span>
+</code></pre>
+  </div>
+</div>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="09" id="testbench">Testbench</h2>
+  <p>The testbench computes <code>x − y</code> and <code>x − y − bin</code> as signed integers. It then compares the actual outputs against the borrow and the low bit of that signed value. The comparison is independent of the design equations.</p>
+  <div class="code-block" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span class="code-block__file">tb.v</span>
+    <button class="copy-btn" type="button" aria-label="Copy tb.v">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code><span class="tok-directive">`default_nettype</span> none
+<span class="tok-directive">`timescale</span> 1ns / 1ps
+
+<span class="tok-keyword">module</span> subtractors_tb;
+    <span class="tok-keyword">reg</span>  hs_x, hs_y;
+    <span class="tok-keyword">wire</span> hs_diff, hs_borrow;
+
+    <span class="tok-keyword">reg</span>  fs_x, fs_y, fs_bin;
+    <span class="tok-keyword">wire</span> fs_diff, fs_borrow;
+
+    <span class="tok-keyword">integer</span> i;
+    <span class="tok-keyword">integer</span> errors;
+    <span class="tok-keyword">integer</span> expected_value;
+    <span class="tok-keyword">integer</span> expected_borrow;
+
+    half_subtractor hs (
+        .x(hs_x), .y(hs_y),
+        .diff(hs_diff), .borrow(hs_borrow)
+    );
+
+    full_subtractor fs (
+        .x(fs_x), .y(fs_y), .bin(fs_bin),
+        .diff(fs_diff), .borrow(fs_borrow)
+    );
+
+    <span class="tok-keyword">initial</span> <span class="tok-keyword">begin</span>
+        errors = <span class="tok-number">0</span>;
+
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;HALF SUBTRACTOR&quot;</span>);
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;x y | diff borrow | x-y&quot;</span>);
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;----+-------------+----&quot;</span>);
+        <span class="tok-keyword">for</span> (i = <span class="tok-number">0</span>; i &lt; <span class="tok-number">4</span>; i = i + <span class="tok-number">1</span>) <span class="tok-keyword">begin</span>
+            {hs_x, hs_y} = i[<span class="tok-number">1</span>:<span class="tok-number">0</span>];
+            #<span class="tok-number">1</span>;
+            expected_value = hs_x;
+            expected_value = expected_value - hs_y;
+            expected_borrow = (expected_value &lt; <span class="tok-number">0</span>);
+            <span class="tok-keyword">if</span> ({hs_borrow, hs_diff} !== {expected_borrow[<span class="tok-number">0</span>], expected_value[<span class="tok-number">0</span>]}) <span class="tok-keyword">begin</span>
+                errors = errors + <span class="tok-number">1</span>;
+            <span class="tok-keyword">end</span>
+            <span class="tok-system">$display</span>(<span class="tok-string">&quot; %b %b |  %b     %b    | %0d&quot;</span>, hs_x, hs_y, hs_diff, hs_borrow, expected_value);
+        <span class="tok-keyword">end</span>
+
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;&quot;</span>);
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;FULL SUBTRACTOR&quot;</span>);
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;x y bin | diff borrow | result&quot;</span>);
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;--------+-------------+-------&quot;</span>);
+        <span class="tok-keyword">for</span> (i = <span class="tok-number">0</span>; i &lt; <span class="tok-number">8</span>; i = i + <span class="tok-number">1</span>) <span class="tok-keyword">begin</span>
+            {fs_x, fs_y, fs_bin} = i[<span class="tok-number">2</span>:<span class="tok-number">0</span>];
+            #<span class="tok-number">1</span>;
+            expected_value = fs_x;
+            expected_value = expected_value - fs_y;
+            expected_value = expected_value - fs_bin;
+            expected_borrow = (expected_value &lt; <span class="tok-number">0</span>);
+            <span class="tok-keyword">if</span> ({fs_borrow, fs_diff} !== {expected_borrow[<span class="tok-number">0</span>], expected_value[<span class="tok-number">0</span>]}) <span class="tok-keyword">begin</span>
+                errors = errors + <span class="tok-number">1</span>;
+            <span class="tok-keyword">end</span>
+            <span class="tok-system">$display</span>(<span class="tok-string">&quot; %b %b  %b  |  %b     %b    |  %0d&quot;</span>,
+                     fs_x, fs_y, fs_bin, fs_diff, fs_borrow, expected_value);
+        <span class="tok-keyword">end</span>
+
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;checked 12 input combinations, mismatches = %0d&quot;</span>, errors);
+        <span class="tok-system">$finish</span>;
+    <span class="tok-keyword">end</span>
+<span class="tok-keyword">endmodule</span>
+
+<span class="tok-directive">`default_nettype</span> <span class="tok-keyword">wire</span>
+</code></pre>
+  </div>
+</div>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="10" id="explanation">Line-by-line explanation</h2>
+  <h3>Design</h3>
+  <ul>
+    <li><code>half_subtractor</code> declares <code>x</code>, <code>y</code>, <code>diff</code> and <code>borrow</code>. Both outputs are wires driven continuously.</li>
+    <li><code>assign diff = x ^ y;</code> makes the difference 1 when the operands differ.</li>
+    <li><code>assign borrow = ~x &amp; y;</code> asserts borrow only for <code>x = 0, y = 1</code>. The NOT applies to <code>x</code> before the AND.</li>
+    <li><code>full_subtractor</code> declares the incoming borrow <code>bin</code> and three internal wires.</li>
+    <li><code>assign d = x ^ y;</code> and <code>assign b1 = ~x &amp; y;</code> are the first half subtraction.</li>
+    <li><code>assign b2 = ~d &amp; bin;</code> is the borrow produced when the incoming borrow is larger than the intermediate difference.</li>
+    <li><code>assign diff = d ^ bin;</code> subtracts the incoming borrow from <code>d</code>.</li>
+    <li><code>assign borrow = b1 | b2;</code> combines the two borrow sources. This is the OR block in the diagram.</li>
+  </ul>
+  <h3>Testbench</h3>
+  <ul>
+    <li><code>expected_value</code> is an integer, so a negative difference is retained rather than wrapped into an unsigned bit.</li>
+    <li><code>expected_value = hs_x; expected_value = expected_value - hs_y;</code> performs the subtraction in two statements. Splitting the expression avoids one-bit expression truncation before the value reaches the integer.</li>
+    <li><code>expected_borrow = (expected_value &lt; 0);</code> derives the borrow from the arithmetic sign.</li>
+    <li><code>{expected_borrow[0], expected_value[0]}</code> builds the two-bit expected result. For −1, <code>expected_value[0]</code> is 1 and the borrow is 1, giving <code>11</code>.</li>
+    <li><code>if ({hs_borrow, hs_diff} !== ...)</code> compares the concatenated outputs in one operation.</li>
+    <li>The full-subtractor loop uses three statements for the same reason and covers 000 through 111.</li>
+    <li><code>$display</code> prints the signed arithmetic value, so a row such as <code>0 1 1</code> shows −2 next to <code>diff = 0, borrow = 1</code>.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="11" id="commands">Compilation and simulation commands</h2>
+  <div class="code-block code-block--commands" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__file">Terminal</span>
+    <button class="copy-btn" type="button" aria-label="Copy build commands">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code>iverilog -g2001 -o experiment-03.out design.v tb.v
+vvp experiment-03.out</code></pre>
+  </div>
+</div>
+  <p>Compile before simulating. If <code>iverilog</code> reports an undeclared identifier, check that every internal wire is declared; <code>`default_nettype none</code> turns a missing declaration into an error.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="12" id="output">Actual simulator output</h2>
+  <p>The transcript below is the exact output captured from Icarus Verilog 13.0 after the testbench was compiled in Verilog-2001 mode.</p>
+  <div class="code-block code-block--output" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__file">Simulator output</span>
+    <span class="output-tag">actual run · Icarus 13.0</span>
+    <button class="copy-btn" type="button" aria-label="Copy simulator output">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code>HALF SUBTRACTOR
+x y | diff borrow | x-y
+----+-------------+----
+ 0 0 |  0     0    | 0
+ 0 1 |  1     1    | -1
+ 1 0 |  1     0    | 1
+ 1 1 |  0     0    | 0
+
+FULL SUBTRACTOR
+x y bin | diff borrow | result
+--------+-------------+-------
+ 0 0  0  |  0     0    |  0
+ 0 0  1  |  1     1    |  -1
+ 0 1  0  |  1     1    |  -1
+ 0 1  1  |  0     1    |  -2
+ 1 0  0  |  1     0    |  1
+ 1 0  1  |  0     0    |  0
+ 1 1  0  |  0     0    |  0
+ 1 1  1  |  1     1    |  -1
+checked 12 input combinations, mismatches = 0
+tb.v:63: $finish called at 12000 (1ps)
+</code></pre>
+  </div>
+</div>
+  <p>Rows with a negative arithmetic value always show <code>borrow = 1</code>. Note the <code>0 0 1</code> row: the difference is 1, the borrow is 1, and the arithmetic value is −1.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="13" id="waveform">Waveform and timing</h2>
+  <p>The circuit is combinational, so there is no clock edge to align with. Each vector is held for 1 ns: the half subtractor occupies 0–4 ns and the full subtractor occupies 4–12 ns. The simulator's finish message at 12,000 ps means 12 ns.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Stimulus order</caption>
+      <thead><tr><th scope="col">Interval</th><th scope="col">Circuit</th><th scope="col">Vectors</th><th scope="col">Checked outputs</th></tr></thead>
+      <tbody>
+        <tr><td>0–4 ns</td><td>Half subtractor</td><td>00, 01, 10, 11</td><td>diff, borrow</td></tr>
+        <tr><td>4–12 ns</td><td>Full subtractor</td><td>000 through 111</td><td>diff, borrow</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A waveform would show <code>borrow</code> rising whenever the arithmetic result goes negative. Because the model is zero-delay, the output changes in the same time step as the input; the <code>#1</code> gives the testbench a stable point at which to sample.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="14" id="result">Result</h2>
+  <div class="lab-result">
+    <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+    <div>
+      <h3>Both subtractors matched the signed arithmetic model.</h3>
+      <p>All <strong>12 input combinations</strong> — 4 half-subtractor and 8 full-subtractor vectors — produced <strong>0 mismatches</strong>. Every borrow bit agrees with the sign of the difference, and every difference bit agrees with the low bit of the result.</p>
+    </div>
+  </div>
+  <p>This exhausts the input space of both circuits. It verifies the borrow direction as well as the difference, which is the part a casual reading of the code often gets wrong.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="15" id="mistakes">Common mistakes and troubleshooting</h2>
+  <div class="concept-grid">
+    <article class="concept-card">
+      <h3>Reversing the borrow</h3>
+      <p><code>borrow = x &amp; ~y</code> asserts borrow when <code>x = 1, y = 0</code>, the opposite of the required case. The correct half-subtractor borrow is <code>~x &amp; y</code>.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Dropping the second borrow</h3>
+      <p>A full subtractor that uses only <code>b1</code> fails whenever <code>bin</code> causes the borrow. Both <code>b1</code> and <code>b2</code> must reach the OR.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Confusing <code>bin</code> with <code>borrow</code></h3>
+      <p><code>bin</code> is an input from the less significant stage; <code>borrow</code> is this stage's output. Wiring them to the same name silently breaks a multi-bit subtractor.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Subtracting in one-bit expressions</h3>
+      <p><code>x - y</code> with one-bit operands wraps before it reaches an integer. Subtract step by step into an integer when computing an expected value.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Using OR instead of XOR for the difference</h3>
+      <p>OR is 1 for <code>1 − 1</code>, but the difference is 0 there. Difference is XOR.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Assuming borrow means a negative number</h3>
+      <p>Borrow is a positional signal. In a wider subtractor the final borrow can indicate underflow, but an intermediate borrow is normal and is resolved by the next stage.</p>
+    </article>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="16" id="viva">Viva questions</h2>
+  <ol class="lab-viva">
+    <li>Why is the borrow of a half subtractor <code>~x &amp; y</code> rather than <code>x &amp; ~y</code>?</li>
+    <li>How many half subtractors are used inside a full subtractor, and what does each one compute?</li>
+    <li>What are <code>diff</code> and <code>borrow</code> for <code>x = 0, y = 1, bin = 1</code>?</li>
+    <li>How can a full adder be converted into a full subtractor?</li>
+    <li>What does a borrow of 1 mean at the most significant stage of a multi-bit subtractor?</li>
+    <li>Why does the testbench keep the expected value as a signed integer?</li>
+    <li>Is the difference output affected by the order of <code>x</code> and <code>y</code>? Is the borrow?</li>
+  </ol>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="17" id="revision">Revision points</h2>
+  <ul>
+    <li>Half subtractor: <code>diff = x ^ y</code>, <code>borrow = ~x &amp; y</code>.</li>
+    <li>Full subtractor: <code>diff = x ^ y ^ bin</code>, with borrow from either half subtraction.</li>
+    <li>Two half subtractors plus an OR make a full subtractor.</li>
+    <li>The direction of the borrow inequality is the critical detail: borrow when <code>y &gt; x</code>.</li>
+    <li>Four and eight vectors exhaust the two-input and three-input truth tables.</li>
+    <li>A negative signed result always pairs with an outgoing borrow of 1.</li>
+  </ul>
+</section>
+
+
+      <footer class="lesson-footer">
+        <div class="lesson-finish panel">
+          <div>
+            <span class="panel-kicker">Experiment 03 · completion</span>
+            <h2>Finished this experiment?</h2>
+            <p>Mark it only after you have built the circuit, run the testbench and checked the transcript against the truth table. The record is reversible and updates the dashboard immediately.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-experiment-toggle aria-pressed="false" aria-describedby="experiment-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-experiment-toggle-label>Mark experiment complete</span>
+          </button>
+        </div>
+
+        <nav class="lesson-pager" aria-label="Experiment navigation">
+          <a class="pager-card pager-card--prev" href="experiment-02.html"><span class="pager-kicker">← Previous · Experiment 02</span><strong>Implementation of Adders</strong></a>
+          <a class="pager-card pager-card--next" href="experiment-04.html"><span class="pager-kicker">→ Next · Experiment 04</span><strong>Implementation of 4-Bit Parallel Adder</strong></a>
+        </nav>
+      </footer>
+    </article>
+  </div>
+</div>
+
+<script type="application/json" id="curriculum-data">{"version":1,"updated":"2026-11-24","courses":[{"id":"ec405","code":"EC-405","title":"Digital Logic Design Through Verilog HDL","kind":"Theory","periodsPerWeek":5,"totalPeriods":75,"formativeMarks":20,"summativeMarks":80,"status":"available","units":[{"id":"unit-01","number":1,"title":"Introduction to Verilog HDL, Language Constructs and Conventions","periods":20,"status":"available","topics":[{"id":"vlsi-design-flow","number":1,"title":"VLSI IC Design Flow and the Role of HDL","slug":"01-vlsi-design-flow"},{"id":"vhdl-vs-verilog","number":2,"title":"VHDL vs Verilog, Features and Abstraction Levels","slug":"02-vhdl-vs-verilog"},{"id":"modules-instances-ports","number":3,"title":"Modules, Instances, Ports and Connection Rules","slug":"03-modules-instances-ports"},{"id":"hierarchical-modelling","number":4,"title":"Hierarchical Modelling and Design Methodologies","slug":"04-hierarchical-modelling"},{"id":"lexical-conventions","number":5,"title":"Lexical Conventions and Number Specification","slug":"05-lexical-conventions"},{"id":"data-types","number":6,"title":"Data Types: Nets, Registers and Vectors","slug":"06-data-types"},{"id":"arrays-memories-strings","number":7,"title":"Arrays, Memories, Strings and Vectors vs Arrays","slug":"07-arrays-memories-strings"},{"id":"parameters","number":8,"title":"Parameters: defparam and localparam","slug":"08-parameters"},{"id":"system-tasks-directives","number":9,"title":"System Tasks and Compiler Directives","slug":"09-system-tasks-directives"},{"id":"expressions-operators","number":10,"title":"Expressions, Operands and Operators","slug":"10-expressions-operators"}]},{"id":"unit-02","number":2,"title":"Gate Level and Data Flow Modelling","periods":10,"status":"available","topics":[{"id":"gate-primitives","number":1,"title":"Gate Primitives, Symbols and Truth Tables","slug":"01-gate-primitives"},{"id":"gate-delays","number":2,"title":"Gate Instantiation and Delay Modelling","slug":"02-gate-delays"},{"id":"dataflow-modelling","number":3,"title":"Dataflow Modelling and Continuous Assignments","slug":"03-dataflow-modelling"},{"id":"adders-subtractors-comparators","number":4,"title":"Adders, Subtractors and Comparators","slug":"04-adders-subtractors-comparators"},{"id":"mux-demux-encoder-decoder","number":5,"title":"Multiplexers, Demultiplexers, Encoders and Decoders","slug":"05-mux-demux-encoder-decoder"},{"id":"alu-modelling-comparison","number":6,"title":"ALU Design and Modelling Comparison","slug":"06-alu-and-modelling-comparison"}]},{"id":"unit-03","number":3,"title":"Behavioural Modelling","periods":15,"status":"available","topics":[{"id":"initial-always","number":1,"title":"Initial and Always Procedures","slug":"01-initial-always"},{"id":"blocking-nonblocking","number":2,"title":"Blocking and Non-Blocking Assignments","slug":"02-blocking-nonblocking"},{"id":"timing-controls","number":3,"title":"Delay-Based and Event-Based Timing Controls","slug":"03-timing-controls"},{"id":"conditionals-case","number":4,"title":"Conditionals, case, casex and casez","slug":"04-conditionals-case"},{"id":"loops","number":5,"title":"Looping Statements","slug":"05-loops"},{"id":"sequential-parallel-blocks","number":6,"title":"Sequential and Parallel Blocks","slug":"06-sequential-parallel-blocks"},{"id":"udp","number":7,"title":"User-Defined Primitives","slug":"07-udp"}]},{"id":"unit-04","number":4,"title":"Modelling of Combinational and Sequential Logic Circuits","periods":15,"status":"locked","topics":[]},{"id":"unit-05","number":5,"title":"System Design Concepts","periods":15,"status":"locked","topics":[]}]},{"id":"ec410","code":"EC-410","title":"Digital Logic Design Through Verilog HDL Lab","kind":"Laboratory","periodsPerWeek":3,"totalPeriods":45,"formativeMarks":40,"summativeMarks":60,"status":"available","experiments":[{"id":"experiment-01","number":1,"title":"Implementation of Basic Logic Gates","slug":"experiment-01","status":"available"},{"id":"experiment-02","number":2,"title":"Implementation of Adders","slug":"experiment-02","status":"available"},{"id":"experiment-03","number":3,"title":"Implementation of Subtractors","slug":"experiment-03","status":"available"},{"id":"experiment-04","number":4,"title":"Implementation of 4-Bit Parallel Adder","slug":"experiment-04","status":"available"},{"id":"experiment-05","number":5,"title":"Implementation of Multiplexers","slug":"experiment-05","status":"available"},{"id":"experiment-06","number":6,"title":"Implementation of Demultiplexers","slug":"experiment-06","status":"available"},{"id":"experiment-07","number":7,"title":"Future practical","slug":"experiment-07","status":"locked"},{"id":"experiment-08","number":8,"title":"Future practical","slug":"experiment-08","status":"locked"},{"id":"experiment-09","number":9,"title":"Future practical","slug":"experiment-09","status":"locked"},{"id":"experiment-10","number":10,"title":"Future practical","slug":"experiment-10","status":"locked"},{"id":"experiment-11","number":11,"title":"Future practical","slug":"experiment-11","status":"locked"},{"id":"experiment-12","number":12,"title":"Future practical","slug":"experiment-12","status":"locked"},{"id":"experiment-13","number":13,"title":"Future practical","slug":"experiment-13","status":"locked"},{"id":"experiment-14","number":14,"title":"Future practical","slug":"experiment-14","status":"locked"},{"id":"experiment-15","number":15,"title":"Future practical","slug":"experiment-15","status":"locked"}]}],"toolchain":{"primary":"Xilinx ISE / Vivado or similar","verification":"Icarus Verilog 13.0 + GTKWave","language":"Verilog-2001"}}</script>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="../labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="../index.html#path">Learning path</a>
+              <a class="footer-link" href="../index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="../circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="../playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="../quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="../guides/index.html">Setup guides</a>
+              <a class="footer-link" href="../index.html#approach">The approach</a>
+              <a class="footer-link" href="../styleguide.html">Design system</a>
+              <a class="footer-link" href="../styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="../index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="../index.html">Homepage<span>01</span></a>
+        <a class="mobile-nav-link" href="../theory/index.html">Theory<span>02</span></a>
+        <a class="mobile-nav-link is-active" href="../labs/index.html" aria-current="page">Laboratory<span>03</span></a>
+        <a class="mobile-nav-link" href="../circuit-lab/index.html">Circuit Lab<span>04</span></a>
+        <a class="mobile-nav-link" href="../playground/index.html">Playground<span>05</span></a>
+        <a class="mobile-nav-link" href="../quizzes/index.html">Quizzes<span>06</span></a>
+        <a class="mobile-nav-link" href="../guides/index.html">Guides<span>07</span></a>
+        <a class="mobile-nav-link" href="../dashboard.html">Dashboard<span>08</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/labs.js"></script>
+</body>
+</html>

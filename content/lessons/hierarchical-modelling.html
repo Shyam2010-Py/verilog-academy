@@ -1,0 +1,89 @@
+<section class="lesson-section">
+  <h2 id="why-hierarchy">Why hierarchy is not optional</h2>
+  <p class="lesson-lead">A modern chip contains millions of gates. No engineer writes it as one flat file. Hierarchy lets a team divide the design into blocks that can be specified, implemented, verified and reused independently, then composed into a top level that is small enough to reason about.</p>
+  <p>Hierarchy is also how verification scales. If a leaf cell is proven against its own specification, the parent only has to prove that it wires the leaves correctly. Bugs are localised: a failure in a top-level test can be traced down the instance path to the block that produced it.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="methods">Top-down, bottom-up and mixed</h2>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h4>Top-down</h4>
+      <p>Start from the system specification, partition into blocks, then refine each block until the leaves are simple enough to implement. Interfaces are fixed early.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Bottom-up</h4>
+      <p>Build and verify reusable leaf cells first, then compose them into larger blocks. Common for cell libraries and for teams reusing proven IP.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Mixed</h4>
+      <p>Sketch the top-level architecture, implement critical leaves bottom-up, and iterate. This is how most real projects actually run.</p>
+    </div>
+  </div>
+  <p>Whichever method is used, the interface is the contract. A leaf cell that changes its ports forces every parent to change. That is why port lists are reviewed and frozen before implementation spreads.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Four full adders make a ripple-carry adder</h2>
+  <p>The example has two levels. At the bottom, <code>full_adder</code> is built from primitive gates. At the top, <code>rca4</code> instantiates four copies and chains their carries. This is structural modelling: no equation at the top level, only instances and wires.</p>
+
+  {{CODE:examples/verilog/hierarchical-modelling/design.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>wire s1, c1, c2;</code> declares the internal nets of the full adder. They are not ports, so the outside world cannot see them — but a simulator can, through a hierarchical name.</li>
+    <li><code>xor x1 (s1, a, b);</code> instantiates a primitive gate. For gate primitives the output comes first, then the inputs. <code>s1</code> is <code>a XOR b</code>.</li>
+    <li><code>xor x2 (sum, s1, cin);</code> gives <code>sum = a XOR b XOR cin</code>, the correct sum bit for a full adder.</li>
+    <li><code>and a1 (c1, a, b);</code> and <code>and a2 (c2, s1, cin);</code> form the two ways a carry can be generated: both inputs high, or the propagated sum high while the carry-in is high.</li>
+    <li><code>or o1 (cout, c1, c2);</code> combines them: <code>cout = ab + cin(a XOR b)</code>.</li>
+    <li>In <code>rca4</code>, <code>full_adder fa0 (...)</code> through <code>fa3</code> are four separate instances. Each has its own internal <code>s1</code>, <code>c1</code>, <code>c2</code>; the names do not collide because they live in different instance scopes.</li>
+    <li><code>.a(a[0])</code> connects one bit of the parent vector to the scalar port. <code>.cout(c1)</code> of <code>fa0</code> becomes <code>.cin(c1)</code> of <code>fa1</code>: that single wire is the carry chain.</li>
+    <li>The final <code>cout</code> is the carry out of bit 3, which is the carry out of the 4-bit addition.</li>
+  </ul>
+
+  {{CODE:examples/verilog/hierarchical-modelling/tb.v}}
+
+  <p>The testbench sweeps <code>a</code> from 0 to 15 with <code>b</code> fixed at 5 and <code>cin</code> following <code>i[0]</code>. Printing <code>{cout, sum}</code> as a five-bit value shows the full arithmetic result, including the carry that does not fit in four bits.</p>
+
+  {{COMMANDS:hierarchical-modelling}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/hierarchical-modelling/expected.txt}}
+
+  <p>Read the last column first. It is <code>{cout, sum}</code> as an unsigned decimal, and it equals <code>a + 5 + cin</code> for every row. When the total reaches 16, the four sum bits wrap to <code>0000</code> and <code>cout</code> becomes 1; the first such row is <code>a = 11</code> with <code>cin = 1</code>, giving 17.</p>
+
+  <div class="lesson-note">
+    <strong>Zero-delay structure</strong>
+    <p>The primitive gates have no delays in this model, so the whole carry chain settles in the same simulation time step. The testbench's <code>#1</code> gives a clean sample, but it does not model propagation delay. Real carry-chain timing is added by gate delays or, more accurately, by static timing analysis after synthesis. The ripple-carry topology itself is what this example teaches.</p>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 id="paths">Hierarchy in the simulator</h2>
+  <p>Every instance creates a scope. In this design the full path to the first carry wire is <code>dut.fa0.c1</code>: the testbench instance <code>dut</code>, the full-adder instance <code>fa0</code>, the internal net <code>c1</code>. Simulators use these paths for waveform viewers, hierarchical references and debug. They are also a useful mental model: if you cannot draw the path, you probably cannot explain which hardware you are looking at.</p>
+  <p>Hierarchy is not free. Every level adds names and a place for a connection error. Keep leaf cells small and their interfaces stable; keep parents shallow enough to review in one screen.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Crossing carry wires.</strong> Connecting <code>fa0.cout</code> to <code>fa2.cin</code> instead of <code>fa1.cin</code> still elaborates and still simulates; only arithmetic tests catch it.</li>
+    <li><strong>Reversing vector bit order.</strong> <code>a[0]</code> must feed the least significant full adder if <code>sum[0]</code> is the least significant result bit. Reversing both consistently is a different (but valid) convention; reversing only one is a bug.</li>
+    <li><strong>Expecting structural code to model delay.</strong> Zero-delay gates switch instantly in simulation. Use gate delays or STA for timing.</li>
+    <li><strong>Duplicating instance names.</strong> Two <code>fa0</code> instances in the same parent are an error, even if they are in different <code>generate</code> branches (not used here).</li>
+    <li><strong>Building hierarchy for its own sake.</strong> Every level should correspond to a real block with a stable interface. A hierarchy that mirrors source files rather than hardware becomes hard to verify.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Hierarchy is created by instantiating modules; each instance is a separate copy of the hardware.</li>
+    <li>Top-down fixes interfaces early; bottom-up reuses verified leaves; mixed is the practical default.</li>
+    <li>Structural modelling contains instances and nets, not equations. It is the style of a gate-level netlist.</li>
+    <li>A full adder's carry is <code>ab + cin(a XOR b)</code>; chaining carries builds a ripple-carry adder.</li>
+    <li>Hierarchical names such as <code>dut.fa0.c1</code> identify one signal in one instance.</li>
+  </ul>
+</section>

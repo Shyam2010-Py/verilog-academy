@@ -1,0 +1,9 @@
+label          = HELLO
+mem[0]         = 10
+mem[1]         = 11
+mem[2]         = 12
+mem[3]         = 13
+mem[2][3]      = 0
+mem[2][7:4]    = 1
+whole memory is not one vector; read word by word
+example.v:24: $finish called at 0 (1s)

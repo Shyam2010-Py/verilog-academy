@@ -1,0 +1,103 @@
+{
+  "units": {
+    "unit-01": {
+      "description": "The language and its rules. Before a single gate is described, you need the design flow, the vocabulary of HDL-based design, the module as a unit of hierarchy, and the data model that every later construction depends on.",
+      "objectives": [
+        "Trace a design from specification to silicon and identify where Verilog enters the flow.",
+        "Compare Verilog with VHDL and place each modelling style on the abstraction ladder.",
+        "Build and connect module hierarchies with correct port directions and widths.",
+        "Use literals, nets, variables, vectors, arrays, parameters and system tasks correctly.",
+        "Evaluate expressions with Verilog's width, signedness and precedence rules."
+      ]
+    },
+    "unit-02": {
+      "description": "Structural and dataflow modelling. Describe hardware as a netlist of primitive gates or as continuous equations over signals, then assemble the arithmetic and routing blocks that make up a datapath.",
+      "objectives": [
+        "Instantiate gate primitives and model rise, fall and turn-off delays.",
+        "Write continuous assignments that describe combinational hardware without inferred storage.",
+        "Build adders, subtractors, comparators, multiplexers, decoders and encoders.",
+        "Choose between gate-level, dataflow and behavioural descriptions for a given block."
+      ]
+    },
+    "unit-03": {
+      "description": "Behavioural modelling. Procedural blocks describe what hardware does over time. This unit covers the event model, assignment scheduling, timing controls, decision constructs, loops, block structure and custom primitives.",
+      "objectives": [
+        "Distinguish initial from always, and blocking from non-blocking assignments.",
+        "Use delay, event and wait controls, and know which controls synthesis ignores.",
+        "Write conditionals, case statements and loops that synthesise predictably.",
+        "Explain sequential and parallel blocks, and define combinational and sequential UDPs."
+      ]
+    }
+  },
+  "topics": {
+    "vlsi-design-flow": {
+      "summary": "Follow a design from specification to silicon, and see exactly where RTL, simulation, synthesis and verification fit in the VLSI flow."
+    },
+    "vhdl-vs-verilog": {
+      "summary": "Compare the two dominant hardware description languages, then place Verilog's modelling styles on the abstraction ladder."
+    },
+    "modules-instances-ports": {
+      "summary": "Treat a module as a hardware component: declare its ports, connect instances by name, and avoid the direction and width errors that break elaboration."
+    },
+    "hierarchical-modelling": {
+      "summary": "Compose verified leaf cells into larger designs, and choose between top-down, bottom-up and mixed design methods."
+    },
+    "lexical-conventions": {
+      "summary": "Read and write Verilog's identifiers, comments, literals and sized numbers without ambiguity."
+    },
+    "data-types": {
+      "summary": "Understand nets, variables, vectors and the four-valued logic that Verilog actually simulates."
+    },
+    "arrays-memories-strings": {
+      "summary": "Distinguish a vector from an array, model memories correctly, and store text without borrowing SystemVerilog types."
+    },
+    "parameters": {
+      "summary": "Make modules reusable with parameters, override them deliberately, and protect internal constants with localparam."
+    },
+    "system-tasks-directives": {
+      "summary": "Use simulation tasks and compiler directives deliberately, and keep them out of synthesizable hardware."
+    },
+    "expressions-operators": {
+      "summary": "Learn how Verilog sizes, signs and evaluates expressions, and why operator precedence alone is not enough."
+    },
+    "gate-primitives": {
+      "summary": "Instantiate primitive gates, read their truth tables, and know when gate-level modelling is the right level of detail."
+    },
+    "gate-delays": {
+      "summary": "Model rise, fall and turn-off delays, and interpret the simulator's timing results instead of guessing them."
+    },
+    "dataflow-modelling": {
+      "summary": "Describe combinational hardware as continuous equations, and recognise when an assignment describes a latch by accident."
+    },
+    "adders-subtractors-comparators": {
+      "summary": "Build arithmetic and comparison hardware, and keep unsigned carry-out separate from signed overflow."
+    },
+    "mux-demux-encoder-decoder": {
+      "summary": "Implement the selection, routing and encoding blocks that sit inside almost every datapath."
+    },
+    "alu-modelling-comparison": {
+      "summary": "Design a small ALU, then compare gate-level, dataflow and behavioural descriptions of the same function."
+    },
+    "initial-always": {
+      "summary": "Use Verilog's two procedural constructs for their real purposes: one-shot setup and synthesizable repeated behaviour."
+    },
+    "blocking-nonblocking": {
+      "summary": "See why blocking and non-blocking assignments produce different hardware, and where each one belongs."
+    },
+    "timing-controls": {
+      "summary": "Control when statements execute with delays, events and waits, and know which controls synthesis ignores."
+    },
+    "conditionals-case": {
+      "summary": "Choose between if/else, case, casez and casex, and avoid the latches and masked bugs they can introduce."
+    },
+    "loops": {
+      "summary": "Use for, while, repeat and forever loops correctly in simulation and in synthesizable hardware."
+    },
+    "sequential-parallel-blocks": {
+      "summary": "Understand statement ordering inside begin/end and true concurrency inside fork/join."
+    },
+    "udp": {
+      "summary": "Define custom primitive gates with truth tables, including edge-triggered sequential primitives."
+    }
+  }
+}

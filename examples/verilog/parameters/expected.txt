@@ -1,0 +1,5 @@
+default  WIDTH=4 -> 00001010
+named    WIDTH=6 -> 00101010
+defparam WIDTH=8 -> 10101010
+hierarchical parameter value: 6
+example.v:29: $finish called at 1 (1s)

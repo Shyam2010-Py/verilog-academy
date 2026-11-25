@@ -1,0 +1,101 @@
+<div class="lesson lab-lesson">
+  <header class="lesson-hero">
+    <div class="lesson-hero__atmosphere" aria-hidden="true"></div>
+    <div class="container">
+      <nav class="lesson-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">EC-410 Laboratory</a>
+        <span aria-hidden="true">/</span>
+        <span>Experiments</span>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Experiment {{EXPERIMENT_NUMBER}}</span>
+      </nav>
+
+      <div class="lesson-hero__grid">
+        <div class="lesson-hero__copy">
+          <span class="eyebrow">EC-410 · Experiment {{EXPERIMENT_NUMBER}}</span>
+          <h1 id="experiment-title">{{EXPERIMENT_TITLE}}</h1>
+          <p class="lede">{{EXPERIMENT_SUMMARY}}</p>
+          <div class="lesson-meta">
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-book"></use></svg> {{EXPERIMENT_MINUTES}} min read</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-circuit"></use></svg> {{EXPERIMENT_SCOPE}}</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-code"></use></svg> Verilog-2001</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-terminal"></use></svg> Verified in Icarus 13.0</span>
+          </div>
+        </div>
+
+        <aside class="lesson-hero__card panel" aria-label="Experiment progress">
+          <span class="panel-kicker">Your progress</span>
+          <p class="lesson-hero__unit">EC-410 · <span data-lab-unit-count>0 / {{EXPERIMENT_TOTAL}}</span> experiments</p>
+          <div class="progress" role="progressbar" aria-label="EC-410 practical progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-lab-bar>
+            <span class="progress-fill" data-lab-fill style="--progress: 0%"></span>
+          </div>
+          <button class="btn btn-primary lesson-toggle" type="button" data-experiment-toggle aria-pressed="false" aria-describedby="experiment-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-experiment-toggle-label>Mark experiment complete</span>
+          </button>
+          <p class="lesson-status" data-experiment-status>Reading progress is stored in this browser.</p>
+          <a class="text-link lesson-hero__dashboard" href="{{ROOT}}dashboard.html">
+            Learning dashboard
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+          </a>
+        </aside>
+      </div>
+
+      <div class="theory-alert" data-storage-alert hidden role="status">
+        <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+        <p data-storage-message></p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container lesson-layout">
+    <aside class="lesson-aside">
+      <div class="lesson-aside__card panel">
+        <span class="panel-kicker">On this page</span>
+        <nav aria-label="On this page">
+          <ol class="toc-list">
+            {{EXPERIMENT_TOC}}
+          </ol>
+        </nav>
+      </div>
+
+      <div class="lesson-aside__card lesson-aside__unit panel">
+        <span class="panel-kicker">EC-410 · Experiment {{EXPERIMENT_NUMBER}}</span>
+        <p>{{EXPERIMENT_SCOPE}}</p>
+        <a class="text-link" href="index.html">
+          Laboratory overview
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="text-link lab-aside-link" href="{{ROOT}}theory/index.html">
+          EC-405 theory
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+        </a>
+      </div>
+    </aside>
+
+    <article class="lesson-article" data-experiment-id="{{EXPERIMENT_ID}}">
+      {{EXPERIMENT_BODY}}
+
+      <footer class="lesson-footer">
+        <div class="lesson-finish panel">
+          <div>
+            <span class="panel-kicker">Experiment {{EXPERIMENT_NUMBER}} · completion</span>
+            <h2>Finished this experiment?</h2>
+            <p>Mark it only after you have built the circuit, run the testbench and checked the transcript against the truth table. The record is reversible and updates the dashboard immediately.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-experiment-toggle aria-pressed="false" aria-describedby="experiment-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-experiment-toggle-label>Mark experiment complete</span>
+          </button>
+        </div>
+
+        <nav class="lesson-pager" aria-label="Experiment navigation">
+          {{EXPERIMENT_PREV}}
+          {{EXPERIMENT_NEXT}}
+        </nav>
+      </footer>
+    </article>
+  </div>
+</div>
+
+<script type="application/json" id="curriculum-data">{{CURRICULUM_JSON}}</script>

@@ -1,0 +1,11 @@
+4-bit ripple-carry adder
+A    B    Cin | Cout Sum  OVF
+---------------+--------------
+0000 0000   0  |  0   0000   0
+1000 1000   0  |  1   0000   1
+1010 0101   0  |  0   1111   0
+1111 0001   0  |  1   0000   0
+1111 1111   1  |  1   1111   0
+Checked 512 input combinations
+PASS: 512/512 combinations match
+tb.v:52: $finish called at 512000 (1ps)

@@ -1,0 +1,1 @@
+{"id":"not-gate","kind":"combinational","caption":"NOT gate truth table","note":"Every row is checked by the interactive engine.","columns":[{"key":"A","label":"A","scope":"input"},{"key":"Y","label":"Y","scope":"output"}],"rows":[{"key":"0","values":["0","1"]},{"key":"1","values":["1","0"]}],"total":2}

@@ -1,0 +1,9 @@
+bus (wire)        = 10100101  a5
+nibble (reg)      = 1010
+byte_reg (reg)    = 00001111
+count (integer)   = -3
+voltage (real)    = 1.80
+stamp (time)      = 5000
+part-select [7:4] = 1010
+bit-select  [0]   = 1
+example.v:31: $finish called at 5000 (1ps)

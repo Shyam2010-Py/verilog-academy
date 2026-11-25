@@ -1,0 +1,83 @@
+<section class="lesson-section">
+  <h2 id="why-delays">Delays are a simulation model</h2>
+  <p class="lesson-lead">A gate does not switch instantly. It has a propagation delay from input change to output change, and the delay usually differs for a rising output and a falling output. Verilog lets a gate primitive carry these delays so that a simulation can show when an output changes, not only what it becomes.</p>
+  <p>The delays are a model, not a manufacturing promise. Synthesis ignores them; static timing analysis computes real delays from the placed layout and the cell library. Gate delays in RTL are useful for teaching, for behavioural models and for detecting races, not for signoff.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="forms">One, two or three delays</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Delay forms on a gate primitive</caption>
+      <thead><tr><th scope="col">Form</th><th scope="col">Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>and #(2) g (...);</code></td><td>One delay for every transition.</td></tr>
+        <tr><td><code>and #(3, 5) g (...);</code></td><td>Rise delay 3, fall delay 5.</td></tr>
+        <tr><td><code>and #(3, 5, 4) g (...);</code></td><td>Rise 3, fall 5, turn-off 4. Turn-off applies to tri-state outputs.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A transition from <code>x</code> to a known value is treated as a rise or a fall for delay selection. That is why an output that starts at <code>x</code> can take the full delay before it shows its first known value.</p>
+  <p>Gate delays are <strong>inertial</strong>: if an input pulse is shorter than the delay, the output may not respond at all. This models a gate that cannot propagate a glitch narrower than its own delay. It is different from a transport delay, which would pass every pulse through unchanged.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Rise 3, fall 5, and an inverter</h2>
+  <p>The example combines an AND gate with asymmetric delays and an inverter with a single delay. The testbench uses <code>$monitor</code>, so every change is printed with its time.</p>
+
+  {{CODE:examples/verilog/gate-delays/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>and #(3, 5) g_and (y, a, b);</code> gives the AND gate a 3 ns rise and a 5 ns fall. The numbers are in the timescale unit, 1 ns.</li>
+    <li><code>not #(2) g_not (yn, a);</code> gives the inverter a 2 ns delay for both directions.</li>
+    <li><code>$monitor</code> prints the header values at time zero and then every time one of the listed signals changes. It is a convenient way to watch a small timing experiment.</li>
+    <li><code>#10 a = 1;</code> changes <code>a</code> at 10 ns; <code>#10 b = 1;</code> changes <code>b</code> at 20 ns; <code>#10 a = 0;</code> changes <code>a</code> again at 30 ns.</li>
+    <li><code>#30 $finish;</code> ends the run at 60 ns, leaving time for the 5 ns fall at the end.</li>
+  </ul>
+
+  {{COMMANDS:gate-delays}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">Reading the timeline</h2>
+  {{OUTPUT:examples/verilog/gate-delays/expected.txt}}
+
+  <p>The times are printed in the simulation precision, 1 ps, so 5000 means 5 ns. Follow each transition:</p>
+  <ul>
+    <li><strong>t = 0:</strong> both gates start at <code>x</code>. The inverter's <code>a</code> is 0, so <code>yn</code> begins rising; it reaches 1 at 2 ns.</li>
+    <li><strong>t = 5 ns:</strong> the AND output reaches 0. Its inputs were 0 and 0 from time zero, but the output started at <code>x</code>, so the transition to 0 takes the fall delay of 5 ns.</li>
+    <li><strong>t = 10 ns:</strong> <code>a</code> rises. The inverter output falls at 12 ns. The AND output stays 0 because <code>b</code> is still 0.</li>
+    <li><strong>t = 20 ns:</strong> <code>b</code> rises. Both AND inputs are now 1, so <code>y</code> rises at 23 ns after the 3 ns rise delay.</li>
+    <li><strong>t = 30 ns:</strong> <code>a</code> falls. The inverter output rises at 32 ns; the AND output falls at 35 ns after the 5 ns fall delay.</li>
+  </ul>
+  <p>The two gates respond at different times to the same input change. That is the entire point of modelling rise and fall separately.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="synthesis">What synthesis does with a delay</h2>
+  <p>A synthesis tool cannot build a 3 ns gate from a <code>#3</code> annotation; it can only choose a cell from the library whose real delay is close to the requirement. In practice, synthesis ignores gate delays with a warning and optimises the logic. Timing is then checked by static timing analysis using the actual library and layout parasitics.</p>
+  <p>This is why a delay in RTL is dangerous: the simulation shows one timing, the hardware shows another. Use delays in testbenches, cell models and small teaching experiments. Do not use them to "fix" a race in synthesizable RTL; fix the design.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Assuming <code>#3</code> survives synthesis.</strong> It does not. Timing comes from the library and the physical design.</li>
+    <li><strong>Forgetting the timescale.</strong> <code>#(3, 5)</code> is 3 ns and 5 ns only if the active timescale says so.</li>
+    <li><strong>Expecting a glitch to propagate.</strong> Gate delays are inertial; a pulse shorter than the delay can disappear.</li>
+    <li><strong>Ignoring the <code>x</code>-to-known transition.</strong> The first edge after time zero can take the full delay, which surprises readers who expect an immediate value.</li>
+    <li><strong>Using delays to paper over a race.</strong> A <code>#1</code> between a clock edge and a check may hide a non-blocking scheduling bug instead of fixing it.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li><code>#(rise)</code>, <code>#(rise, fall)</code> and <code>#(rise, fall, turn-off)</code> are the three gate delay forms.</li>
+    <li>A transition from <code>x</code> to a known value uses the rise or fall delay according to the destination.</li>
+    <li>Gate delays are inertial and simulation-only; synthesis ignores them.</li>
+    <li><code>$monitor</code> prints on every change and is ideal for small timing experiments.</li>
+    <li>Real timing is verified by static timing analysis, not by <code>#</code> annotations.</li>
+  </ul>
+</section>

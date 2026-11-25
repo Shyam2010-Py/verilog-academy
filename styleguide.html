@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Component Library — Verilog Academy</title>
+  <meta name="description" content="The Verilog Academy design system: tokens, typography, components, patterns, motion and implementation notes.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Component Library — Verilog Academy">
+  <meta property="og:description" content="The Verilog Academy design system: tokens, typography, components, patterns, motion and implementation notes.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  
+</head>
+<body class="page-styleguide" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="index.html">Homepage</a>
+          <a class="nav-link" href="styleguide.html#foundations">Foundations</a>
+          <a class="nav-link" href="styleguide.html#components">Components</a>
+          <a class="nav-link" href="styleguide.html#patterns">Patterns</a>
+          <a class="nav-link" href="styleguide.html#accessibility">Accessibility</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <section class="styleguide-hero">
+  <div class="container styleguide-hero-grid">
+    <div data-reveal>
+      <span class="eyebrow">Reference · Internal</span>
+      <h1>Component library.</h1>
+      <p>The implementation reference for Verilog Academy. Tokens, states and patterns are documented here so every page is assembled from the same visual grammar.</p>
+      <div class="button-row" style="margin-top:var(--space-6)">
+        <a class="btn btn-secondary" href="index.html">
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+          Back to overview
+        </a>
+        <span class="badge badge-cyan">Design system</span>
+        <span class="badge">Vanilla CSS</span>
+      </div>
+    </div>
+    <div class="styleguide-meta" data-reveal style="--reveal-delay: 80ms">
+      <div><strong>7</strong><span>CSS layers</span></div>
+      <div><strong>3</strong><span>Local fonts</span></div>
+      <div><strong>0</strong><span>Runtime deps</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="styleguide-section" id="foundations">
+  <div class="container">
+    <div class="styleguide-section-header" data-reveal>
+      <div><span class="eyebrow">01 / Foundations</span><h2>Tokens</h2></div>
+      <p>Colour, type and geometry are declared once. Themes swap values rather than overriding component rules, which keeps Midnight and Daylight consistent.</p>
+    </div>
+
+    <div class="token-table" data-reveal>
+      <div class="token-row"><span class="token-name">--canvas</span><span class="token-value">#05070D</span><span class="token-sample"><span class="token-chip" style="--chip:#05070D"></span>page</span></div>
+      <div class="token-row"><span class="token-name">--surface</span><span class="token-value">#0B1220</span><span class="token-sample"><span class="token-chip" style="--chip:#0B1220"></span>panel</span></div>
+      <div class="token-row"><span class="token-name">--blue</span><span class="token-value">#4F8CFF</span><span class="token-sample"><span class="token-chip" style="--chip:#4F8CFF"></span>primary</span></div>
+      <div class="token-row"><span class="token-name">--cyan</span><span class="token-value">#5EE7FF</span><span class="token-sample"><span class="token-chip" style="--chip:#5EE7FF"></span>signal</span></div>
+      <div class="token-row"><span class="token-name">--violet</span><span class="token-value">#8B5CF6</span><span class="token-sample"><span class="token-chip" style="--chip:#8B5CF6"></span>depth</span></div>
+      <div class="token-row"><span class="token-name">--success</span><span class="token-value">#3DDC97</span><span class="token-sample"><span class="token-chip" style="--chip:#3DDC97"></span>complete</span></div>
+      <div class="token-row"><span class="token-name">--warning</span><span class="token-value">#FFB86B</span><span class="token-sample"><span class="token-chip" style="--chip:#FFB86B"></span>attention</span></div>
+    </div>
+
+    <div class="grid-2" style="margin-top:var(--space-4)">
+      <div class="panel foundation-card" data-reveal>
+        <span class="panel-kicker">Type scale</span>
+        <div class="type-specimen" style="margin-top:var(--space-4)">
+          <div class="type-row"><span class="type-label">Display</span><span class="type-sample type-sample--display">Hardware, humanised.</span></div>
+          <div class="type-row"><span class="type-label">Heading</span><span class="type-sample type-sample--heading">From logic to silicon.</span></div>
+          <div class="type-row"><span class="type-label">Body</span><span class="type-sample type-sample--body">Inter carries long-form explanation. Space Grotesk carries hierarchy. JetBrains Mono carries code, labels and instrument data.</span></div>
+          <div class="type-row"><span class="type-label">Mono</span><span class="type-sample type-sample--mono">always @(posedge clk)</span></div>
+        </div>
+      </div>
+
+      <div class="panel foundation-card" data-reveal style="--reveal-delay: 60ms">
+        <span class="panel-kicker">Theme behaviour</span>
+        <div class="theme-split" style="margin-top:var(--space-4)">
+          <div class="theme-card">
+            <h3>Midnight</h3>
+            <p>Canonical identity. Deep navy, cyan signal, violet atmosphere.</p>
+            <div class="theme-swatches"><span style="--t:#05070D"></span><span style="--t:#0B1220"></span><span style="--t:#5EE7FF"></span><span style="--t:#8B5CF6"></span></div>
+          </div>
+          <div class="theme-card theme-card--light">
+            <h3>Daylight</h3>
+            <p>Warm off-white surfaces, ink typography, same accent family.</p>
+            <div class="theme-swatches"><span style="--t:#F4F6FB"></span><span style="--t:#FFFFFF"></span><span style="--t:#0891B2"></span><span style="--t:#7C3AED"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="styleguide-section" id="components">
+  <div class="container">
+    <div class="styleguide-section-header" data-reveal>
+      <div><span class="eyebrow">02 / Components</span><h2>States and behaviour</h2></div>
+      <p>Each component is shown in its default state. Hover, focus and active states are defined in CSS and verified with keyboard and pointer input.</p>
+    </div>
+
+    <div class="grid-2">
+      <article class="panel component-card" data-reveal>
+        <div class="component-card__head"><div><span class="panel-kicker">Actions</span><h3>Buttons</h3></div><span class="badge">4 variants</span></div>
+        <div class="component-card__body">
+          <div class="showcase-row"><span class="showcase-label">Primary</span><button class="btn btn-primary" type="button">Start learning <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></button><button class="btn btn-primary btn-sm" type="button">Small</button><button class="btn btn-primary" type="button" disabled>Disabled</button></div>
+          <div class="showcase-row"><span class="showcase-label">Secondary</span><button class="btn btn-secondary" type="button">Open lab</button><button class="btn btn-secondary btn-sm" type="button">Small</button></div>
+          <div class="showcase-row"><span class="showcase-label">Ghost</span><button class="btn btn-ghost" type="button">View notes</button><button class="btn btn-ghost btn-sm" type="button">Details</button></div>
+          <div class="showcase-row"><span class="showcase-label">Icon</span><button class="icon-btn" type="button" aria-label="Bookmark"><svg class="icon" aria-hidden="true"><use href="#icon-bookmark"></use></svg></button><button class="icon-btn" type="button" aria-label="Download"><svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg></button><button class="icon-btn" type="button" aria-label="Reset"><svg class="icon" aria-hidden="true"><use href="#icon-reset"></use></svg></button></div>
+        </div>
+      </article>
+
+      <article class="panel component-card" data-reveal style="--reveal-delay: 60ms">
+        <div class="component-card__head"><div><span class="panel-kicker">Status</span><h3>Badges and progress</h3></div><span class="badge">Semantic</span></div>
+        <div class="component-card__body">
+          <div class="showcase-row"><span class="showcase-label">Badges</span><span class="badge">Default</span><span class="badge badge-cyan">Theory</span><span class="badge badge-violet">Lab</span><span class="badge badge-success"><span class="badge-dot"></span>Complete</span><span class="badge badge-warning">Review</span></div>
+          <div style="display:flex;gap:var(--space-5);align-items:center;margin-top:var(--space-2)">
+            <div class="progress-ring" style="--ring-progress:0.58;--ring-circumference:264" role="img" aria-label="58 percent complete">
+              <svg viewBox="0 0 92 92" aria-hidden="true">
+                <defs><linearGradient id="ring-gradient-2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5EE7FF"/><stop offset="0.5" stop-color="#4F8CFF"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+                <circle class="progress-ring__track" cx="46" cy="46" r="42"/>
+                <circle class="progress-ring__value" cx="46" cy="46" r="42" style="--ring-stroke:url(#ring-gradient-2)"/>
+              </svg>
+              <span class="progress-ring__label">58%<small>EC-410</small></span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:var(--space-4)">
+              <div><div class="progress-row"><span>Experiments complete</span><span>3 / 6</span></div><div class="progress" style="margin-top:var(--space-2)"><span class="progress-fill" style="--progress:50%"></span></div></div>
+              <div><div class="progress-row"><span>Checkpoints</span><span>18 / 32</span></div><div class="progress" style="margin-top:var(--space-2)"><span class="progress-fill" style="--progress:56%"></span></div></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel component-card component-card--wide" data-reveal>
+        <div class="component-card__head"><div><span class="panel-kicker">Technical content</span><h3>Code blocks</h3></div><span class="badge badge-cyan">Verilog-2001</span></div>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="code-block__file">and_gate.v</span>
+            <button class="copy-btn" type="button" aria-label="Copy and gate code"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-copy"></use></svg><span class="copy-label">Copy</span></button>
+          </div>
+          <div class="code-block__body">
+            <pre><code><span class="tok-comment">// Gate-level model of a two-input AND gate</span>
+<span class="tok-keyword">module</span> <span class="tok-type">and_gate</span> (
+  <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> a,
+  <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> b,
+  <span class="tok-keyword">output</span> <span class="tok-keyword">wire</span> y
+);
+  <span class="tok-keyword">and</span> <span class="tok-system">u1</span> (y, a, b);
+<span class="tok-keyword">endmodule</span></code></pre>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel component-card" data-reveal>
+        <div class="component-card__head"><div><span class="panel-kicker">Guidance</span><h3>Callouts</h3></div></div>
+        <div class="component-card__body">
+          <div class="callout"><svg class="icon" aria-hidden="true"><use href="#icon-info"></use></svg><div><strong>Information</strong>Use for definitions, context and non-critical explanation.</div></div>
+          <div class="callout callout--success"><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><div><strong>Verification</strong>Use when a simulation or testbench has been checked successfully.</div></div>
+          <div class="callout callout--warning"><svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg><div><strong>Common mistake</strong>Use for dangerous assumptions, width mismatches and blocking/non-blocking errors.</div></div>
+        </div>
+      </article>
+
+      <article class="panel component-card" data-reveal style="--reveal-delay: 60ms">
+        <div class="component-card__head"><div><span class="panel-kicker">Disclosure</span><h3>Details and tables</h3></div></div>
+        <div class="component-card__body">
+          <details class="details" open><summary>What does non-blocking mean?</summary><div class="details__body">The right-hand side is evaluated, then the assignment is scheduled for the end of the current time step. It models sequential hardware more safely than blocking assignment in clocked always blocks.</div></details>
+          <details class="details"><summary>Why use a testbench?</summary><div class="details__body">A testbench applies stimuli, observes outputs and makes a design verifiable before synthesis.</div></details>
+          <div class="table-wrap" style="margin-top:var(--space-2)">
+            <table>
+              <caption class="sr-only">AND gate truth table</caption>
+              <thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">Y</th></tr></thead>
+              <tbody><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr class="is-active"><td>1</td><td>1</td><td>1</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel component-card" data-reveal>
+        <div class="component-card__head"><div><span class="panel-kicker">Inputs</span><h3>Fields and controls</h3></div></div>
+        <div class="component-card__body">
+          <label class="field"><span class="field-label">Search lessons</span><input class="input" type="search" placeholder="e.g. blocking assignment"></label>
+          <label class="field"><span class="field-label">Select unit</span><select class="input"><option>Unit 1 · Language constructs</option><option>Unit 2 · Gate and dataflow</option><option>Unit 3 · Behavioural modelling</option></select></label>
+          <div class="state-row"><span class="state-label">Toggle</span><button class="btn btn-secondary" type="button" data-demo-toast="Preference saved locally.">Save preference</button><span class="badge badge-success"><span class="badge-dot"></span>Local only</span></div>
+        </div>
+      </article>
+
+      <article class="panel component-card" data-reveal style="--reveal-delay: 60ms">
+        <div class="component-card__head"><div><span class="panel-kicker">Feedback</span><h3>Overlays</h3></div></div>
+        <div class="component-card__body">
+          <div class="button-row"><button class="btn btn-secondary" type="button" data-demo-toast="Copied to clipboard.">Show toast</button><button class="btn btn-secondary" type="button" data-dialog-open="styleguide-dialog">Open dialog</button><button class="btn btn-ghost has-tooltip" type="button" data-tooltip="Tooltip on hover and focus.">Tooltip</button></div>
+          <div class="skeleton" style="height:72px;margin-top:var(--space-2)" aria-hidden="true"></div>
+          <div class="skeleton skeleton-line" style="margin-top:var(--space-3)" aria-hidden="true"></div>
+          <div class="skeleton skeleton-line skeleton-line--short" aria-hidden="true"></div>
+          <p class="panel-text">Skeletons are reserved for genuinely asynchronous content. Static lesson pages never show artificial loading.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="styleguide-section" id="patterns">
+  <div class="container">
+    <div class="styleguide-section-header" data-reveal>
+      <div><span class="eyebrow">03 / Patterns</span><h2>Composition</h2></div>
+      <p>These links open the live specimens: the local progress workspace, a complete lesson, and the classroom overview that carries the mobile layout.</p>
+    </div>
+    <div class="pattern-links" data-reveal>
+      <a class="pattern-link" href="dashboard.html">Engineering workstation <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a>
+      <a class="pattern-link" href="theory/udp.html">Lesson reading <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a>
+      <a class="pattern-link" href="theory/index.html">Mobile lesson <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a>
+    </div>
+
+    <div class="grid-2" style="margin-top:var(--space-4)">
+      <div class="panel component-card" data-reveal>
+        <span class="panel-kicker">Milestones</span>
+        <div class="timeline" style="margin-top:var(--space-5)">
+          <div class="timeline-item is-done"><span class="timeline-dot"></span><div><div class="timeline-title">First simulation</div><div class="timeline-meta">COMPLETE</div></div></div>
+          <div class="timeline-item is-done"><span class="timeline-dot"></span><div><div class="timeline-title">Unit 1 complete</div><div class="timeline-meta">10 / 10 TOPICS</div></div></div>
+          <div class="timeline-item is-active"><span class="timeline-dot"></span><div><div class="timeline-title">First practical</div><div class="timeline-meta">IN PROGRESS</div></div></div>
+          <div class="timeline-item"><span class="timeline-dot"></span><div><div class="timeline-title">Unit 2 complete</div><div class="timeline-meta">LOCKED</div></div></div>
+        </div>
+      </div>
+      <div class="panel component-card" data-reveal style="--reveal-delay: 60ms">
+        <span class="panel-kicker">Recent activity</span>
+        <div style="margin-top:var(--space-4)">
+          <a class="list-row" href="#"><span class="list-row-main"><span class="list-row-title">Gate primitives and truth tables</span><span class="list-row-meta">EC-405 · 12 MIN AGO</span></span><span class="badge badge-cyan">Theory</span></a>
+          <a class="list-row" href="#"><span class="list-row-main"><span class="list-row-title">Experiment 1 · Basic logic gates</span><span class="list-row-meta">EC-410 · YESTERDAY</span></span><span class="badge badge-violet">Lab</span></a>
+          <a class="list-row" href="#"><span class="list-row-main"><span class="list-row-title">Dataflow modelling</span><span class="list-row-meta">EC-405 · 2 DAYS AGO</span></span><span class="badge badge-success">Complete</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="styleguide-section" id="accessibility">
+  <div class="container">
+    <div class="styleguide-section-header" data-reveal>
+      <div><span class="eyebrow">04 / Accessibility</span><h2>Non-negotiables</h2></div>
+      <p>These checks apply to every page, component and interactive circuit before release.</p>
+    </div>
+    <div class="a11y-grid">
+      <div class="panel a11y-card" data-reveal><h3>Keyboard</h3><p>Every interactive element is reachable with Tab, operable with Enter or Space, and has a visible focus state.</p></div>
+      <div class="panel a11y-card" data-reveal style="--reveal-delay: 60ms"><h3>Contrast</h3><p>Body and muted text are checked against their surfaces in both themes. Colour is never the only carrier of state.</p></div>
+      <div class="panel a11y-card" data-reveal style="--reveal-delay: 120ms"><h3>Touch</h3><p>Mobile controls meet a 44px target. Code blocks scroll horizontally; tables remain contained.</p></div>
+      <div class="panel a11y-card" data-reveal style="--reveal-delay: 180ms"><h3>Motion</h3><p>Reduced-motion preferences remove ambient animation and reveal transitions while preserving content.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="styleguide-section" id="implementation">
+  <div class="container">
+    <div class="styleguide-section-header" data-reveal>
+      <div><span class="eyebrow">05 / Implementation</span><h2>Architecture notes</h2></div>
+      <p>The site is static, modular and dependency-free at runtime. The build step only assembles shared shells and content fragments.</p>
+    </div>
+    <div class="implementation-grid">
+      <div class="panel implementation-card" data-reveal><h3>CSS</h3><p>Seven layers: fonts, tokens, themes, base, layout, components and pages. Components consume tokens only; themes override values.</p><span class="code-inline">css/tokens.css</span></div>
+      <div class="panel implementation-card" data-reveal style="--reveal-delay: 60ms"><h3>JavaScript</h3><p>Native ES modules. Theme, navigation, copy, dialogs, toasts, reveal and motion controls are isolated in <span class="code-inline">ui.js</span>.</p><span class="code-inline">js/ui.js</span></div>
+      <div class="panel implementation-card" data-reveal style="--reveal-delay: 120ms"><h3>Build</h3><p>A standard-library Python script wraps content fragments in the shared shell and resolves relative paths for GitHub Pages subpaths.</p><span class="code-inline">tools/build.py</span></div>
+      <div class="panel implementation-card" data-reveal style="--reveal-delay: 180ms"><h3>Performance</h3><p>No framework, no external requests, local fonts, CSS gradients and inline SVG. Animations are limited to transform and opacity.</p><span class="code-inline">0 runtime deps</span></div>
+    </div>
+  </div>
+</section>
+
+<dialog class="dialog" id="styleguide-dialog" aria-labelledby="styleguide-dialog-title">
+  <div class="dialog-header">
+    <div><span class="panel-kicker">Dialog</span><h2 class="dialog-title" id="styleguide-dialog-title">Example confirmation</h2></div>
+    <button class="icon-btn" type="button" data-dialog-close aria-label="Close dialog"><svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg></button>
+  </div>
+  <div class="dialog-body"><p>Dialogs use the native dialog element, which provides focus management and an Escape-key close behaviour without a library.</p></div>
+  <div class="dialog-actions"><button class="btn btn-secondary" type="button" data-dialog-close>Cancel</button><button class="btn btn-primary" type="button" data-dialog-close>Confirm</button></div>
+</dialog>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="index.html#path">Learning path</a>
+              <a class="footer-link" href="index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="guides/index.html">Setup guides</a>
+              <a class="footer-link" href="index.html#approach">The approach</a>
+              <a class="footer-link" href="styleguide.html">Design system</a>
+              <a class="footer-link" href="styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="index.html">Homepage<span>01</span></a>
+        <a class="mobile-nav-link" href="styleguide.html#foundations">Foundations<span>02</span></a>
+        <a class="mobile-nav-link" href="styleguide.html#components">Components<span>03</span></a>
+        <a class="mobile-nav-link" href="styleguide.html#patterns">Patterns<span>04</span></a>
+        <a class="mobile-nav-link" href="styleguide.html#accessibility">Accessibility<span>05</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+  
+</body>
+</html>

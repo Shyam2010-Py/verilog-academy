@@ -1,0 +1,315 @@
+<script type="application/json" id="playground-data">{{PG_EXAMPLE_DATA}}</script>
+
+<section class="theory-hero pg-hero">
+  <div class="theory-hero__atmosphere" aria-hidden="true"></div>
+  <div class="container theory-hero__grid">
+    <div class="theory-hero__copy" data-reveal>
+      <span class="eyebrow">Verilog Playground</span>
+      <h1 class="display">Write the design.<br><span class="gradient-text">Compile it locally.</span></h1>
+      <p class="lede">A lightweight coding workbench for {{PG_EXAMPLE_COUNT}} verified starter projects. Edit a design and its testbench, download both <code>.v</code> files, then compile and run them with Icarus Verilog on your own machine. The page prepares the files; it does not pretend to compile Verilog inside the browser.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#workbench">
+          Open the workbench
+          <svg class="icon" aria-hidden="true"><use href="#icon-code"></use></svg>
+        </a>
+        <a class="btn btn-secondary btn-lg" href="#library">
+          Browse the library
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+      <div class="hero-facts theory-facts" aria-label="Playground scope">
+        <div><strong>{{PG_EXAMPLE_COUNT}}</strong><span>Verified projects</span></div>
+        <div><strong>{{PG_CHECK_TOTAL}}</strong><span>Recorded checks</span></div>
+        <div><strong>{{PG_TOOL_VERSION}}</strong><span>Icarus Verilog</span></div>
+        <div><strong>0</strong><span>Browser compilers</span></div>
+      </div>
+    </div>
+
+    <aside class="pg-hero__panel panel" aria-labelledby="pg-boundary-title" data-reveal style="--reveal-delay: 100ms">
+      <div class="pg-hero__panel-head">
+        <div>
+          <span class="panel-kicker">Honest boundary</span>
+          <h2 id="pg-boundary-title">No fake Run button.</h2>
+        </div>
+        <span class="badge badge-warning">Static site</span>
+      </div>
+      <ul class="pg-boundary-list">
+        <li><strong>This page edits and downloads text.</strong> It does not compile, elaborate or simulate Verilog.</li>
+        <li><strong>The transcript is evidence.</strong> Each reference output was produced by Icarus Verilog 13.0 from the original files.</li>
+        <li><strong>Your edits are yours.</strong> As soon as either editor changes, the reference transcript is marked as belonging to the original example.</li>
+        <li><strong>Drafts stay local.</strong> They use a separate browser key and never touch lesson or experiment progress.</li>
+      </ul>
+      <a class="text-link" href="#workflow">See the local workflow
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+      </a>
+    </aside>
+  </div>
+</section>
+
+<div class="container">
+  <div class="theory-alert pg-alert" role="status">
+    <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+    <p><strong>Compilation happens on your computer, not on this page.</strong> The Playground has no server-side compiler and no browser-side Verilog engine. Use the downloaded files with the installed Icarus Verilog toolchain, then compare your transcript with the reference output.</p>
+  </div>
+</div>
+
+<section class="section-tight pg-workbench-section" id="workbench">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">01 / The workbench</span>
+        <h2>One project. Two files. No hidden magic.</h2>
+      </div>
+      <p>Select a verified example, switch between its design and testbench, edit the text, and download the exact files you need. The reference output below the editor belongs to the original example and is marked clearly when your copy changes.</p>
+    </div>
+
+    <div class="pg-shell">
+      <div class="pg-main panel" data-workbench>
+        <div class="pg-toolbar">
+          <label class="pg-select-label" for="pg-example">Project</label>
+          <div class="pg-select-wrap">
+            <select id="pg-example" class="pg-select" data-example-select>
+              {{PG_OPTIONS}}
+            </select>
+            <svg class="icon pg-select-chevron" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
+          </div>
+          <div class="pg-toolbar__meta">
+            <span class="badge badge-cyan" data-project-category>Logic gates</span>
+            <span class="badge badge-success" data-project-state>Verified original</span>
+          </div>
+        </div>
+
+        <div class="pg-project-line">
+          <h3 data-project-title>AND Gate</h3>
+          <p data-project-summary>The simplest product term: the output is high only when both inputs are high.</p>
+        </div>
+
+        <div class="pg-tabs" role="tablist" aria-label="Editor files">
+          <button class="pg-tab" id="pg-tab-design" type="button" role="tab" aria-selected="true" aria-controls="pg-panel-design" tabindex="0" data-tab="design">
+            Design
+            <span class="pg-tab__file">design.v</span>
+          </button>
+          <button class="pg-tab" id="pg-tab-testbench" type="button" role="tab" aria-selected="false" aria-controls="pg-panel-testbench" tabindex="-1" data-tab="testbench">
+            Testbench
+            <span class="pg-tab__file">tb.v</span>
+          </button>
+        </div>
+
+        <div class="pg-editor-panels">
+          <div class="pg-editor-panel" id="pg-panel-design" role="tabpanel" aria-labelledby="pg-tab-design" data-panel="design">
+            <div class="pg-editor" data-editor="design">
+              <div class="pg-gutter" aria-hidden="true"><div class="pg-gutter__inner" data-gutter></div></div>
+              <div class="pg-code">
+                <pre class="pg-highlight" aria-hidden="true"><code data-highlight></code></pre>
+                <textarea class="pg-textarea" data-textarea spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" aria-label="Verilog design editor"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="pg-editor-panel" id="pg-panel-testbench" role="tabpanel" aria-labelledby="pg-tab-testbench" data-panel="testbench" hidden>
+            <div class="pg-editor" data-editor="testbench">
+              <div class="pg-gutter" aria-hidden="true"><div class="pg-gutter__inner" data-gutter></div></div>
+              <div class="pg-code">
+                <pre class="pg-highlight" aria-hidden="true"><code data-highlight></code></pre>
+                <textarea class="pg-textarea" data-textarea spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" aria-label="Verilog testbench editor"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pg-editor-footer">
+          <div class="pg-editor-status">
+            <span data-editor-status>design.v · 0 lines</span>
+            <span class="pg-editor-hint">Tab inserts two spaces · Shift+Tab outdents</span>
+          </div>
+          <div class="pg-editor-actions">
+            <button class="btn btn-secondary btn-sm" type="button" data-action="copy">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" type="button" data-action="download-design">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg>
+              <span>design.v</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" type="button" data-action="download-testbench">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg>
+              <span>tb.v</span>
+            </button>
+            <button class="btn btn-ghost btn-sm" type="button" data-action="reset-file">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-reset"></use></svg>
+              <span>Reset file</span>
+            </button>
+            <button class="btn btn-ghost btn-sm" type="button" data-action="reset-all">
+              <span>Reset both</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="pg-rail" aria-label="Project details">
+        <section class="panel pg-rail-card">
+          <span class="panel-kicker">At a glance</span>
+          <dl class="pg-meta-list">
+            <div><dt>Category</dt><dd data-meta-category>Logic gates</dd></div>
+            <div><dt>Level</dt><dd data-meta-level>Foundation</dd></div>
+            <div><dt>Design</dt><dd><code>design.v</code></dd></div>
+            <div><dt>Testbench</dt><dd><code>tb.v</code></dd></div>
+            <div><dt>Checks</dt><dd data-meta-checks>4</dd></div>
+          </dl>
+        </section>
+
+        <section class="panel pg-rail-card pg-draft-card">
+          <span class="panel-kicker">Local draft</span>
+          <p class="pg-draft-status" data-draft-status>No draft saved for this project.</p>
+          <p class="pg-rail-note">Drafts are stored only in this browser profile under <code>va.playground.drafts</code>. They are separate from <code>va.progress</code> and do not mark any lesson or experiment complete.</p>
+          <button class="btn btn-ghost btn-sm" type="button" data-action="clear-drafts">Clear saved drafts</button>
+        </section>
+
+        <section class="panel pg-rail-card pg-rail-note-card">
+          <span class="panel-kicker">Before you edit</span>
+          <p>The reference transcript is evidence for the original files only. When either editor changes, the badge switches to <strong>Original only</strong>. Nothing is recompiled until you run Icarus locally.</p>
+          <a class="text-link" href="{{ROOT}}theory/dataflow-modelling.html">Review continuous assignments
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+          </a>
+        </section>
+      </aside>
+    </div>
+
+    <div class="pg-brief-stack" data-brief-stack>
+      {{PG_BRIEFS}}
+    </div>
+  </div>
+</section>
+
+<section class="section-tight pg-library" id="library">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">02 / Example library</span>
+        <h2>{{PG_EXAMPLE_COUNT}} verified starting points.</h2>
+      </div>
+      <p>Every card opens a complete design and testbench pair. The collection moves from single gates to arithmetic, routing, behavioural blocks and one clocked flip-flop. Start small, or open the circuit that matches your laboratory task.</p>
+    </div>
+    <div class="pg-library-grid">
+      {{PG_CARDS}}
+    </div>
+  </div>
+</section>
+
+<section class="section-tight pg-workflow" id="workflow">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">03 / The real workflow</span>
+        <h2>Download. Compile. Run. Compare.</h2>
+      </div>
+      <p>The page is honest about the boundary: it prepares files and shows verified reference output. The actual compilation and simulation happen in a terminal with Icarus Verilog. The same four steps work for every project in the library.</p>
+    </div>
+
+    <div class="pg-workflow-grid">
+      <ol class="pg-flow">
+        <li class="pg-flow__step">
+          <span class="pg-flow__num">01</span>
+          <div><h3>Choose and edit</h3><p>Select a project, open the Design or Testbench tab, and make your change. Drafts are optional and local.</p></div>
+        </li>
+        <li class="pg-flow__step">
+          <span class="pg-flow__num">02</span>
+          <div><h3>Download both files</h3><p>Use the two download controls. Keep <code>design.v</code> and <code>tb.v</code> in the same folder so the testbench can find the design module.</p></div>
+        </li>
+        <li class="pg-flow__step">
+          <span class="pg-flow__num">03</span>
+          <div><h3>Compile with Icarus</h3><p>Open a terminal in that folder and run <code>iverilog -g2001 -o simulation.out design.v tb.v</code>.</p></div>
+        </li>
+        <li class="pg-flow__step">
+          <span class="pg-flow__num">04</span>
+          <div><h3>Run and compare</h3><p>Run <code>vvp simulation.out</code>. Compare the transcript with the reference output, but remember that edited files have no verified transcript on this page.</p></div>
+        </li>
+      </ol>
+
+      <div class="panel pg-terminal-card">
+        <span class="panel-kicker">Terminal · after download</span>
+        <h3>Two commands, no online service.</h3>
+        {{PG_COMMANDS}}
+        <p class="pg-terminal-note">The <code>.out</code> file is an Icarus simulation image, not a hardware bitstream. On Windows, run the commands in PowerShell or a MSYS2 terminal where <code>iverilog</code> and <code>vvp</code> are on <code>PATH</code>.</p>
+        <p class="pg-terminal-note"><strong>Different example?</strong> The downloaded names stay the same, so the commands do not change. If you rename the files, replace <code>design.v</code> and <code>tb.v</code> with your names in both commands.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight pg-guidance" id="guidance">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">04 / Reading the workbench</span>
+        <h2>What the code is doing.</h2>
+      </div>
+      <p>These notes are a bridge to the classroom and the laboratory, not a replacement for either. Use them to read the example, then follow the linked lesson when you need the full treatment.</p>
+    </div>
+
+    <div class="pg-guidance-grid">
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-cpu"></use></svg></span>
+        <h3>What is a Verilog module?</h3>
+        <p>A module is a hardware component with a name, a port list and a body. The ports declare what enters and leaves; the body describes the behaviour or structure. A design file can contain several modules, but only the modules named by the testbench are instantiated.</p>
+        <p><a class="text-link" href="{{ROOT}}theory/modules-instances-ports.html">Read modules and ports</a></p>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-flask"></use></svg></span>
+        <h3>Design versus testbench</h3>
+        <p>The design is the hardware you want. The testbench is a simulation-only module that drives the design inputs, observes the outputs and decides whether the result is correct. A testbench is not synthesised into the circuit; it is the experiment around it.</p>
+        <p><a class="text-link" href="{{ROOT}}labs/index.html">See the laboratory method</a></p>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-terminal"></use></svg></span>
+        <h3>Compilation and simulation</h3>
+        <p><code>iverilog</code> parses the Verilog, checks module and port connections, and writes a simulation image. <code>vvp</code> runs that image. A compile error means the source never reached simulation; a simulation mismatch means the design ran but disagreed with the testbench.</p>
+        <p><a class="text-link" href="{{ROOT}}theory/vlsi-design-flow.html">Place simulation in the flow</a></p>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-waveform"></use></svg></span>
+        <h3>Reading simulator output</h3>
+        <p>The testbenches print a header, the important rows and a final <code>PASS</code> or <code>FAIL</code> summary. The <code>$finish called at ...</code> line is normal: it records when the testbench ended. Read the columns against the header rather than guessing what a number means.</p>
+        <p><a class="text-link" href="{{ROOT}}theory/system-tasks-directives.html">Use display and finish correctly</a></p>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg></span>
+        <h3>Common Icarus errors</h3>
+        <dl class="pg-error-list">
+          <div><dt><code>syntax error</code></dt><dd>A missing semicolon, unmatched <code>begin</code>/<code>end</code>, or a misplaced port comma.</dd></div>
+          <div><dt><code>Unknown module type</code></dt><dd>The design file was not included in the compile command, or the module name is misspelled.</dd></div>
+          <div><dt><code>port ... is not a port</code></dt><dd>The testbench uses a port name that does not exist in the design.</dd></div>
+          <div><dt><code>warning: implicit declaration</code></dt><dd>A signal was used before it was declared; add the missing <code>wire</code> or <code>reg</code>.</dd></div>
+        </dl>
+      </article>
+
+      <article class="panel pg-guide">
+        <span class="pg-guide__icon"><svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg></span>
+        <h3>Common Verilog mistakes</h3>
+        <ul class="pg-list pg-list--warning">
+          <li>Using <code>=</code> where <code>==</code> is intended, or <code>&&</code> where a bitwise gate is intended.</li>
+          <li>Forgetting a <code>default</code> branch in a combinational <code>case</code> and inferring a latch.</li>
+          <li>Mixing blocking and non-blocking assignments inside one clocked block.</li>
+          <li>Connecting module ports by position when named connections would be clearer and safer.</li>
+        </ul>
+        <p><a class="text-link" href="{{ROOT}}theory/blocking-nonblocking.html">Review assignment rules</a></p>
+      </article>
+    </div>
+
+    <div class="pg-scope-note panel">
+      <div>
+        <span class="panel-kicker">Keep the boundary visible</span>
+        <h3>Preparation, not a replacement.</h3>
+        <p>The Playground helps you start, edit and download a design. It does not replace the EC-405 theory sequence, the EC-410 laboratory record or your own compiler output. The verified examples remain the reference; your custom code is unverified until you compile and run it yourself.</p>
+      </div>
+      <div class="button-row">
+        <a class="btn btn-secondary" href="{{ROOT}}theory/index.html">Open EC-405 Theory</a>
+        <a class="btn btn-secondary" href="{{ROOT}}labs/index.html">Open EC-410 Laboratory</a>
+      </div>
+    </div>
+  </div>
+</section>

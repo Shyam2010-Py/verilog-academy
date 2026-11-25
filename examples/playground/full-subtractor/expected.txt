@@ -1,0 +1,13 @@
+Full subtractor truth table
+a b bin | diff borrow | a-b-bin
+--------+-------------+--------
+0 0  0  |  0     0    |    0
+0 0  1  |  1     1    |    -1
+0 1  0  |  1     1    |    -1
+0 1  1  |  0     1    |    -2
+1 0  0  |  1     0    |    1
+1 0  1  |  0     0    |    0
+1 1  0  |  0     0    |    0
+1 1  1  |  1     1    |    -1
+PASS: 8/8 rows match
+tb.v:37: $finish called at 8000 (1ps)

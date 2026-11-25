@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="index, follow">
+  <title>Setup Guides — Windows and Android | Verilog Academy</title>
+  <meta name="description" content="Two honest setup guides: the verified Windows Icarus Verilog and GTKWave workflow, and what Android can really do with the static Academy site.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Setup Guides — Windows and Android | Verilog Academy">
+  <meta property="og:description" content="Two honest setup guides: the verified Windows Icarus Verilog and GTKWave workflow, and what Android can really do with the static Academy site.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="../assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="../assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <link rel="stylesheet" href="../css/theory.css"><link rel="stylesheet" href="../css/guides.css">
+</head>
+<body class="page-guide page-guide-index" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="../index.html">Homepage</a>
+          <a class="nav-link" href="../theory/index.html">Theory</a>
+          <a class="nav-link" href="../labs/index.html">Laboratory</a>
+          <a class="nav-link" href="../circuit-lab/index.html">Circuit Lab</a>
+          <a class="nav-link" href="../playground/index.html">Playground</a>
+          <a class="nav-link" href="../quizzes/index.html">Quizzes</a>
+          <a class="nav-link is-active" href="../guides/index.html" aria-current="page">Guides</a>
+          <a class="nav-link" href="../dashboard.html">Dashboard</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <section class="guide-hero">
+  <div class="guide-hero__atmosphere" aria-hidden="true"></div>
+  <div class="container guide-hero__grid">
+    <div class="guide-hero__copy" data-reveal>
+      <span class="eyebrow">Setup guides</span>
+      <h1 class="display">Set up the toolchain.<br><span class="gradient-text">Study anywhere.</span></h1>
+      <p class="lede">Two honest guides for the two places students actually work: a Windows PC with Icarus Verilog and GTKWave, and an Android phone browsing the static Academy. Neither guide pretends that a browser can compile Verilog.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="windows.html">
+          Windows PC guide
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn-secondary btn-lg" href="android.html">
+          Android guide
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+      <div class="hero-facts theory-facts" aria-label="Guide scope">
+        <div><strong>02</strong><span>Platform guides</span></div>
+        <div><strong>13.0</strong><span>Icarus Verilog</span></div>
+        <div><strong>3.3.128</strong><span>GTKWave package</span></div>
+        <div><strong>0</strong><span>Browser compilers</span></div>
+      </div>
+    </div>
+
+    <aside class="guide-boundary panel" data-reveal style="--reveal-delay: 100ms">
+      <span class="panel-kicker">What is verified</span>
+      <h2>The PC workflow is tested. The phone is for study.</h2>
+      <p>The Windows guide uses the installed, verified toolchain: Icarus Verilog 13.0, the matching <code>vvp</code> runtime, GTKWave 3.3.128 and Python 3.14.7. The Android guide covers the static site, local progress, the Playground editor and downloads. It does not claim that Android runs Icarus.</p>
+      <div class="guide-boundary__facts">
+        <div><span>Installed</span><strong>Icarus 13.0 · GTKWave 3.3.128</strong></div>
+        <div><span>Not claimed</span><strong>Vivado · Xilinx ISE · Android Icarus</strong></div>
+        <div><span>Preview</span><strong>Static files through a local server</strong></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="section-tight guide-choice" id="choose">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">01 / Choose your device</span>
+        <h2>Use the right guide for the job.</h2>
+      </div>
+      <p>The Academy itself is the same site on both platforms. The difference is what the device can do with a Verilog source file after you download it.</p>
+    </div>
+
+    <div class="guide-card-grid">
+      <a class="guide-card panel" href="windows.html" data-reveal>
+        <span class="guide-card__top">
+          <span class="guide-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-terminal"></use></svg></span>
+          <span class="badge badge-success">Full workflow</span>
+        </span>
+        <span class="guide-card__title">Windows PC</span>
+        <span class="guide-card__text">Install checks, a working folder, exact compile and run commands, simulator output, VCD waveforms in GTKWave and a troubleshooting table.</span>
+        <span class="guide-card__foot">Open the Windows guide <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span>
+      </a>
+
+      <a class="guide-card panel" href="android.html" data-reveal style="--reveal-delay: 80ms">
+        <span class="guide-card__top">
+          <span class="guide-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-book"></use></svg></span>
+          <span class="badge badge-cyan">Study and edit</span>
+        </span>
+        <span class="guide-card__title">Android phone</span>
+        <span class="guide-card__text">Read theory and laboratory pages, use the Circuit Lab, edit and download Playground files, keep progress local and export a backup.</span>
+        <span class="guide-card__foot">Open the Android guide <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span>
+      </a>
+    </div>
+
+    <div class="guide-compare panel" data-reveal>
+      <div class="guide-compare__row guide-compare__row--head">
+        <span>Task</span><span>Windows PC</span><span>Android phone</span>
+      </div>
+      <div class="guide-compare__row">
+        <span>Read theory and laboratory pages</span><span class="is-yes">Yes</span><span class="is-yes">Yes</span>
+      </div>
+      <div class="guide-compare__row">
+        <span>Use the Circuit Lab</span><span class="is-yes">Yes</span><span class="is-yes">Yes</span>
+      </div>
+      <div class="guide-compare__row">
+        <span>Edit and download Playground files</span><span class="is-yes">Yes</span><span class="is-yes">Yes</span>
+      </div>
+      <div class="guide-compare__row">
+        <span>Compile and simulate with Icarus</span><span class="is-yes">Yes — verified</span><span class="is-no">No — not bundled</span>
+      </div>
+      <div class="guide-compare__row">
+        <span>Inspect a VCD waveform</span><span class="is-yes">Yes — GTKWave</span><span class="is-no">Not in this release</span>
+      </div>
+      <div class="guide-compare__row">
+        <span>Keep progress and quiz attempts</span><span class="is-yes">Browser-local</span><span class="is-yes">Browser-local</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight guide-next" id="next">
+  <div class="container">
+    <div class="guide-next__panel panel" data-reveal>
+      <div>
+        <span class="panel-kicker">After setup</span>
+        <h2>Start with a verified example.</h2>
+        <p>Open the Playground, download <code>design.v</code> and <code>tb.v</code>, then follow the Windows commands. Use the quizzes to check the concepts before you move to the next experiment.</p>
+      </div>
+      <div class="guide-next__actions">
+        <a class="btn btn-secondary" href="../playground/index.html">Open Playground</a>
+        <a class="btn btn-secondary" href="../quizzes/index.html">Open quizzes</a>
+        <a class="btn btn-ghost" href="../dashboard.html">Dashboard</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="../labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="../index.html#path">Learning path</a>
+              <a class="footer-link" href="../index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="../circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="../playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="../quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="../guides/index.html">Setup guides</a>
+              <a class="footer-link" href="../index.html#approach">The approach</a>
+              <a class="footer-link" href="../styleguide.html">Design system</a>
+              <a class="footer-link" href="../styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="../index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="../index.html">Homepage<span>01</span></a>
+        <a class="mobile-nav-link" href="../theory/index.html">Theory<span>02</span></a>
+        <a class="mobile-nav-link" href="../labs/index.html">Laboratory<span>03</span></a>
+        <a class="mobile-nav-link" href="../circuit-lab/index.html">Circuit Lab<span>04</span></a>
+        <a class="mobile-nav-link" href="../playground/index.html">Playground<span>05</span></a>
+        <a class="mobile-nav-link" href="../quizzes/index.html">Quizzes<span>06</span></a>
+        <a class="mobile-nav-link is-active" href="../guides/index.html" aria-current="page">Guides<span>07</span></a>
+        <a class="mobile-nav-link" href="../dashboard.html">Dashboard<span>08</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/app.js"></script>
+  
+</body>
+</html>

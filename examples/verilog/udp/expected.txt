@@ -1,0 +1,16 @@
+combinational UDP: 2:1 mux
+sel a b | out
+--------+----
+ 0  0 0 |  0
+ 0  0 1 |  0
+ 0  1 0 |  1
+ 0  1 1 |  1
+ 1  0 0 |  0
+ 1  0 1 |  1
+ 1  1 0 |  0
+ 1  1 1 |  1
+sequential UDP: transparent D latch
+en=1 d=1 -> q=1
+en=0 d=0 -> q=1 (held)
+en=1 d=0 -> q=0
+tb.v:43: $finish called at 11000 (1ps)

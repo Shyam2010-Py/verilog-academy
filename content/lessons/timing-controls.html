@@ -1,0 +1,117 @@
+<section class="lesson-section">
+  <h2 id="time">Procedural code needs to know when</h2>
+  <p class="lesson-lead">A procedural block does not run on its own. Something has to tell it when to execute: a delay that elapses, an event that occurs, or a condition that becomes true. Those three mechanisms are Verilog's timing controls, and they are the difference between a script and a hardware model.</p>
+  <p>This topic covers the controls themselves. Their role in synthesis is just as important: delays are ignored, edges become clock and reset pins, and level waits are generally not synthesizable at all. A control that is perfect for a testbench can make an RTL block unbuildable.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="kinds">The three controls</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Timing controls in Verilog-2001</caption>
+      <thead><tr><th scope="col">Form</th><th scope="col">Meaning</th><th scope="col">Typical use</th></tr></thead>
+      <tbody>
+        <tr><td><code>#10;</code></td><td>Delay: wait 10 time units.</td><td>Testbench stimulus, clock generation.</td></tr>
+        <tr><td><code>@(posedge clk);</code></td><td>Event: wait for a rising edge on <code>clk</code>.</td><td>Clocked logic, edge-aligned sampling.</td></tr>
+        <tr><td><code>@(a or b);</code></td><td>Event: wait for any change on <code>a</code> or <code>b</code>.</td><td>Pre-2001 combinational sensitivity; still used for mixed lists.</td></tr>
+        <tr><td><code>wait (state == 2);</code></td><td>Level: block until the expression is true.</td><td>Testbench synchronisation; not synthesizable.</td></tr>
+        <tr><td><code>@(posedge clk or negedge rst_n);</code></td><td>Event list with two sources.</td><td>Asynchronous reset register.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>These controls can appear at the head of a statement or alone as a statement. <code>@(posedge clk);</code> on its own simply waits. <code>@(posedge clk) q &lt;= d;</code> performs an intra-statement event control: wait for the edge, then execute the assignment.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="intra">Intra-assignment delays</h2>
+  <p>A delay can also sit inside an assignment:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Two positions, two meanings</span></div>
+    <div class="code-block__body"><pre><code>#5 q = d;      // wait 5, then evaluate d and assign immediately
+q = #5 d;      // evaluate d now, assign 5 time units later
+q &lt;= #5 d;     // evaluate d now, schedule the update 5 later</code></pre></div>
+  </div>
+  <p>The difference matters when <code>d</code> can change during the delay. In the first form, <code>d</code> is read after the wait, so the assignment sees the later value. In the second, <code>d</code> is captured first and the old value is written later. The third form is the non-blocking variant, used in cell models to represent output delay without blocking the block.</p>
+  <p>All three are simulation constructs. Synthesis ignores them, often with a warning.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Delay, event and wait in one run</h2>
+  <p>The example has a clock, a small state counter that increments only while <code>start</code> is high, and an <code>initial</code> block that uses each of the three controls in turn.</p>
+
+  {{CODE:examples/verilog/timing-controls/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>always #5 clk = ~clk;</code> generates a 10 ns period clock: rising edges at 5, 15, 25, 35 and so on.</li>
+    <li><code>always @(posedge clk)</code> with <code>if (start &amp;&amp; state &lt; 2'd3)</code> is a gated counter. It stops at 3 rather than wrapping, because the comparison prevents further increments.</li>
+    <li><code>#7 start = 1'b1;</code> waits 7 ns from time zero, then raises <code>start</code>. There is no clock edge at 7 ns, so the counter does not move yet.</li>
+    <li><code>@(posedge clk);</code> blocks the <code>initial</code> block until the next rising edge. The first one after 7 ns is at 15 ns, so the message prints at 15 ns.</li>
+    <li><code>wait (state == 2'd2);</code> blocks until the condition is true. The counter reaches 1 at 15 ns and 2 at 25 ns, so the message prints at 25 ns, immediately when the state updates. A level wait is sensitive to a condition, not to an edge.</li>
+    <li><code>#3 $display(...)</code> waits three more time units and prints at 28 ns.</li>
+  </ul>
+
+  {{COMMANDS:timing-controls}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/timing-controls/expected.txt}}
+
+  <p>Each line is evidence for one control:</p>
+  <ul>
+    <li><strong>7000:</strong> the delay ended at 7 ns and the statement executed.</li>
+    <li><strong>15000:</strong> the event control resumed exactly on the first rising edge after the delay. Not at 7 ns, not at 10 ns.</li>
+    <li><strong>25000:</strong> the wait resumed in the same time step in which <code>state</code> became 2, not at the following edge.</li>
+    <li><strong>28000:</strong> the final delay added three time units to the wait's completion.</li>
+  </ul>
+  <p>The printed values are in picoseconds because <code>%0t</code> uses the simulation precision. Seven nanoseconds is 7000 ps.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="synthesis">What survives synthesis</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Timing controls versus synthesis</caption>
+      <thead><tr><th scope="col">Control</th><th scope="col">Synthesis result</th></tr></thead>
+      <tbody>
+        <tr><td><code>@(posedge clk)</code></td><td>Clock input of a flip-flop.</td></tr>
+        <tr><td><code>@(posedge clk or negedge rst_n)</code></td><td>Flip-flop with asynchronous reset.</td></tr>
+        <tr><td><code>@*</code></td><td>Combinational logic with inferred sensitivity.</td></tr>
+        <tr><td><code>#delay</code></td><td>Ignored, or rejected. Timing comes from the library.</td></tr>
+        <tr><td><code>wait (level)</code></td><td>Not synthesizable as written; usually a latch or a protocol handshake in disguise.</td></tr>
+        <tr><td><code>@(a or b)</code> on data signals</td><td>Combinational logic; equivalent to <code>@*</code> if the list is complete.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The distinction is not academic. A design that uses <code>wait</code> to sequence operations will simulate exactly as intended and then fail synthesis with an obscure message. If a behavioural model needs sequencing, use a clock and a state machine, not a level wait.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="races">Timing controls and races</h2>
+  <p>Timing controls do not remove races; they move them. Two blocks that both wait for <code>posedge clk</code> resume in an order the language does not define. If one samples a value that the other updates at the same edge, the result depends on scheduling. The standard defences are non-blocking assignment in clocked blocks, sampling on the opposite edge in a testbench, or sampling after a small delay.</p>
+  <p>Adding <code>#1</code> to hide a race is a common but weak fix: it changes the timing rather than the ordering guarantee, and it can hide a real design bug. Use it only in a testbench where the intent is explicit.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Confusing <code>@</code> with <code>wait</code>.</strong> An event control resumes on a transition; a wait resumes when a condition is true, which may be immediately.</li>
+    <li><strong>Using <code>#</code> in synthesizable RTL.</strong> It is ignored, so the hardware has no delay, and the simulation is misleading.</li>
+    <li><strong>Forgetting that a delay is in timescale units.</strong> <code>#5</code> is 5 ns only if the active timescale says so.</li>
+    <li><strong>Waiting for an edge that already happened.</strong> <code>@(posedge clk)</code> waits for the <em>next</em> edge; it does not test the current level.</li>
+    <li><strong>Using <code>wait</code> in a design that must synthesise.</strong> It has no hardware equivalent as written.</li>
+    <li><strong>Relying on the order of two blocks resuming at the same edge.</strong> The order is undefined; use non-blocking assignment or opposite-edge sampling.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li><code>#</code> is a delay, <code>@</code> is an event control, <code>wait</code> is a level control.</li>
+    <li><code>@(posedge clk)</code> resumes on the next rising edge, never on a previous one.</li>
+    <li>An intra-assignment delay changes when a value is read or written; the position of <code>#</code> matters.</li>
+    <li>Edge controls become clock and reset pins in synthesis; delays are ignored; level waits are not synthesizable.</li>
+    <li>Timing controls do not define the order between blocks that resume at the same time.</li>
+  </ul>
+</section>

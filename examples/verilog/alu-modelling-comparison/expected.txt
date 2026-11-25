@@ -1,0 +1,9 @@
+compared 1024 input combinations, mismatches = 0
+a=1010 (10)  b=0101 (5)
+op | result | decimal
+---+--------+--------
+00 |  0000  |     0
+01 |  1111  |    15
+10 |  1111  |    15
+11 |  0101  |     5
+tb.v:52: $finish called at 1028000 (1ps)

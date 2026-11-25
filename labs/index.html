@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="index, follow">
+  <title>EC-410 Practical Laboratory — Verilog Academy</title>
+  <meta name="description" content="Six verified Verilog-2001 experiments for EC-410: basic gates, adders, subtractors, a four-bit parallel adder, multiplexers and demultiplexers, each compiled and simulated with Icarus Verilog 13.0.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="EC-410 Practical Laboratory — Verilog Academy">
+  <meta property="og:description" content="Six verified Verilog-2001 experiments for EC-410: basic gates, adders, subtractors, a four-bit parallel adder, multiplexers and demultiplexers, each compiled and simulated with Icarus Verilog 13.0.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="../assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="../assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <link rel="stylesheet" href="../css/theory.css"><link rel="stylesheet" href="../css/labs.css">
+</head>
+<body class="page-lab page-lab-index" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="../index.html">Homepage</a>
+          <a class="nav-link" href="../theory/index.html">Theory</a>
+          <a class="nav-link is-active" href="../labs/index.html" aria-current="page">Laboratory</a>
+          <a class="nav-link" href="../circuit-lab/index.html">Circuit Lab</a>
+          <a class="nav-link" href="../playground/index.html">Playground</a>
+          <a class="nav-link" href="../quizzes/index.html">Quizzes</a>
+          <a class="nav-link" href="../guides/index.html">Guides</a>
+          <a class="nav-link" href="../dashboard.html">Dashboard</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <section class="theory-hero lab-hero">
+  <div class="theory-hero__atmosphere" aria-hidden="true"></div>
+  <div class="container theory-hero__grid">
+    <div class="theory-hero__copy" data-reveal>
+      <span class="eyebrow">EC-410 · Practical laboratory</span>
+      <h1 class="display">Six experiments.<br><span class="gradient-text">Real evidence.</span></h1>
+      <p class="lede">The first six EC-410 experiments, built as complete Verilog-2001 designs with testbenches and captured simulator transcripts. Every truth table, equation and diagram matches the code that produced it. Nothing in this laboratory is marked verified until Icarus Verilog 13.0 has compiled and run it.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="experiment-01.html" data-lab-continue>
+          <span data-lab-continue-label>Start with Experiment 01</span>
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn-secondary btn-lg" href="../dashboard.html">
+          Open dashboard
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+        </a>
+      </div>
+      <div class="hero-facts theory-facts" aria-label="Practical laboratory scope">
+        <div><strong>6</strong><span>Experiments</span></div>
+        <div><strong>45</strong><span>Laboratory periods</span></div>
+        <div><strong>2,700</strong><span>Recorded checks</span></div>
+        <div><strong>13.0</strong><span>Icarus Verilog</span></div>
+      </div>
+    </div>
+
+    <aside class="theory-progress panel" aria-labelledby="lab-progress-title" data-reveal style="--reveal-delay: 100ms">
+      <div class="theory-progress__head">
+        <div>
+          <span class="panel-kicker">Local progress</span>
+          <h2 class="theory-progress__title" id="lab-progress-title"><span data-lab-count>0</span><span class="theory-progress__total">/ 6</span></h2>
+          <p class="theory-progress__label">experiments complete</p>
+        </div>
+        <span class="badge badge-cyan" data-lab-percent>0%</span>
+      </div>
+      <div class="progress progress--lg" role="progressbar" aria-label="EC-410 practical progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-lab-bar>
+        <span class="progress-fill" data-lab-fill style="--progress: 0%"></span>
+      </div>
+
+      <div class="theory-progress__next">
+        <span class="panel-kicker">Next unfinished experiment</span>
+        <h3 data-lab-next-title>Implementation of Basic Logic Gates</h3>
+        <p data-lab-next-meta>Experiment 01 · 4 combinations</p>
+        <a class="btn btn-secondary btn-sm" href="experiment-01.html" data-lab-next>
+          <span data-lab-next-label>Open experiment</span>
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+
+      <p class="theory-progress__note">An experiment becomes complete only when you select the control on its page. The same reversible record feeds this overview and the learning dashboard.</p>
+    </aside>
+  </div>
+</section>
+
+<div class="container">
+  <div class="theory-alert" data-storage-alert hidden role="status">
+    <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+    <p data-storage-message></p>
+  </div>
+</div>
+
+<noscript>
+  <div class="container theory-noscript">
+    <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+    <p><strong>Progress needs JavaScript.</strong> Every experiment is readable without it, but completion states and the continue link cannot be updated. Enable JavaScript to track experiments.</p>
+  </div>
+</noscript>
+
+<section class="section-tight lab-bench" id="experiments">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">01 / The bench</span>
+        <h2>Six circuits. Six verified transcripts.</h2>
+      </div>
+      <p>Each experiment is a complete bench record: aim, theory, diagram, equations, truth table, design, testbench, commands, actual output and viva preparation. Work through them in order, or open any experiment whose circuit you already understand.</p>
+    </div>
+
+    <div class="lab-objectives panel" id="objectives" data-reveal>
+      <div class="lab-objectives__head">
+        <span class="panel-kicker">Laboratory objectives</span>
+        <h3>What these six experiments build</h3>
+      </div>
+      <ul class="lab-objectives__list">
+        <li>Derive a truth table and Boolean equations before writing any Verilog.</li>
+        <li>Implement combinational circuits in Verilog-2001 using gate primitives, dataflow assignments and <code>always @*</code>.</li>
+        <li>Write a self-checking testbench that drives every required input combination.</li>
+        <li>Compile with <code>iverilog -g2001</code> and run the simulation image with <code>vvp</code>.</li>
+        <li>Compare the simulator transcript against the expected truth table and explain every column.</li>
+        <li>Diagnose mismatches, undriven outputs, inferred latches and reversed bus order.</li>
+      </ul>
+    </div>
+
+    <div class="lab-grid">
+      <a class="lab-card panel" href="experiment-01.html" data-lab-card="experiment-01" data-reveal><span class="lab-card__head"><span class="lab-card__num">Experiment 01</span><span class="badge badge-violet" data-lab-state>Not started</span></span><h3 class="lab-card__title">Implementation of Basic Logic Gates</h3><p class="lab-card__summary">Build AND, OR, NOT, NAND, NOR, XOR and XNOR from continuous assignments, then compare every output against an independent truth table for all four input combinations.</p><span class="lab-card__foot"><span class="lab-card__meta">7 gates · 4 input vectors</span><span class="lab-card__open">Open experiment<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+      <a class="lab-card panel" href="experiment-02.html" data-lab-card="experiment-02" data-reveal><span class="lab-card__head"><span class="lab-card__num">Experiment 02</span><span class="badge badge-violet" data-lab-state>Not started</span></span><h3 class="lab-card__title">Implementation of Adders</h3><p class="lab-card__summary">Derive half and full adders from their Boolean equations, implement both in Verilog-2001, and verify all four half-adder and all eight full-adder input combinations.</p><span class="lab-card__foot"><span class="lab-card__meta">2 adders · 12 input vectors</span><span class="lab-card__open">Open experiment<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+      <a class="lab-card panel" href="experiment-03.html" data-lab-card="experiment-03" data-reveal><span class="lab-card__head"><span class="lab-card__num">Experiment 03</span><span class="badge badge-violet" data-lab-state>Not started</span></span><h3 class="lab-card__title">Implementation of Subtractors</h3><p class="lab-card__summary">Implement half and full subtractors with borrow logic, then verify every input combination against independent difference and borrow expectations.</p><span class="lab-card__foot"><span class="lab-card__meta">2 subtractors · 12 input vectors</span><span class="lab-card__open">Open experiment<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+      <a class="lab-card panel" href="experiment-04.html" data-lab-card="experiment-04" data-reveal><span class="lab-card__head"><span class="lab-card__num">Experiment 04</span><span class="badge badge-violet" data-lab-state>Not started</span></span><h3 class="lab-card__title">Implementation of 4-Bit Parallel Adder</h3><p class="lab-card__summary">Connect four full-adder instances into a four-bit ripple-carry adder, expose carry-out and signed overflow, and sweep all 512 input combinations.</p><span class="lab-card__foot"><span class="lab-card__meta">4-bit ripple carry · 512 vectors</span><span class="lab-card__open">Open experiment<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+      <a class="lab-card panel" href="experiment-05.html" data-lab-card="experiment-05" data-reveal><span class="lab-card__head"><span class="lab-card__num">Experiment 05</span><span class="badge badge-violet" data-lab-state>Not started</span></span><h3 class="lab-card__title">Implementation of Multiplexers</h3><p class="lab-card__summary">Implement 2:1, 4:1 and 8:1 multiplexers, then verify every select value and every data pattern for each width: 2,132 checks in total.</p><span class="lab-card__foot"><span class="lab-card__meta">3 multiplexers · 2,132 checks</span><span class="lab-card__open">Open experiment<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+      <a class="lab-card panel" href="experiment-06.html" data-lab-card="experiment-06" data-reveal><span class="lab-card__head"><span class="lab-card__num">Experiment 06</span><span class="badge badge-violet" data-lab-state>Not started</span></span><h3 class="lab-card__title">Implementation of Demultiplexers</h3><p class="lab-card__summary">Implement 1:2, 1:4 and 1:8 demultiplexers so exactly one output follows the data input, then verify every select and data combination.</p><span class="lab-card__foot"><span class="lab-card__meta">3 demultiplexers · 28 vectors</span><span class="lab-card__open">Open experiment<svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span></span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight lab-method" id="method">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">02 / The method</span>
+        <h2>Write it. Compile it. Compare it.</h2>
+      </div>
+      <p>A laboratory result is not a screenshot of code. It is a design, a stimulus, a simulator transcript and a comparison against the expected behaviour. Every experiment here follows the same four steps.</p>
+    </div>
+
+    <div class="lab-method__grid">
+      <ol class="flow-list lab-method__steps" data-reveal>
+        <li class="flow-step"><strong>Derive</strong><span>Write the Boolean behaviour or the structural connection before writing Verilog.</span></li>
+        <li class="flow-step"><strong>Describe</strong><span>Implement the circuit in Verilog-2001 and keep the module ports aligned with the diagram.</span></li>
+        <li class="flow-step"><strong>Stimulate</strong><span>Drive every required input combination from a testbench, not by hand-editing values.</span></li>
+        <li class="flow-step"><strong>Compare</strong><span>Read the transcript against the truth table and record the mismatch count.</span></li>
+      </ol>
+
+      <div class="lab-command-card panel" data-reveal style="--reveal-delay: 80ms">
+        <span class="panel-kicker">Exact workflow · Experiment 01</span>
+        <h3 class="lab-command-card__title">Compile and run from the example directory</h3>
+        <div class="code-block code-block--commands" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__file">Terminal</span>
+    <button class="copy-btn" type="button" aria-label="Copy build commands">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code>iverilog -g2001 -o experiment-01.out design.v tb.v
+vvp experiment-01.out</code></pre>
+  </div>
+</div>
+        <p class="lab-command-card__note">The build uses <code>-g2001</code>, so the source is checked against Verilog-2001 rather than a newer language mode. The <code>.out</code> file is an Icarus simulation image, not a hardware bitstream.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight lab-tools" id="tools">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">03 / Required tools</span>
+        <h2>A small, free toolchain.</h2>
+      </div>
+      <p>No online simulator and no account are required. The laboratory needs a text editor, a terminal, and Icarus Verilog. Waveform viewing is optional because every experiment records its result as text.</p>
+    </div>
+
+    <div class="lab-tool-grid">
+      <article class="lab-tool panel" data-reveal>
+        <span class="lab-tool__icon"><svg class="icon" aria-hidden="true"><use href="#icon-terminal"></use></svg></span>
+        <h3>Icarus Verilog 13.0</h3>
+        <p>The compiler <code>iverilog</code> checks and elaborates the design; <code>vvp</code> runs the resulting simulation image. Every transcript on this site was produced with this toolchain in Verilog-2001 (-g2001) mode.</p>
+        <span class="lab-tool__meta">Required · installed and used for verification</span>
+      </article>
+
+      <article class="lab-tool panel" data-reveal style="--reveal-delay: 60ms">
+        <span class="lab-tool__icon"><svg class="icon" aria-hidden="true"><use href="#icon-code"></use></svg></span>
+        <h3>Text editor</h3>
+        <p>Any editor that saves plain UTF-8 text works. Keep <code>design.v</code> and <code>tb.v</code> in the same working directory so the command lines in each experiment apply without changes.</p>
+        <span class="lab-tool__meta">Required · no plugin or extension</span>
+      </article>
+
+      <article class="lab-tool panel" data-reveal style="--reveal-delay: 120ms">
+        <span class="lab-tool__icon"><svg class="icon" aria-hidden="true"><use href="#icon-keyboard"></use></svg></span>
+        <h3>Terminal</h3>
+        <p>PowerShell, Command Prompt, Bash or any shell that can find <code>iverilog</code> and <code>vvp</code>. If the commands are not on <code>PATH</code>, call them with their full install path.</p>
+        <span class="lab-tool__meta">Required · same directory as the sources</span>
+      </article>
+
+      <article class="lab-tool panel" data-reveal style="--reveal-delay: 180ms">
+        <span class="lab-tool__icon"><svg class="icon" aria-hidden="true"><use href="#icon-waveform"></use></svg></span>
+        <h3>GTKWave (optional)</h3>
+        <p>The experiments use <code>$display</code> transcripts, so a waveform viewer is not needed to complete them. If you add <code>$dumpfile</code> and <code>$dumpvars</code>, GTKWave is a convenient way to inspect the result.</p>
+        <span class="lab-tool__meta">Optional · not required by any experiment</span>
+      </article>
+    </div>
+
+    <div class="lesson-note lab-tool-note" data-reveal>
+      <strong>Version honesty.</strong>
+      <p>The commands use Verilog-2001 syntax. A different simulator may accept the same files and print a different transcript layout; compare the values, not the spacing. The outputs shown on each experiment page are the actual Icarus 13.0 outputs captured for this release.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight lab-roadmap" id="roadmap">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div>
+        <span class="eyebrow">04 / Roadmap</span>
+        <h2>Experiments 07–15 are not published.</h2>
+      </div>
+      <p>The practical paper reserves 9 further experiments. They appear here only as locked roadmap rows: there is no page, no design and no completion control for them in this release.</p>
+    </div>
+
+    <div class="lab-roadmap-panel panel" data-reveal>
+      <div class="lab-roadmap-panel__head">
+        <span class="unit-index">EC-410 · later release</span>
+        <span class="badge badge-violet"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-lock"></use></svg> Locked</span>
+      </div>
+      <ol class="lab-roadmap-list">
+        <li class="lab-roadmap-row"><span class="lab-roadmap-num">07</span><span class="lab-roadmap-title">Future practical</span><span class="lab-roadmap-meta">Not published</span></li>
+        <li class="lab-roadmap-row"><span class="lab-roadmap-num">08</span><span class="lab-roadmap-title">Future practical</span><span class="lab-roadmap-meta">Not published</span></li>
+        <li class="lab-roadmap-row"><span class="lab-roadmap-num">09</span><span class="lab-roadmap-title">Future practical</span><span class="lab-roadmap-meta">Not published</span></li>
+        <li class="lab-roadmap-row"><span class="lab-roadmap-num">10</span><span class="lab-roadmap-title">Future practical</span><span class="lab-roadmap-meta">Not published</span></li>
+        <li class="lab-roadmap-row"><span class="lab-roadmap-num">11</span><span class="lab-roadmap-title">Future practical</span><span class="lab-roadmap-meta">Not published</span></li>
+        <li class="lab-roadmap-row"><span class="lab-roadmap-num">12</span><span class="lab-roadmap-title">Future practical</span><span class="lab-roadmap-meta">Not published</span></li>
+        <li class="lab-roadmap-row"><span class="lab-roadmap-num">13</span><span class="lab-roadmap-title">Future practical</span><span class="lab-roadmap-meta">Not published</span></li>
+        <li class="lab-roadmap-row"><span class="lab-roadmap-num">14</span><span class="lab-roadmap-title">Future practical</span><span class="lab-roadmap-meta">Not published</span></li>
+        <li class="lab-roadmap-row"><span class="lab-roadmap-num">15</span><span class="lab-roadmap-title">Future practical</span><span class="lab-roadmap-meta">Not published</span></li>
+      </ol>
+    </div>
+
+    <div class="theory-roadmap-note panel" data-reveal>
+      <div>
+        <span class="panel-kicker">Keep the boundary visible</span>
+        <h3>No placeholder experiments.</h3>
+        <p>Locked experiments are named only to show the official scope. Nothing in this laboratory claims to teach them, and no completion record can be created for them.</p>
+      </div>
+      <a class="btn btn-secondary" href="../dashboard.html">
+        View the dashboard
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight lab-links">
+  <div class="container">
+    <div class="lab-links__grid">
+      <a class="lab-link-card panel" href="../theory/index.html" data-reveal>
+        <span class="panel-kicker">EC-405 · Theory</span>
+        <h2>Review the language behind the bench.</h2>
+        <p>Gate primitives, dataflow assignments, behavioural blocks and testbench timing are all explained with their own verified examples.</p>
+        <span class="text-link">Open the theory classroom <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span>
+      </a>
+      <a class="lab-link-card panel" href="../dashboard.html" data-reveal style="--reveal-delay: 80ms">
+        <span class="panel-kicker">Progress · Dashboard</span>
+        <h2>See both tracks in one place.</h2>
+        <p>The dashboard combines EC-405 topics and EC-410 experiments, calculates totals from the curriculum, and exports a local backup.</p>
+        <span class="text-link">Open the learning dashboard <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="curriculum-data">{"version":1,"updated":"2026-11-24","courses":[{"id":"ec405","code":"EC-405","title":"Digital Logic Design Through Verilog HDL","kind":"Theory","periodsPerWeek":5,"totalPeriods":75,"formativeMarks":20,"summativeMarks":80,"status":"available","units":[{"id":"unit-01","number":1,"title":"Introduction to Verilog HDL, Language Constructs and Conventions","periods":20,"status":"available","topics":[{"id":"vlsi-design-flow","number":1,"title":"VLSI IC Design Flow and the Role of HDL","slug":"01-vlsi-design-flow"},{"id":"vhdl-vs-verilog","number":2,"title":"VHDL vs Verilog, Features and Abstraction Levels","slug":"02-vhdl-vs-verilog"},{"id":"modules-instances-ports","number":3,"title":"Modules, Instances, Ports and Connection Rules","slug":"03-modules-instances-ports"},{"id":"hierarchical-modelling","number":4,"title":"Hierarchical Modelling and Design Methodologies","slug":"04-hierarchical-modelling"},{"id":"lexical-conventions","number":5,"title":"Lexical Conventions and Number Specification","slug":"05-lexical-conventions"},{"id":"data-types","number":6,"title":"Data Types: Nets, Registers and Vectors","slug":"06-data-types"},{"id":"arrays-memories-strings","number":7,"title":"Arrays, Memories, Strings and Vectors vs Arrays","slug":"07-arrays-memories-strings"},{"id":"parameters","number":8,"title":"Parameters: defparam and localparam","slug":"08-parameters"},{"id":"system-tasks-directives","number":9,"title":"System Tasks and Compiler Directives","slug":"09-system-tasks-directives"},{"id":"expressions-operators","number":10,"title":"Expressions, Operands and Operators","slug":"10-expressions-operators"}]},{"id":"unit-02","number":2,"title":"Gate Level and Data Flow Modelling","periods":10,"status":"available","topics":[{"id":"gate-primitives","number":1,"title":"Gate Primitives, Symbols and Truth Tables","slug":"01-gate-primitives"},{"id":"gate-delays","number":2,"title":"Gate Instantiation and Delay Modelling","slug":"02-gate-delays"},{"id":"dataflow-modelling","number":3,"title":"Dataflow Modelling and Continuous Assignments","slug":"03-dataflow-modelling"},{"id":"adders-subtractors-comparators","number":4,"title":"Adders, Subtractors and Comparators","slug":"04-adders-subtractors-comparators"},{"id":"mux-demux-encoder-decoder","number":5,"title":"Multiplexers, Demultiplexers, Encoders and Decoders","slug":"05-mux-demux-encoder-decoder"},{"id":"alu-modelling-comparison","number":6,"title":"ALU Design and Modelling Comparison","slug":"06-alu-and-modelling-comparison"}]},{"id":"unit-03","number":3,"title":"Behavioural Modelling","periods":15,"status":"available","topics":[{"id":"initial-always","number":1,"title":"Initial and Always Procedures","slug":"01-initial-always"},{"id":"blocking-nonblocking","number":2,"title":"Blocking and Non-Blocking Assignments","slug":"02-blocking-nonblocking"},{"id":"timing-controls","number":3,"title":"Delay-Based and Event-Based Timing Controls","slug":"03-timing-controls"},{"id":"conditionals-case","number":4,"title":"Conditionals, case, casex and casez","slug":"04-conditionals-case"},{"id":"loops","number":5,"title":"Looping Statements","slug":"05-loops"},{"id":"sequential-parallel-blocks","number":6,"title":"Sequential and Parallel Blocks","slug":"06-sequential-parallel-blocks"},{"id":"udp","number":7,"title":"User-Defined Primitives","slug":"07-udp"}]},{"id":"unit-04","number":4,"title":"Modelling of Combinational and Sequential Logic Circuits","periods":15,"status":"locked","topics":[]},{"id":"unit-05","number":5,"title":"System Design Concepts","periods":15,"status":"locked","topics":[]}]},{"id":"ec410","code":"EC-410","title":"Digital Logic Design Through Verilog HDL Lab","kind":"Laboratory","periodsPerWeek":3,"totalPeriods":45,"formativeMarks":40,"summativeMarks":60,"status":"available","experiments":[{"id":"experiment-01","number":1,"title":"Implementation of Basic Logic Gates","slug":"experiment-01","status":"available"},{"id":"experiment-02","number":2,"title":"Implementation of Adders","slug":"experiment-02","status":"available"},{"id":"experiment-03","number":3,"title":"Implementation of Subtractors","slug":"experiment-03","status":"available"},{"id":"experiment-04","number":4,"title":"Implementation of 4-Bit Parallel Adder","slug":"experiment-04","status":"available"},{"id":"experiment-05","number":5,"title":"Implementation of Multiplexers","slug":"experiment-05","status":"available"},{"id":"experiment-06","number":6,"title":"Implementation of Demultiplexers","slug":"experiment-06","status":"available"},{"id":"experiment-07","number":7,"title":"Future practical","slug":"experiment-07","status":"locked"},{"id":"experiment-08","number":8,"title":"Future practical","slug":"experiment-08","status":"locked"},{"id":"experiment-09","number":9,"title":"Future practical","slug":"experiment-09","status":"locked"},{"id":"experiment-10","number":10,"title":"Future practical","slug":"experiment-10","status":"locked"},{"id":"experiment-11","number":11,"title":"Future practical","slug":"experiment-11","status":"locked"},{"id":"experiment-12","number":12,"title":"Future practical","slug":"experiment-12","status":"locked"},{"id":"experiment-13","number":13,"title":"Future practical","slug":"experiment-13","status":"locked"},{"id":"experiment-14","number":14,"title":"Future practical","slug":"experiment-14","status":"locked"},{"id":"experiment-15","number":15,"title":"Future practical","slug":"experiment-15","status":"locked"}]}],"toolchain":{"primary":"Xilinx ISE / Vivado or similar","verification":"Icarus Verilog 13.0 + GTKWave","language":"Verilog-2001"}}</script>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="../labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="../index.html#path">Learning path</a>
+              <a class="footer-link" href="../index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="../circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="../playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="../quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="../guides/index.html">Setup guides</a>
+              <a class="footer-link" href="../index.html#approach">The approach</a>
+              <a class="footer-link" href="../styleguide.html">Design system</a>
+              <a class="footer-link" href="../styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="../index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="../index.html">Homepage<span>01</span></a>
+        <a class="mobile-nav-link" href="../theory/index.html">Theory<span>02</span></a>
+        <a class="mobile-nav-link is-active" href="../labs/index.html" aria-current="page">Laboratory<span>03</span></a>
+        <a class="mobile-nav-link" href="../circuit-lab/index.html">Circuit Lab<span>04</span></a>
+        <a class="mobile-nav-link" href="../playground/index.html">Playground<span>05</span></a>
+        <a class="mobile-nav-link" href="../quizzes/index.html">Quizzes<span>06</span></a>
+        <a class="mobile-nav-link" href="../guides/index.html">Guides<span>07</span></a>
+        <a class="mobile-nav-link" href="../dashboard.html">Dashboard<span>08</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/labs.js"></script>
+</body>
+</html>

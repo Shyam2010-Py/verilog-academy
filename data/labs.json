@@ -1,0 +1,60 @@
+{
+  "toolchain": {
+    "simulator": "Icarus Verilog",
+    "version": "13.0",
+    "mode": "Verilog-2001 (-g2001)",
+    "compiler": "iverilog",
+    "runner": "vvp",
+    "note": "Every transcript in this laboratory was produced by the installed Icarus Verilog 13.0 toolchain in Verilog-2001 mode."
+  },
+  "experiments": {
+    "experiment-01": {
+      "summary": "Build AND, OR, NOT, NAND, NOR, XOR and XNOR from continuous assignments, then compare every output against an independent truth table for all four input combinations.",
+      "scope": "7 gates · 4 input vectors",
+      "checks": "4 combinations",
+      "design": "design.v",
+      "testbench": "tb.v",
+      "vectors": 4
+    },
+    "experiment-02": {
+      "summary": "Derive half and full adders from their Boolean equations, implement both in Verilog-2001, and verify all four half-adder and all eight full-adder input combinations.",
+      "scope": "2 adders · 12 input vectors",
+      "checks": "12 combinations",
+      "design": "design.v",
+      "testbench": "tb.v",
+      "vectors": 12
+    },
+    "experiment-03": {
+      "summary": "Implement half and full subtractors with borrow logic, then verify every input combination against independent difference and borrow expectations.",
+      "scope": "2 subtractors · 12 input vectors",
+      "checks": "12 combinations",
+      "design": "design.v",
+      "testbench": "tb.v",
+      "vectors": 12
+    },
+    "experiment-04": {
+      "summary": "Connect four full-adder instances into a four-bit ripple-carry adder, expose carry-out and signed overflow, and sweep all 512 input combinations.",
+      "scope": "4-bit ripple carry · 512 vectors",
+      "checks": "512 combinations",
+      "design": "design.v",
+      "testbench": "tb.v",
+      "vectors": 512
+    },
+    "experiment-05": {
+      "summary": "Implement 2:1, 4:1 and 8:1 multiplexers, then verify every select value and every data pattern for each width: 2,132 checks in total.",
+      "scope": "3 multiplexers · 2,132 checks",
+      "checks": "2,132 checks",
+      "design": "design.v",
+      "testbench": "tb.v",
+      "vectors": 2132
+    },
+    "experiment-06": {
+      "summary": "Implement 1:2, 1:4 and 1:8 demultiplexers so exactly one output follows the data input, then verify every select and data combination.",
+      "scope": "3 demultiplexers · 28 vectors",
+      "checks": "28 combinations",
+      "design": "design.v",
+      "testbench": "tb.v",
+      "vectors": 28
+    }
+  }
+}

@@ -1,0 +1,294 @@
+<section class="lesson-section">
+  <h2 id="aim">Aim and scope</h2>
+  <p class="lesson-lead">Build a four-bit parallel adder by connecting four full-adder instances in a ripple-carry chain, expose the unsigned carry-out and the signed overflow flag, and verify all 512 input combinations.</p>
+  <p>This experiment moves from a single one-bit stage to a working multi-bit datapath. The four full adders are structural instances, not a behavioural <code>+</code> operator, so the carry path is visible in the source. That visibility is the point: each stage's carry-out becomes the next stage's carry-in, and the last two carries also determine signed overflow.</p>
+  <p>The design has two distinct carry-related outputs. <code>cout</code> is the carry out of the most significant bit and indicates unsigned overflow when the operands are treated as unsigned. <code>overflow</code> is the XOR of the carry into and the carry out of the most significant bit and indicates signed overflow. They answer different questions and must not be conflated.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="objectives">Learning objectives</h2>
+  <ul class="objective-list">
+    <li>Instantiate a module four times with named port connections.</li>
+    <li>Route a carry chain from the least significant to the most significant stage.</li>
+    <li>Distinguish unsigned carry-out from signed overflow.</li>
+    <li>Compute <code>overflow = c4 ^ c3</code> and explain why the XOR works.</li>
+    <li>Verify all 512 combinations of two four-bit operands and a carry-in.</li>
+    <li>Recognise the propagation-delay limitation of a ripple-carry structure.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="tools">Required tools and files</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Experiment 04 bench inventory</caption>
+      <thead><tr><th scope="col">Item</th><th scope="col">Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Icarus Verilog 13.0</td><td>Elaborates four full-adder instances and runs the 512-vector testbench.</td></tr>
+        <tr><td><code>design.v</code></td><td>Contains <code>full_adder</code> and <code>parallel_adder_4</code>.</td></tr>
+        <tr><td><code>tb.v</code></td><td>Prints nine selected cases, then sweeps the complete input space.</td></tr>
+        <tr><td>Terminal</td><td>Runs the compile and simulation commands from the example directory.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The design deliberately avoids the built-in <code>+</code> operator in the adder itself. The testbench does use arithmetic, but only to compute the expected value independently of the structural design.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="theory">Theory and working principle</h2>
+  <p>A four-bit adder adds <code>a[3:0]</code>, <code>b[3:0]</code> and a carry-in. Bit 0 has no incoming carry from a less significant stage, so it receives <code>cin</code>. Each subsequent bit receives the carry produced by the bit below it. The result is a five-bit unsigned value <code>{cout, sum}</code>.</p>
+  <p>Each stage is a full adder with <code>sum = a ^ b ^ carry_in</code> and <code>carry_out = (a &amp; b) | (carry_in &amp; (a ^ b))</code>. In a ripple-carry adder the carry propagates through the stages one after another. That is simple and area-efficient, but the worst-case delay grows with the number of bits because the most significant sum cannot settle until every carry below it has settled.</p>
+  <p>The carry out of the final stage, <code>c4</code>, is the unsigned carry-out. If the operands are unsigned four-bit numbers, <code>c4 = 1</code> means the exact sum is 16 or more and does not fit in four bits. If the operands are signed two's-complement numbers, the range is −8 to +7. Signed overflow occurs when the exact result falls outside that range. It can be detected by comparing the carry into the sign bit with the carry out of the sign bit: <code>overflow = c4 ^ c3</code>. The two carries differ exactly when the sign of the result is wrong.</p>
+  <p>This is why <code>1000 + 1000</code> sets both <code>cout</code> and <code>overflow</code>, while <code>1111 + 0001</code> sets <code>cout</code> but not <code>overflow</code>. Unsigned 15 + 1 = 16 overflows four unsigned bits; signed −1 + 1 = 0 is perfectly valid and does not overflow.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="diagram">Logic diagram</h2>
+  <p>Four full-adder blocks are chained from bit 0 to bit 3. The carry wire between bit 2 and bit 3 is <code>c3</code>; the carry out of bit 3 is <code>c4</code>. The overflow XOR taps those two nodes, not <code>cout</code> and <code>cin</code>.</p>
+
+  <figure class="lab-figure">
+    <div class="lab-figure__scroll" tabindex="0" role="group" aria-label="Block diagram of the four-bit ripple-carry adder. The figure scrolls horizontally on narrow screens.">
+      <svg class="lab-svg" viewBox="0 0 1000 330" role="img" aria-labelledby="fig-pa-title fig-pa-desc">
+        <title id="fig-pa-title">Four-bit ripple-carry parallel adder</title>
+        <desc id="fig-pa-desc">Four full-adder blocks FA0 to FA3 are chained by carry wires. Each block receives a and b bits and produces a sum bit. The carry out of the last block is cout, and overflow is the XOR of the carry into and out of the last block.</desc>
+
+        <text class="lab-svg__label" x="24" y="26">RIPPLE-CARRY CHAIN</text>
+
+        <g>
+          <rect class="lab-svg__block" x="100" y="130" width="120" height="80" rx="5"/>
+          <text x="160" y="166" text-anchor="middle">FA 0</text>
+          <text class="lab-svg__note" x="160" y="186" text-anchor="middle">bit 0</text>
+          <text class="lab-svg__value" x="135" y="94">a0</text>
+          <path class="lab-svg__wire" d="M135 100 V130"/>
+          <text class="lab-svg__value" x="195" y="94">sum0</text>
+          <path class="lab-svg__wire" d="M195 130 V100"/>
+          <text class="lab-svg__value" x="135" y="272">b0</text>
+          <path class="lab-svg__wire" d="M135 258 V210"/>
+        </g>
+
+        <g>
+          <rect class="lab-svg__block" x="270" y="130" width="120" height="80" rx="5"/>
+          <text x="330" y="166" text-anchor="middle">FA 1</text>
+          <text class="lab-svg__note" x="330" y="186" text-anchor="middle">bit 1</text>
+          <text class="lab-svg__value" x="305" y="94">a1</text>
+          <path class="lab-svg__wire" d="M305 100 V130"/>
+          <text class="lab-svg__value" x="365" y="94">sum1</text>
+          <path class="lab-svg__wire" d="M365 130 V100"/>
+          <text class="lab-svg__value" x="305" y="272">b1</text>
+          <path class="lab-svg__wire" d="M305 258 V210"/>
+        </g>
+
+        <g>
+          <rect class="lab-svg__block" x="440" y="130" width="120" height="80" rx="5"/>
+          <text x="500" y="166" text-anchor="middle">FA 2</text>
+          <text class="lab-svg__note" x="500" y="186" text-anchor="middle">bit 2</text>
+          <text class="lab-svg__value" x="475" y="94">a2</text>
+          <path class="lab-svg__wire" d="M475 100 V130"/>
+          <text class="lab-svg__value" x="535" y="94">sum2</text>
+          <path class="lab-svg__wire" d="M535 130 V100"/>
+          <text class="lab-svg__value" x="475" y="272">b2</text>
+          <path class="lab-svg__wire" d="M475 258 V210"/>
+        </g>
+
+        <g>
+          <rect class="lab-svg__block" x="610" y="130" width="120" height="80" rx="5"/>
+          <text x="670" y="166" text-anchor="middle">FA 3</text>
+          <text class="lab-svg__note" x="670" y="186" text-anchor="middle">bit 3 · sign</text>
+          <text class="lab-svg__value" x="645" y="94">a3</text>
+          <path class="lab-svg__wire" d="M645 100 V130"/>
+          <text class="lab-svg__value" x="705" y="94">sum3</text>
+          <path class="lab-svg__wire" d="M705 130 V100"/>
+          <text class="lab-svg__value" x="645" y="272">b3</text>
+          <path class="lab-svg__wire" d="M645 258 V210"/>
+        </g>
+
+        <text class="lab-svg__value" x="24" y="184">cin</text>
+        <path class="lab-svg__wire" d="M58 180 H100"/>
+        <path class="lab-svg__wire" d="M220 180 H270"/>
+        <path class="lab-svg__wire" d="M390 180 H440"/>
+        <path class="lab-svg__wire" d="M560 180 H610"/>
+        <circle class="lab-svg__dot" cx="585" cy="180" r="3"/>
+        <path class="lab-svg__wire" d="M585 180 V245 H830"/>
+        <text class="lab-svg__note" x="566" y="196" text-anchor="end">c3</text>
+
+        <path class="lab-svg__wire" d="M730 180 H800 V225 H830"/>
+        <text class="lab-svg__value" x="760" y="174">cout</text>
+        <text class="lab-svg__note" x="804" y="240">c4</text>
+
+        <rect class="lab-svg__block" x="830" y="205" width="64" height="50" rx="5"/>
+        <text x="862" y="235" text-anchor="middle">XOR</text>
+        <path class="lab-svg__wire" d="M894 230 H920"/>
+        <text class="lab-svg__value" x="928" y="234">overflow</text>
+
+        <text class="lab-svg__note" x="24" y="312">sum = a ^ b ^ carry_in     carry_out = (a &amp; b) | (carry_in &amp; (a ^ b))     overflow = c4 ^ c3</text>
+      </svg>
+    </div>
+    <figcaption><strong>Figure 1.</strong> Four full adders in a ripple-carry chain. The tap labelled <code>c3</code> is the carry into bit 3; <code>c4</code> is the carry out of bit 3. Their XOR drives <code>overflow</code>, while <code>c4</code> alone drives <code>cout</code>.</figcaption>
+  </figure>
+</section>
+
+<section class="lesson-section">
+  <h2 id="truth-table">Selected truth cases</h2>
+  <p>A complete table has 512 rows, so the table below lists the cases printed by the testbench before the exhaustive sweep. The exhaustive loop covers every remaining combination.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Selected cases from the captured transcript</caption>
+      <thead><tr><th scope="col">a</th><th scope="col">b</th><th scope="col">cin</th><th scope="col">{cout, sum}</th><th scope="col">cout</th><th scope="col">overflow</th></tr></thead>
+      <tbody>
+        <tr><td>0000</td><td>0000</td><td>0</td><td>00000</td><td>0</td><td>0</td></tr>
+        <tr><td>0011</td><td>0100</td><td>0</td><td>00111</td><td>0</td><td>0</td></tr>
+        <tr><td>0100</td><td>0100</td><td>0</td><td>01000</td><td>0</td><td>1</td></tr>
+        <tr><td>0111</td><td>0001</td><td>0</td><td>01000</td><td>0</td><td>1</td></tr>
+        <tr><td>1000</td><td>0111</td><td>0</td><td>01111</td><td>0</td><td>0</td></tr>
+        <tr><td>1111</td><td>0001</td><td>0</td><td>10000</td><td>1</td><td>0</td></tr>
+        <tr><td>1001</td><td>0111</td><td>0</td><td>10000</td><td>1</td><td>0</td></tr>
+        <tr><td>1000</td><td>1000</td><td>0</td><td>10000</td><td>1</td><td>1</td></tr>
+        <tr><td>1010</td><td>0101</td><td>1</td><td>10000</td><td>1</td><td>0</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The first row of interest is <code>0100 + 0100</code>. Unsigned 4 + 4 = 8, which fits in five bits but not in the signed range −8…+7, so <code>cout = 0</code> and <code>overflow = 1</code>. The row <code>1111 + 0001</code> is the mirror case: unsigned 15 + 1 = 16 overflows the four-bit unsigned range, but signed −1 + 1 = 0 is valid, so <code>cout = 1</code> and <code>overflow = 0</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="equations">Boolean equations</h2>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Sum bit i</span><code>sum[i] = a[i] ^ b[i] ^ c[i]</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Carry bit i</span><code>c[i+1] = (a[i] &amp; b[i]) | (c[i] &amp; (a[i] ^ b[i]))</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Carry-in</span><code>c[0] = cin</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Carry-out</span><code>cout = c[4]</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Overflow</span><code>overflow = c[4] ^ c[3]</code></div>
+  </div>
+  <p>In the Verilog source, the wire <code>carry[0]</code> is <code>c[1]</code> and <code>carry[3]</code> is <code>c[4]</code>. The expression <code>carry[3] ^ carry[2]</code> is therefore <code>c[4] ^ c[3]</code>. The names differ, but the nodes are the same.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="design">Verilog design code</h2>
+  <p>The file defines the full-adder stage first and then instantiates it four times. Named port association makes each carry connection explicit and prevents a silent bit-order mistake.</p>
+  {{CODE:examples/labs/experiment-04/design.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="testbench">Testbench</h2>
+  <p>The testbench first prints nine selected cases, then sweeps <code>ai</code> from 0 to 15, <code>bi</code> from 0 to 15 and <code>ci</code> from 0 to 1. Overflow is predicted from the exact signed sum, not from the design's own carry bits, so the two computations are independent.</p>
+  {{CODE:examples/labs/experiment-04/tb.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="explanation">Line-by-line explanation</h2>
+  <h3>Design</h3>
+  <ul>
+    <li><code>full_adder</code> is a one-bit stage. Its sum and carry equations are the same as Experiment 02, but written in the compact expanded form.</li>
+    <li><code>parallel_adder_4</code> declares two four-bit operands, a carry-in, a four-bit sum and two flags.</li>
+    <li><code>wire [3:0] carry;</code> holds the four inter-stage carries. <code>carry[0]</code> is produced by bit 0 and consumed by bit 1.</li>
+    <li><code>fa0</code> receives <code>cin</code> and produces <code>sum[0]</code> and <code>carry[0]</code>.</li>
+    <li><code>fa1</code>, <code>fa2</code> and <code>fa3</code> each take the previous stage's carry. This chain is the ripple.</li>
+    <li><code>assign cout = carry[3];</code> exposes the final carry as an output.</li>
+    <li><code>assign overflow = carry[3] ^ carry[2];</code> compares the carry into and out of the sign stage.</li>
+  </ul>
+  <h3>Testbench</h3>
+  <ul>
+    <li><code>expected_sum</code> is five bits so it can hold 16 or more. A four-bit expected value would silently wrap.</li>
+    <li><code>exact_signed</code> is an integer holding the signed arithmetic result.</li>
+    <li><code>$signed({ta[3], ta})</code> sign-extends a four-bit operand to five bits before conversion, so <code>1000</code> is treated as −8 rather than +8.</li>
+    <li><code>expected_overflow = (exact_signed &lt; -8) || (exact_signed &gt; 7);</code> is the definition of signed overflow for a four-bit result.</li>
+    <li><code>{cout, sum}</code> concatenates the outputs into the five-bit result for comparison with <code>expected_sum</code>.</li>
+    <li>The triple loop performs 16 × 16 × 2 = 512 checks and prints only the first three failures, which keeps a failing transcript readable.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="commands">Compilation and simulation commands</h2>
+  {{COMMANDS:experiment-04}}
+  <p>The simulation performs 521 one-nanosecond steps: nine selected cases plus 512 exhaustive vectors. It should finish quickly because the circuit has no large memories or long loops inside the design.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">Actual simulator output</h2>
+  <p>The complete captured transcript follows. The selected cases appear first, then the exhaustive sweep and its mismatch count.</p>
+  {{OUTPUT:examples/labs/experiment-04/expected.txt}}
+  <p>The finish time is 521,000 ps, which is 521 ns: one nanosecond for each of the 521 stimulus vectors. It is not 521 microseconds.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="waveform">Waveform and timing</h2>
+  <p>The first nine vectors occupy 0–9 ns. The exhaustive sweep applies one vector per nanosecond from 9 ns to 521 ns. In a real ripple-carry adder the carry would arrive later at each stage; this zero-delay model shows only the settled logic values.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Stimulus phases</caption>
+      <thead><tr><th scope="col">Phase</th><th scope="col">Time</th><th scope="col">Vectors</th><th scope="col">Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Selected cases</td><td>0–9 ns</td><td>9 named cases from the transcript</td><td>Show unsigned carry and signed overflow side by side.</td></tr>
+        <tr><td>Exhaustive sweep</td><td>9–521 ns</td><td>512 combinations</td><td>Prove every input maps to the correct result.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>If you add delays inside the full-adder module, a waveform would show each <code>sum[i]</code> settling after <code>carry[i]</code>. That is the ripple effect the name describes. The functional transcript would not change, because the testbench waits before sampling.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="result">Result</h2>
+  <div class="lab-result">
+    <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+    <div>
+      <h3>All 512 combinations produced the correct sum, carry and overflow.</h3>
+      <p>The exhaustive sweep checked <strong>512 input combinations</strong> and reported <strong>0 mismatches</strong>. The selected cases demonstrate that <code>cout</code> and <code>overflow</code> are independent flags: each can be 1 while the other is 0.</p>
+    </div>
+  </div>
+  <p>This is complete functional verification of a four-bit adder with carry-in. It does not measure worst-case delay, and it does not verify a gate-level netlist after synthesis.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes and troubleshooting</h2>
+  <div class="concept-grid">
+    <article class="concept-card">
+      <h3>Using <code>cin</code> for overflow</h3>
+      <p><code>overflow = cout ^ cin</code> is wrong for a multi-bit adder. The correct comparison is the carry into and out of the sign bit, <code>c4 ^ c3</code>.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Treating <code>cout</code> as signed overflow</h3>
+      <p><code>1111 + 0001</code> sets <code>cout</code> but is a valid signed operation. Unsigned carry and signed overflow answer different questions.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Connecting the carry chain backwards</h3>
+      <p><code>fa1</code> must take <code>carry[0]</code>, not <code>carry[1]</code>. A reversed connection can still compile, so only the exhaustive test exposes it.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Declaring the expected sum as four bits</h3>
+      <p><code>reg [3:0] expected_sum</code> cannot represent 16. Use five bits for a four-bit addition with carry-out.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Sign-extending incorrectly</h3>
+      <p><code>$signed(a)</code> on a four-bit value does not widen it to five bits. Concatenate the sign bit first: <code>$signed({a[3], a})</code>.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Forgetting the testbench delay</h3>
+      <p>Without a settling delay, the comparison may read the previous vector. Each vector is held for 1 ns in this testbench.</p>
+    </article>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 id="viva">Viva questions</h2>
+  <ol class="lab-viva">
+    <li>Why is the carry out of bit 3 not the same as signed overflow?</li>
+    <li>For <code>a = 1000</code> and <code>b = 1000</code>, give the sum, <code>cout</code> and <code>overflow</code>.</li>
+    <li>How many full adders are needed for a 16-bit ripple-carry adder?</li>
+    <li>What is the worst-case carry propagation path in this circuit?</li>
+    <li>How would a carry-look-ahead adder reduce that path?</li>
+    <li>Why does the testbench use 512 vectors rather than a sample of cases?</li>
+    <li>What does <code>{cout, sum}</code> represent as an unsigned integer?</li>
+  </ol>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>A four-bit ripple-carry adder is four full adders with the carry chained.</li>
+    <li><code>cout = c4</code> is unsigned carry-out; <code>overflow = c4 ^ c3</code> is signed overflow.</li>
+    <li>Unsigned overflow and signed overflow are independent; either can occur without the other.</li>
+    <li>Five bits are needed for the full result of a four-bit addition.</li>
+    <li>512 vectors exhaust two four-bit operands plus one carry-in.</li>
+    <li>Ripple carry is simple but slow; the critical path passes through every stage.</li>
+  </ul>
+</section>

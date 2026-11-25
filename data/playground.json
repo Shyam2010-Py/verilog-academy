@@ -1,0 +1,450 @@
+{
+  "version": 1,
+  "updated": "2026-11-25",
+  "examples": [
+    {
+      "id": "and-gate",
+      "title": "AND Gate",
+      "category": "Logic gates",
+      "level": "Foundation",
+      "summary": "The simplest product term: the output is high only when both inputs are high.",
+      "aim": "Implement a two-input AND gate with a continuous assignment and verify all four input combinations.",
+      "operation": "The continuous assignment y = a & b is always active. Whenever a or b changes, the simulator evaluates the bitwise AND and drives y with the result. For single-bit signals, bitwise AND and logical AND agree, but the bitwise operator is the one that describes hardware.",
+      "statements": [
+        {
+          "code": "module and_gate (input wire a, input wire b, output wire y);",
+          "text": "Declares the module and its three single-bit ports. The design has no storage."
+        },
+        {
+          "code": "assign y = a & b;",
+          "text": "Continuously drives y from the AND of a and b. This is dataflow modelling."
+        }
+      ],
+      "observations": [
+        "Only the 11 row produces a 1; the other three rows produce 0.",
+        "The output changes as soon as either input changes because the assignment is continuous.",
+        "The testbench checks all four rows and reports 4/4 matches."
+      ],
+      "mistakes": [
+        "Using && instead of &: && is a logical operator that returns a one-bit result and is not the usual gate description.",
+        "Declaring y as a reg in a design that only uses assign; a continuous assignment drives a net.",
+        "Connecting the testbench ports in the wrong order instead of using named connections."
+      ],
+      "revision": "AND is the product term: Y = A · B. It is 1 only for A = 1 and B = 1."
+    },
+    {
+      "id": "or-gate",
+      "title": "OR Gate",
+      "category": "Logic gates",
+      "level": "Foundation",
+      "summary": "The sum term: the output is low only when every input is low.",
+      "aim": "Implement a two-input OR gate with a continuous assignment and verify all four input combinations.",
+      "operation": "The assignment y = a | b drives y high whenever at least one input is high. The only zero row is 00. Like the AND example, this is pure combinational logic with no clock and no stored state.",
+      "statements": [
+        {
+          "code": "module or_gate (input wire a, input wire b, output wire y);",
+          "text": "The module boundary names the inputs and the output."
+        },
+        {
+          "code": "assign y = a | b;",
+          "text": "The bitwise OR operator describes the gate. It is not the logical || operator."
+        }
+      ],
+      "observations": [
+        "Three rows produce 1 and only 00 produces 0.",
+        "OR is not the same as XOR: 11 still produces 1 for OR.",
+        "The testbench reports 4/4 rows match."
+      ],
+      "mistakes": [
+        "Using || instead of | and expecting a multi-bit gate.",
+        "Confusing OR with XOR when the inputs are both high.",
+        "Leaving an output undriven by forgetting the assign statement."
+      ],
+      "revision": "OR is the sum term: Y = A + B. It is 0 only when A = 0 and B = 0."
+    },
+    {
+      "id": "xor-gate",
+      "title": "XOR Gate",
+      "category": "Logic gates",
+      "level": "Foundation",
+      "summary": "The difference detector: the output is high when the two inputs disagree.",
+      "aim": "Implement a two-input XOR gate and verify its four-row truth table.",
+      "operation": "The assignment y = a ^ b produces 1 when exactly one input is high. XOR is also the one-bit parity function, which is why it appears inside adders and subtractors. It is combinational and has no memory.",
+      "statements": [
+        {
+          "code": "module xor_gate (input wire a, input wire b, output wire y);",
+          "text": "A small module with two inputs and one output."
+        },
+        {
+          "code": "assign y = a ^ b;",
+          "text": "The ^ operator is bitwise XOR. For 1-bit operands it is the gate function."
+        }
+      ],
+      "observations": [
+        "The 01 and 10 rows produce 1; the equal rows 00 and 11 produce 0.",
+        "XOR is not OR: the 11 row is 0, not 1.",
+        "The testbench reports 4/4 rows match."
+      ],
+      "mistakes": [
+        "Calling XOR inclusive OR and expecting 11 to be 1.",
+        "Using ^~ when XNOR is intended.",
+        "Forgetting that XOR is a parity function when it is extended to wider vectors."
+      ],
+      "revision": "XOR is inequality: Y = A ⊕ B. It is 1 when the inputs differ and 0 when they match."
+    },
+    {
+      "id": "half-adder",
+      "title": "Half Adder",
+      "category": "Arithmetic",
+      "level": "Foundation",
+      "summary": "Adds two one-bit inputs and produces a sum and a carry.",
+      "aim": "Build a half adder from XOR and AND, then compare every row with the decimal sum A + B.",
+      "operation": "The sum bit is A XOR B because 1 + 1 produces 0 in the current column and a carry. The carry bit is A AND B because a carry is generated only when both inputs are 1. There is no carry input, so this circuit cannot be chained directly without extra logic.",
+      "statements": [
+        {
+          "code": "assign sum = a ^ b;",
+          "text": "The current-column result of adding two bits."
+        },
+        {
+          "code": "assign carry = a & b;",
+          "text": "The carry generated when both inputs are high."
+        }
+      ],
+      "observations": [
+        "1 + 1 gives sum 0 and carry 1, which is decimal 2 when the carry is included.",
+        "The decimal column in the transcript is computed with integers, so it shows 2 rather than a wrapped one-bit value.",
+        "The testbench reports 4/4 rows match."
+      ],
+      "mistakes": [
+        "Forgetting the carry output and treating the circuit as a one-bit adder only.",
+        "Computing the decimal sum with one-bit arithmetic in the testbench, which hides the carry.",
+        "Trying to chain half adders without an extra OR gate for the incoming carry."
+      ],
+      "revision": "Half adder: S = A ⊕ B, C = A · B. It adds two bits but has no carry input."
+    },
+    {
+      "id": "full-adder",
+      "title": "Full Adder",
+      "category": "Arithmetic",
+      "level": "Intermediate",
+      "summary": "Adds three one-bit inputs, including a carry-in, and produces sum and carry-out.",
+      "aim": "Implement a full adder from Boolean equations and verify all eight input combinations.",
+      "operation": "The sum is the parity of A, B and Cin, so it is high for an odd number of ones. The carry is the majority function: it is high when at least two of the three inputs are high. The expression (A · B) + (Cin · (A ⊕ B)) is a compact majority form.",
+      "statements": [
+        {
+          "code": "assign sum = a ^ b ^ cin;",
+          "text": "Three-input parity gives the sum bit."
+        },
+        {
+          "code": "assign carry = (a & b) | (cin & (a ^ b));",
+          "text": "Carry is generated by A and B, or propagated by Cin through exactly one of them."
+        }
+      ],
+      "observations": [
+        "Rows with an odd number of ones have sum 1; rows with two or three ones have carry 1.",
+        "The decimal column shows 3 for 1 + 1 + 1, not a wrapped one-bit value.",
+        "The testbench reports 8/8 rows match."
+      ],
+      "mistakes": [
+        "Using OR instead of XOR for the sum, which fails when all three inputs are high.",
+        "Forgetting the carry-in term in the carry expression.",
+        "Reversing the carry-out and sum connections in a larger adder."
+      ],
+      "revision": "Full adder: S = A ⊕ B ⊕ Cin, Cout = A·B + Cin·(A ⊕ B). It is the building block of a ripple-carry adder."
+    },
+    {
+      "id": "half-subtractor",
+      "title": "Half Subtractor",
+      "category": "Arithmetic",
+      "level": "Foundation",
+      "summary": "Subtracts B from A and reports the difference and the borrow.",
+      "aim": "Implement a half subtractor and verify all four input combinations, including the negative decimal case.",
+      "operation": "The difference is A XOR B, the same parity function used by the half adder. The borrow is high only for 0 − 1, which is (~A) AND B. Subtraction is not symmetric: A − B and B − A produce different borrows.",
+      "statements": [
+        {
+          "code": "assign diff = a ^ b;",
+          "text": "The difference bit for two one-bit operands."
+        },
+        {
+          "code": "assign borrow = (~a) & b;",
+          "text": "A borrow is needed only when A is 0 and B is 1."
+        }
+      ],
+      "observations": [
+        "The 0 − 1 row gives difference 1 and borrow 1, which represents −1 in two's-complement style arithmetic.",
+        "The decimal column shows −1 rather than the unsigned wrap value 1.",
+        "The testbench reports 4/4 rows match."
+      ],
+      "mistakes": [
+        "Using A AND ~B for the borrow, which is the borrow for B − A.",
+        "Forgetting that the decimal result can be negative.",
+        "Assuming a half subtractor can accept a borrow-in."
+      ],
+      "revision": "Half subtractor: D = A ⊕ B, Bout = ~A · B. It subtracts two bits and has no borrow input."
+    },
+    {
+      "id": "full-subtractor",
+      "title": "Full Subtractor",
+      "category": "Arithmetic",
+      "level": "Intermediate",
+      "summary": "Subtracts B and a borrow-in from A, producing difference and borrow-out.",
+      "aim": "Implement a full subtractor and verify all eight input combinations.",
+      "operation": "The difference is the parity of A, B and Bin. The borrow-out is high when A is 0 and B is 1, or when the difference term is 0 and Bin is 1. The decimal column uses signed integers in the testbench so negative results are visible.",
+      "statements": [
+        {
+          "code": "assign diff = a ^ b ^ bin;",
+          "text": "Three-input parity gives the difference bit."
+        },
+        {
+          "code": "assign borrow = (~a & b) | (~(a ^ b) & bin);",
+          "text": "Borrow is generated directly, or propagated through the current difference."
+        }
+      ],
+      "observations": [
+        "The 0 − 1 − 1 row produces difference 0 and borrow 1, representing −2.",
+        "The borrow-out depends on Bin as well as A and B.",
+        "The testbench reports 8/8 rows match."
+      ],
+      "mistakes": [
+        "Dropping the Bin term from the borrow expression.",
+        "Treating the borrow as A < B only and ignoring the incoming borrow.",
+        "Printing the decimal result with one-bit arithmetic and losing the sign."
+      ],
+      "revision": "Full subtractor: D = A ⊕ B ⊕ Bin, Bout = ~A·B + ~(A ⊕ B)·Bin. It is the subtractor counterpart of the full adder."
+    },
+    {
+      "id": "four-bit-adder",
+      "title": "4-Bit Ripple-Carry Adder",
+      "category": "Arithmetic",
+      "level": "Intermediate",
+      "summary": "Chains four full adders to add two four-bit numbers with a carry-in.",
+      "aim": "Build a four-bit ripple-carry adder from four full-adder instances and sweep all 512 input combinations.",
+      "operation": "Each full adder handles one bit position. The carry from bit 0 feeds bit 1, and so on. The final carry is the unsigned carry-out. Signed overflow is not the same signal: it is the XOR of the carry into and out of the most significant bit, which the design exposes as overflow.",
+      "statements": [
+        {
+          "code": "full_adder fa0 (.a(a[0]), .b(b[0]), .cin(cin), .sum(sum[0]), .carry(carry[0]));",
+          "text": "The first stage adds the least significant bits and the incoming carry."
+        },
+        {
+          "code": "assign cout = carry[3];",
+          "text": "The last carry becomes the unsigned carry-out."
+        },
+        {
+          "code": "assign overflow = carry[2] ^ carry[3];",
+          "text": "Signed overflow is the mismatch between the carry entering and leaving the sign bit."
+        }
+      ],
+      "observations": [
+        "The testbench checks all 512 combinations of A, B and Cin.",
+        "8 + 8 produces sum 0000, carry-out 1 and overflow 1: unsigned 16 is negative in four-bit signed arithmetic.",
+        "15 + 15 + 1 produces sum 1111 and carry-out 1, but no signed overflow.",
+        "The transcript prints five representative rows and the 512/512 summary."
+      ],
+      "mistakes": [
+        "Treating carry-out as signed overflow; they answer different questions.",
+        "Reversing the carry chain so bit 0 receives the final carry.",
+        "Using a 4-bit expression for the expected sum and losing the fifth bit."
+      ],
+      "revision": "A ripple-carry adder chains full adders. Sum is modulo 16 for four bits; carry-out is unsigned overflow, while signed overflow is carry[2] XOR carry[3]."
+    },
+    {
+      "id": "mux-4-to-1",
+      "title": "4:1 Multiplexer",
+      "category": "Routing",
+      "level": "Intermediate",
+      "summary": "Routes one of four data inputs to a single output under a two-bit select.",
+      "aim": "Implement a 4:1 multiplexer with a behavioural case statement and verify all 64 select/data combinations.",
+      "operation": "The select input chooses which data bit reaches y. Only one branch of the case statement is active at a time. A default branch keeps the output defined even if the select value were unknown or out of range, which also helps avoid an accidental latch.",
+      "statements": [
+        {
+          "code": "always @* begin",
+          "text": "A combinational procedural block: it re-evaluates whenever a read signal changes."
+        },
+        {
+          "code": "case (sel) 2'b00: y = d[0]; ... endcase",
+          "text": "Selects exactly one data input for each select value."
+        },
+        {
+          "code": "default: y = 1'b0;",
+          "text": "Keeps the output defined and makes the intent explicit."
+        }
+      ],
+      "observations": [
+        "With d = 1010, select 00 gives 0, 01 gives 1, 10 gives 0 and 11 gives 1.",
+        "All 64 combinations of four data bits and four select values are checked.",
+        "The output is purely combinational; there is no clock."
+      ],
+      "mistakes": [
+        "Forgetting the default branch and inferring a latch in some tools.",
+        "Swapping the select bit order so S1 and S0 are reversed.",
+        "Using blocking assignments in a clocked block when combinational behaviour is intended."
+      ],
+      "revision": "A 4:1 multiplexer is a selector: Y = D[S], where S is the two-bit select value. It is the routing element of a datapath."
+    },
+    {
+      "id": "demux-1-to-4",
+      "title": "1:4 Demultiplexer",
+      "category": "Routing",
+      "level": "Intermediate",
+      "summary": "Sends one data input to exactly one of four outputs.",
+      "aim": "Implement a 1:4 demultiplexer and verify all eight data/select combinations.",
+      "operation": "The output vector is cleared to 0000 first, then the selected bit is driven with din. This one-hot style means exactly one output can be high, and all unselected outputs stay low. The select input is the destination address.",
+      "statements": [
+        {
+          "code": "y = 4'b0000;",
+          "text": "Clears every output before selecting one destination."
+        },
+        {
+          "code": "case (sel) 2'b00: y[0] = din; ... endcase",
+          "text": "Routes din to the output named by sel."
+        }
+      ],
+      "observations": [
+        "When din = 0, every output is 0 regardless of select.",
+        "When din = 1, exactly one output is 1 and the other three are 0.",
+        "The testbench checks all eight combinations."
+      ],
+      "mistakes": [
+        "Forgetting to clear the other outputs, so old values remain high.",
+        "Driving the same output from two branches.",
+        "Confusing a demultiplexer with a decoder: a demux routes data, while a decoder asserts a selected line."
+      ],
+      "revision": "A 1:4 demultiplexer is the reverse of a multiplexer: one input is routed to one of four outputs. The unselected outputs must be driven low."
+    },
+    {
+      "id": "decoder-2-to-4",
+      "title": "2-to-4 Decoder with Enable",
+      "category": "Routing",
+      "level": "Intermediate",
+      "summary": "Converts a two-bit address into one active output line, with an enable input.",
+      "aim": "Implement a 2-to-4 decoder with an active-high enable and verify all eight enable/address combinations.",
+      "operation": "When enable is low, all four outputs are forced low. When enable is high, exactly one output is high according to the address. This is a one-hot decoder, not a data router: there is no data input to pass through.",
+      "statements": [
+        {
+          "code": "if (!enable) y = 4'b0000;",
+          "text": "The enable gates the whole decoder."
+        },
+        {
+          "code": "case (addr) 2'b00: y = 4'b0001; ... endcase",
+          "text": "Maps each address to one active output."
+        }
+      ],
+      "observations": [
+        "With enable = 0, every address produces 0000.",
+        "With enable = 1, address 00 produces 0001, 01 produces 0010, 10 produces 0100 and 11 produces 1000.",
+        "The testbench checks all eight combinations."
+      ],
+      "mistakes": [
+        "Treating enable as active-low without inverting it.",
+        "Using a decoder as a demultiplexer and expecting a data input.",
+        "Forgetting the default branch and leaving outputs undefined."
+      ],
+      "revision": "A 2-to-4 decoder asserts one of four lines for each address. The enable input can disable every output at once."
+    },
+    {
+      "id": "priority-encoder",
+      "title": "4-to-2 Priority Encoder",
+      "category": "Behavioural",
+      "level": "Advanced",
+      "summary": "Reports the highest-numbered active request as a two-bit code.",
+      "aim": "Implement a four-input priority encoder with a valid output and verify all 16 request patterns.",
+      "operation": "The if/else-if chain checks req[3] first, then req[2], req[1] and req[0]. The first high request wins. If no request is high, code is 00 and valid is 0; valid distinguishes the no-request case from a genuine request on req[0].",
+      "statements": [
+        {
+          "code": "valid = 1'b1;",
+          "text": "The default is valid; the no-request branch clears it."
+        },
+        {
+          "code": "if (req[3]) code = 2'd3; else if (req[2]) ...",
+          "text": "The order of the branches implements priority."
+        },
+        {
+          "code": "else begin code = 2'd0; valid = 1'b0; end",
+          "text": "Handles the no-request case explicitly."
+        }
+      ],
+      "observations": [
+        "Request 0000 gives code 00 and valid 0.",
+        "Request 0001 gives code 00 and valid 1, so valid is essential.",
+        "Request 1111 gives code 11 because req[3] has the highest priority.",
+        "The testbench checks all 16 patterns."
+      ],
+      "mistakes": [
+        "Reversing the priority order and checking req[0] first.",
+        "Forgetting the valid output and making 0000 indistinguishable from 0001.",
+        "Using casex instead of casez without understanding the difference between don't-care and unknown values."
+      ],
+      "revision": "A priority encoder reports the most significant active request. The valid bit separates a real request on line 0 from no request at all."
+    },
+    {
+      "id": "d-flip-flop",
+      "title": "D Flip-Flop with Enable and Reset",
+      "category": "Sequential",
+      "level": "Advanced",
+      "summary": "Stores one bit on a rising clock edge, with an enable and an asynchronous reset.",
+      "aim": "Implement a positive-edge D flip-flop and verify reset, hold, load and no-edge behaviour.",
+      "operation": "The always block triggers on a rising clock edge or a rising reset edge. Reset clears q immediately, without waiting for a clock. When reset is low and enable is high, the next rising edge copies d into q. When enable is low, the stored value holds. qbar is the continuous complement of q. The testbench checks both q and qbar.",
+      "statements": [
+        {
+          "code": "always @(posedge clk or posedge rst)",
+          "text": "A positive-edge clock with an asynchronous active-high reset."
+        },
+        {
+          "code": "if (rst) q <= 1'b0; else if (en) q <= d;",
+          "text": "Reset has priority; enable gates the load."
+        },
+        {
+          "code": "assign qbar = ~q;",
+          "text": "The complement output follows q continuously."
+        }
+      ],
+      "observations": [
+        "Changing d while the clock is steady does not change q.",
+        "Enable low holds the old value across a rising edge.",
+        "Reset high clears q immediately, even without a clock edge.",
+        "The testbench reports 8/8 state checks match."
+      ],
+      "mistakes": [
+        "Using blocking assignments in a clocked block and creating a race.",
+        "Treating enable as a clock and expecting a level-sensitive latch.",
+        "Assuming reset waits for the next clock edge when it is asynchronous.",
+        "Forgetting that qbar must be a wire driven by a continuous assignment."
+      ],
+      "revision": "A D flip-flop samples D on the active clock edge. Enable decides whether the edge loads; asynchronous reset overrides the clock and clears the state."
+    },
+    {
+      "id": "alu-4-bit",
+      "title": "4-Bit Behavioural ALU",
+      "category": "Behavioural",
+      "level": "Advanced",
+      "summary": "Selects AND, OR, addition or subtraction from a two-bit operation code.",
+      "aim": "Implement a small combinational ALU with a behavioural case statement and verify all four operations on two data pairs.",
+      "operation": "The always @* block is combinational: every output depends only on the current inputs. The case statement selects one operation. Addition and subtraction are four-bit operations, so the result wraps modulo 16; the testbench expects that truncation. The same function could be written as a dataflow conditional expression, which is a useful comparison.",
+      "statements": [
+        {
+          "code": "always @* begin",
+          "text": "Re-evaluates whenever a, b or op changes."
+        },
+        {
+          "code": "case (op) 2'b00: y = a & b; ... endcase",
+          "text": "One branch for each operation code."
+        },
+        {
+          "code": "default: y = 4'b0000;",
+          "text": "Keeps the output defined for unexpected codes."
+        }
+      ],
+      "observations": [
+        "Operation 00 performs bitwise AND; 01 performs bitwise OR.",
+        "Operation 10 adds modulo 16; operation 11 subtracts modulo 16.",
+        "The testbench checks eight operation/data pairs and reports 8/8 matches."
+      ],
+      "mistakes": [
+        "Forgetting the default branch and inferring a latch.",
+        "Expecting a carry or overflow output that this small ALU does not provide.",
+        "Mixing blocking and non-blocking assignments in a combinational block."
+      ],
+      "revision": "A behavioural ALU uses a case statement to select an operation. It is still combinational hardware: no clock, no stored state, and a defined output for every input."
+    }
+  ]
+}

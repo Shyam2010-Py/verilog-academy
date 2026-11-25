@@ -1,0 +1,323 @@
+{
+  "version": 1,
+  "updated": "2026-11-24",
+  "courses": [
+    {
+      "id": "ec405",
+      "code": "EC-405",
+      "title": "Digital Logic Design Through Verilog HDL",
+      "kind": "Theory",
+      "periodsPerWeek": 5,
+      "totalPeriods": 75,
+      "formativeMarks": 20,
+      "summativeMarks": 80,
+      "status": "available",
+      "units": [
+        {
+          "id": "unit-01",
+          "number": 1,
+          "title": "Introduction to Verilog HDL, Language Constructs and Conventions",
+          "periods": 20,
+          "status": "available",
+          "topics": [
+            {
+              "id": "vlsi-design-flow",
+              "number": 1,
+              "title": "VLSI IC Design Flow and the Role of HDL",
+              "slug": "01-vlsi-design-flow"
+            },
+            {
+              "id": "vhdl-vs-verilog",
+              "number": 2,
+              "title": "VHDL vs Verilog, Features and Abstraction Levels",
+              "slug": "02-vhdl-vs-verilog"
+            },
+            {
+              "id": "modules-instances-ports",
+              "number": 3,
+              "title": "Modules, Instances, Ports and Connection Rules",
+              "slug": "03-modules-instances-ports"
+            },
+            {
+              "id": "hierarchical-modelling",
+              "number": 4,
+              "title": "Hierarchical Modelling and Design Methodologies",
+              "slug": "04-hierarchical-modelling"
+            },
+            {
+              "id": "lexical-conventions",
+              "number": 5,
+              "title": "Lexical Conventions and Number Specification",
+              "slug": "05-lexical-conventions"
+            },
+            {
+              "id": "data-types",
+              "number": 6,
+              "title": "Data Types: Nets, Registers and Vectors",
+              "slug": "06-data-types"
+            },
+            {
+              "id": "arrays-memories-strings",
+              "number": 7,
+              "title": "Arrays, Memories, Strings and Vectors vs Arrays",
+              "slug": "07-arrays-memories-strings"
+            },
+            {
+              "id": "parameters",
+              "number": 8,
+              "title": "Parameters: defparam and localparam",
+              "slug": "08-parameters"
+            },
+            {
+              "id": "system-tasks-directives",
+              "number": 9,
+              "title": "System Tasks and Compiler Directives",
+              "slug": "09-system-tasks-directives"
+            },
+            {
+              "id": "expressions-operators",
+              "number": 10,
+              "title": "Expressions, Operands and Operators",
+              "slug": "10-expressions-operators"
+            }
+          ]
+        },
+        {
+          "id": "unit-02",
+          "number": 2,
+          "title": "Gate Level and Data Flow Modelling",
+          "periods": 10,
+          "status": "available",
+          "topics": [
+            {
+              "id": "gate-primitives",
+              "number": 1,
+              "title": "Gate Primitives, Symbols and Truth Tables",
+              "slug": "01-gate-primitives"
+            },
+            {
+              "id": "gate-delays",
+              "number": 2,
+              "title": "Gate Instantiation and Delay Modelling",
+              "slug": "02-gate-delays"
+            },
+            {
+              "id": "dataflow-modelling",
+              "number": 3,
+              "title": "Dataflow Modelling and Continuous Assignments",
+              "slug": "03-dataflow-modelling"
+            },
+            {
+              "id": "adders-subtractors-comparators",
+              "number": 4,
+              "title": "Adders, Subtractors and Comparators",
+              "slug": "04-adders-subtractors-comparators"
+            },
+            {
+              "id": "mux-demux-encoder-decoder",
+              "number": 5,
+              "title": "Multiplexers, Demultiplexers, Encoders and Decoders",
+              "slug": "05-mux-demux-encoder-decoder"
+            },
+            {
+              "id": "alu-modelling-comparison",
+              "number": 6,
+              "title": "ALU Design and Modelling Comparison",
+              "slug": "06-alu-and-modelling-comparison"
+            }
+          ]
+        },
+        {
+          "id": "unit-03",
+          "number": 3,
+          "title": "Behavioural Modelling",
+          "periods": 15,
+          "status": "available",
+          "topics": [
+            {
+              "id": "initial-always",
+              "number": 1,
+              "title": "Initial and Always Procedures",
+              "slug": "01-initial-always"
+            },
+            {
+              "id": "blocking-nonblocking",
+              "number": 2,
+              "title": "Blocking and Non-Blocking Assignments",
+              "slug": "02-blocking-nonblocking"
+            },
+            {
+              "id": "timing-controls",
+              "number": 3,
+              "title": "Delay-Based and Event-Based Timing Controls",
+              "slug": "03-timing-controls"
+            },
+            {
+              "id": "conditionals-case",
+              "number": 4,
+              "title": "Conditionals, case, casex and casez",
+              "slug": "04-conditionals-case"
+            },
+            {
+              "id": "loops",
+              "number": 5,
+              "title": "Looping Statements",
+              "slug": "05-loops"
+            },
+            {
+              "id": "sequential-parallel-blocks",
+              "number": 6,
+              "title": "Sequential and Parallel Blocks",
+              "slug": "06-sequential-parallel-blocks"
+            },
+            {
+              "id": "udp",
+              "number": 7,
+              "title": "User-Defined Primitives",
+              "slug": "07-udp"
+            }
+          ]
+        },
+        {
+          "id": "unit-04",
+          "number": 4,
+          "title": "Modelling of Combinational and Sequential Logic Circuits",
+          "periods": 15,
+          "status": "locked",
+          "topics": []
+        },
+        {
+          "id": "unit-05",
+          "number": 5,
+          "title": "System Design Concepts",
+          "periods": 15,
+          "status": "locked",
+          "topics": []
+        }
+      ]
+    },
+    {
+      "id": "ec410",
+      "code": "EC-410",
+      "title": "Digital Logic Design Through Verilog HDL Lab",
+      "kind": "Laboratory",
+      "periodsPerWeek": 3,
+      "totalPeriods": 45,
+      "formativeMarks": 40,
+      "summativeMarks": 60,
+      "status": "available",
+      "experiments": [
+        {
+          "id": "experiment-01",
+          "number": 1,
+          "title": "Implementation of Basic Logic Gates",
+          "slug": "experiment-01",
+          "status": "available"
+        },
+        {
+          "id": "experiment-02",
+          "number": 2,
+          "title": "Implementation of Adders",
+          "slug": "experiment-02",
+          "status": "available"
+        },
+        {
+          "id": "experiment-03",
+          "number": 3,
+          "title": "Implementation of Subtractors",
+          "slug": "experiment-03",
+          "status": "available"
+        },
+        {
+          "id": "experiment-04",
+          "number": 4,
+          "title": "Implementation of 4-Bit Parallel Adder",
+          "slug": "experiment-04",
+          "status": "available"
+        },
+        {
+          "id": "experiment-05",
+          "number": 5,
+          "title": "Implementation of Multiplexers",
+          "slug": "experiment-05",
+          "status": "available"
+        },
+        {
+          "id": "experiment-06",
+          "number": 6,
+          "title": "Implementation of Demultiplexers",
+          "slug": "experiment-06",
+          "status": "available"
+        },
+        {
+          "id": "experiment-07",
+          "number": 7,
+          "title": "Future practical",
+          "slug": "experiment-07",
+          "status": "locked"
+        },
+        {
+          "id": "experiment-08",
+          "number": 8,
+          "title": "Future practical",
+          "slug": "experiment-08",
+          "status": "locked"
+        },
+        {
+          "id": "experiment-09",
+          "number": 9,
+          "title": "Future practical",
+          "slug": "experiment-09",
+          "status": "locked"
+        },
+        {
+          "id": "experiment-10",
+          "number": 10,
+          "title": "Future practical",
+          "slug": "experiment-10",
+          "status": "locked"
+        },
+        {
+          "id": "experiment-11",
+          "number": 11,
+          "title": "Future practical",
+          "slug": "experiment-11",
+          "status": "locked"
+        },
+        {
+          "id": "experiment-12",
+          "number": 12,
+          "title": "Future practical",
+          "slug": "experiment-12",
+          "status": "locked"
+        },
+        {
+          "id": "experiment-13",
+          "number": 13,
+          "title": "Future practical",
+          "slug": "experiment-13",
+          "status": "locked"
+        },
+        {
+          "id": "experiment-14",
+          "number": 14,
+          "title": "Future practical",
+          "slug": "experiment-14",
+          "status": "locked"
+        },
+        {
+          "id": "experiment-15",
+          "number": 15,
+          "title": "Future practical",
+          "slug": "experiment-15",
+          "status": "locked"
+        }
+      ]
+    }
+  ],
+  "toolchain": {
+    "primary": "Xilinx ISE / Vivado or similar",
+    "verification": "Icarus Verilog 13.0 + GTKWave",
+    "language": "Verilog-2001"
+  }
+}

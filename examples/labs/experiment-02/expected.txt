@@ -1,0 +1,21 @@
+HALF ADDER
+a b | sum carry | a+b
+----+-----------+----
+ 0 0 |  0    0    |  0
+ 0 1 |  1    0    |  1
+ 1 0 |  1    0    |  1
+ 1 1 |  0    1    |  2
+
+FULL ADDER
+a b cin | sum carry | a+b+cin
+--------+-----------+--------
+ 0 0  0  |  0    0    |    0
+ 0 0  1  |  1    0    |    1
+ 0 1  0  |  1    0    |    1
+ 0 1  1  |  0    1    |    2
+ 1 0  0  |  1    0    |    1
+ 1 0  1  |  0    1    |    2
+ 1 1  0  |  0    1    |    2
+ 1 1  1  |  1    1    |    3
+checked 12 input combinations, mismatches = 0
+tb.v:56: $finish called at 12000 (1ps)

@@ -1,0 +1,119 @@
+<section class="lesson-section">
+  <h2 id="two-languages">Two languages, one job</h2>
+  <p class="lesson-lead">Verilog and VHDL are both hardware description languages. Both describe concurrent hardware, both are standardised by the IEEE, and both can be simulated and synthesised. They differ in heritage, type discipline and the way a design is written — not in what hardware can be built.</p>
+  <p>Verilog grew out of a C-like simulation language and became the dominant language of commercial ASIC and FPGA design. VHDL grew out of Ada and is common in FPGA development, aerospace, defence and mixed-language environments where strong typing is valued. Neither language is inherently faster or smaller; synthesis results depend on the description and the library, not on the spelling.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="side-by-side">The comparison that matters</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Verilog-2001 and VHDL-93 compared</caption>
+      <thead>
+        <tr><th scope="col">Dimension</th><th scope="col">Verilog-2001</th><th scope="col">VHDL-93</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Heritage</td><td>C-like, concise</td><td>Ada-like, explicit</td></tr>
+        <tr><td>Standard</td><td>IEEE 1364-2001</td><td>IEEE 1076-1993</td></tr>
+        <tr><td>Logic values</td><td>Four: <code>0</code>, <code>1</code>, <code>x</code>, <code>z</code></td><td>Nine in <code>std_logic</code>, including drive strengths</td></tr>
+        <tr><td>Typing</td><td>Weak, with implicit width conversion</td><td>Strong, with explicit conversions</td></tr>
+        <tr><td>Structural unit</td><td><code>module</code></td><td><code>entity</code> plus <code>architecture</code></td></tr>
+        <tr><td>Procedural unit</td><td><code>always</code>, <code>initial</code></td><td><code>process</code></td></tr>
+        <tr><td>Concurrency</td><td><code>assign</code> and <code>always</code></td><td>Concurrent signal assignments and processes</td></tr>
+        <tr><td>Successor</td><td>SystemVerilog, IEEE 1800</td><td>VHDL-2008</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The table explains why beginners find Verilog quicker to start: a one-bit AND gate is one line, and widths convert implicitly. The same features become hazards at scale. VHDL forces the designer to state types and conversions, which is verbose but catches some classes of error earlier. Professional teams choose according to toolchain, legacy code and verification environment, not according to a universal "better".</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="abstraction">Abstraction levels inside Verilog</h2>
+  <p>Verilog is not one language level. The same design can be described at several levels, and the level determines what the simulator and synthesis tool can do with it.</p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h4>Switch level</h4>
+      <p>Transistors and switches: <code>nmos</code>, <code>pmos</code>, <code>cmos</code>. Used in cell models and analogue-like experiments, not in RTL.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Gate level</h4>
+      <p>Primitive gates and module instances. This is the level of a netlist produced by synthesis.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Dataflow</h4>
+      <p>Continuous assignments: <code>assign y = (a &amp; b) | c;</code>. The equations are combinational hardware.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Behavioural</h4>
+      <p><code>initial</code> and <code>always</code> blocks with algorithms, conditionals and timing controls.</p>
+    </div>
+  </div>
+
+  <p><strong>RTL</strong> is the synthesizable subset of behavioural modelling in which every signal is either a register updated on a clock edge or combinational logic between registers. A behavioural block with <code>#10</code> delays is still behavioural, but it is not RTL. That distinction is the reason a design can simulate beautifully and still fail synthesis.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">The same gate in both languages</h2>
+  <p>Below is a two-input AND gate with a self-checking-style truth-table testbench. Everything is in one file, so one compile command produces one runnable simulation.</p>
+
+  {{CODE:examples/verilog/vhdl-vs-verilog/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>`default_nettype none</code> disables implicit nets. The directive is restored at the end of the file.</li>
+    <li><code>assign y = a &amp; b;</code> is a continuous assignment. The <code>&amp;</code> is bitwise AND; for one-bit operands it is the same as the logic function.</li>
+    <li>The testbench declares <code>reg</code> for the driven inputs and <code>wire</code> for the observed output. That split mirrors the direction of every connection in the design.</li>
+    <li><code>for (i = 0; i &lt; 4; i = i + 1)</code> walks the four input combinations. <code>{a, b} = i[1:0]</code> drives both inputs in one assignment.</li>
+    <li><code>#1</code> separates the stimulus from the observation. The output would settle without it, but the printed table and any waveform become unambiguous.</li>
+  </ul>
+
+  <p>For comparison, here is the same gate in VHDL. It is a language reference fragment: this course installs a Verilog simulator, not a VHDL one, so this file is not compiled or executed here.</p>
+
+  {{SNIPPET:content/snippets/and2.vhdl}}
+
+  <p>The mapping is conceptual, not line-for-line. An <code>entity</code> plays the role of a module's interface; an <code>architecture</code> plays the role of its body; a concurrent signal assignment plays the role of <code>assign</code>. VHDL's <code>&lt;=</code> on a signal is a scheduled update, not the same operator as Verilog's non-blocking <code>&lt;=</code>. Do not translate punctuation; translate meaning.</p>
+
+  {{COMMANDS:vhdl-vs-verilog}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  <p>The truth table is the definition of AND: the output is 1 only when both inputs are 1.</p>
+
+  {{OUTPUT:examples/verilog/vhdl-vs-verilog/expected.txt}}
+
+  <p>As in every example in this classroom, the final <code>$finish called at ...</code> line is the simulator's own message, printed in the simulation precision (1 ps). Four iterations of <code>#1</code> leave the simulation at 4 ns, so 4 is the time value shown.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="choosing">Choosing a level, not just a language</h2>
+  <p>Most real designs mix levels deliberately:</p>
+  <ul>
+    <li><strong>RTL</strong> for the blocks you own and need to synthesise. It is readable, portable and verified by simulation.</li>
+    <li><strong>Gate level</strong> for library cells, post-synthesis simulation and small glue logic where the exact cell matters.</li>
+    <li><strong>Dataflow</strong> for short combinational equations where a truth table or boolean expression is clearer than a procedural block.</li>
+    <li><strong>Behavioural with timing</strong> for testbenches, bus functional models and cell models. This code is not the design.</li>
+  </ul>
+  <p>In Verilog the same keywords can appear at several levels, which is why "it compiles" says very little. The question to ask is always: which parts of this file are intended to become hardware?</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Assuming the languages are interchangeable.</strong> Types, conversion rules and assignment semantics differ. A VHDL design translated token-by-token is usually wrong.</li>
+    <li><strong>Assuming strong typing prevents all bugs.</strong> VHDL catches some width and type errors earlier; it does not prove intent or timing.</li>
+    <li><strong>Equating behavioural with non-synthesizable.</strong> RTL is behavioural code that synthesis accepts. The presence of <code>always</code> does not make a block unsynthesizable; delays and testbench constructs do.</li>
+    <li><strong>Reading Verilog as C.</strong> Statements outside procedural blocks are concurrent descriptions, not sequential instructions.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Verilog and VHDL are both IEEE-standard HDLs; the choice is driven by toolchain, ecosystem and team, not capability.</li>
+    <li>Verilog's four logic values are <code>0</code>, <code>1</code>, <code>x</code> and <code>z</code>; VHDL's <code>std_logic</code> has nine.</li>
+    <li>The four modelling levels are switch, gate, dataflow and behavioural; RTL is the synthesizable behavioural subset.</li>
+    <li>Simulation-only constructs do not belong in RTL, regardless of which HDL is used.</li>
+  </ul>
+</section>

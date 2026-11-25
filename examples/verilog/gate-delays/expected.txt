@@ -1,0 +1,11 @@
+t=0 a=0 b=0 y=x yn=x
+t=2000 a=0 b=0 y=x yn=1
+t=5000 a=0 b=0 y=0 yn=1
+t=10000 a=1 b=0 y=0 yn=1
+t=12000 a=1 b=0 y=0 yn=0
+t=20000 a=1 b=1 y=0 yn=0
+t=23000 a=1 b=1 y=1 yn=0
+t=30000 a=0 b=1 y=1 yn=0
+t=32000 a=0 b=1 y=1 yn=1
+t=35000 a=0 b=1 y=0 yn=1
+example.v:30: $finish called at 60000 (1ps)

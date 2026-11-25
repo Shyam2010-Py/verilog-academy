@@ -1,0 +1,315 @@
+<section class="lesson-section">
+  <h2 id="aim">Aim and scope</h2>
+  <p class="lesson-lead">Implement 1:2, 1:4 and 1:8 demultiplexers in Verilog-2001 so that exactly one output follows the data input, then verify every data and select combination.</p>
+  <p>A demultiplexer is the reverse of a multiplexer: one data input is routed to one of several outputs, chosen by the select lines. All unselected outputs must be driven to 0, not left undriven. That requirement is what makes a demultiplexer more than a decoder — it gates the data, so an unselected output is low even when the selected output is high.</p>
+  <p>The 1:2 device uses two continuous assignments with the select line and its complement. The 1:4 and 1:8 devices use an <code>always @*</code> block that clears every output first and then sets the selected bit. The testbench checks 4 + 8 + 16 = 28 combinations, which exhausts every device.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="objectives">Learning objectives</h2>
+  <ul class="objective-list">
+    <li>Explain the difference between a demultiplexer and a decoder.</li>
+    <li>Implement a 1:2 demultiplexer with data-gated assignments.</li>
+    <li>Use a <code>case</code> statement to route data to one of four or eight outputs.</li>
+    <li>Guarantee that every unselected output is driven to 0.</li>
+    <li>Verify all 28 data/select combinations across the three devices.</li>
+    <li>Recognise how an incompletely assigned output can infer a latch.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="tools">Required tools and files</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Experiment 06 bench inventory</caption>
+      <thead><tr><th scope="col">Item</th><th scope="col">Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Icarus Verilog 13.0</td><td>Compiles the three demultiplexer modules and runs the testbench.</td></tr>
+        <tr><td><code>design.v</code></td><td>Contains <code>demux1_2</code>, <code>demux1_4</code> and <code>demux1_8</code>.</td></tr>
+        <tr><td><code>tb.v</code></td><td>Drives 28 vectors and checks the complete output vector for each.</td></tr>
+        <tr><td>Terminal</td><td>Runs the compile and simulation commands from the example directory.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The design uses no tri-state buffers. Every output is always driven to a defined 0 or 1, which is simpler to verify and safer for synthesis.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="theory">Theory and working principle</h2>
+  <p>A demultiplexer takes one data input and distributes it to one of 2<sup><em>n</em></sup> outputs. The select code names the destination. For a 1:4 device, <code>s = 2'b10</code> routes <code>din</code> to <code>y[2]</code> and forces <code>y[3]</code>, <code>y[1]</code> and <code>y[0]</code> to 0.</p>
+  <p>The 1:2 case is small enough to write directly. Output <code>y0</code> is enabled when the select is 0, so <code>y0 = din &amp; ~s</code>. Output <code>y1</code> is enabled when the select is 1, so <code>y1 = din &amp; s</code>. When <code>din = 0</code>, both outputs are 0 regardless of the select; the data input gates the whole device.</p>
+  <p>For wider devices the pattern generalises to <code>y[i] = din &amp; (s == i)</code>. Only one equality term can be true at a time, so at most one output follows <code>din</code>. The design implements this with a <code>case</code> statement that clears all outputs and then assigns the selected bit.</p>
+  <p>The contrast with a decoder matters. A 2-to-4 decoder asserts exactly one output for each input code, independent of any data signal. A 1:4 demultiplexer behaves like a decoder whose selected output is ANDed with <code>din</code>. When <code>din = 1</code> the two look identical; when <code>din = 0</code> the demultiplexer produces all zeros while the decoder still produces a one-hot pattern.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="diagram">Logic diagram</h2>
+  <p>Each block has one data input on the left, a select bus at the bottom and all outputs on the right. The arrows on the output side show that every output is driven; unselected outputs are 0, not high impedance.</p>
+
+  <figure class="lab-figure">
+    <div class="lab-figure__scroll" tabindex="0" role="group" aria-label="Block diagram of the 1 to 2, 1 to 4 and 1 to 8 demultiplexers. The figure scrolls horizontally on narrow screens.">
+      <svg class="lab-svg" viewBox="0 0 1000 320" role="img" aria-labelledby="fig-demux-title fig-demux-desc">
+        <title id="fig-demux-title">1:2, 1:4 and 1:8 demultiplexer block diagrams</title>
+        <desc id="fig-demux-desc">Three demultiplexer blocks. Each receives one data input and a select code, and routes the data to one of two, four or eight outputs while holding the others at zero.</desc>
+
+        <rect class="lab-svg__block" x="60" y="95" width="140" height="90" rx="5"/>
+        <text x="130" y="132" text-anchor="middle">1:2 DEMUX</text>
+        <text class="lab-svg__note" x="130" y="152" text-anchor="middle">din → y[s]</text>
+        <path class="lab-svg__wire" d="M14 140 H60"/>
+        <text class="lab-svg__value" x="18" y="134">din</text>
+        <path class="lab-svg__wire" d="M130 240 V185"/>
+        <text class="lab-svg__value" x="130" y="258" text-anchor="middle">s</text>
+        <path class="lab-svg__wire" d="M200 120 H240 M200 160 H240"/>
+        <text class="lab-svg__value" x="248" y="124">y1</text>
+        <text class="lab-svg__value" x="248" y="164">y0</text>
+
+        <rect class="lab-svg__block" x="330" y="68" width="140" height="148" rx="5"/>
+        <text x="400" y="120" text-anchor="middle">1:4 DEMUX</text>
+        <text class="lab-svg__note" x="400" y="140" text-anchor="middle">din → y[s]</text>
+        <path class="lab-svg__wire" d="M284 130 H330"/>
+        <text class="lab-svg__value" x="288" y="124">din</text>
+        <path class="lab-svg__wire" d="M400 262 V216"/>
+        <text class="lab-svg__value" x="400" y="280" text-anchor="middle">s[1:0]</text>
+        <path class="lab-svg__wire" d="M470 85 H510 M470 115 H510 M470 145 H510 M470 175 H510"/>
+        <text class="lab-svg__value" x="518" y="89">y3</text>
+        <text class="lab-svg__value" x="518" y="119">y2</text>
+        <text class="lab-svg__value" x="518" y="149">y1</text>
+        <text class="lab-svg__value" x="518" y="179">y0</text>
+
+        <rect class="lab-svg__block" x="620" y="42" width="150" height="210" rx="5"/>
+        <text x="695" y="98" text-anchor="middle">1:8 DEMUX</text>
+        <text class="lab-svg__note" x="695" y="118" text-anchor="middle">din → y[s]</text>
+        <path class="lab-svg__wire" d="M574 130 H620"/>
+        <text class="lab-svg__value" x="578" y="124">din</text>
+        <path class="lab-svg__wire" d="M695 292 V252"/>
+        <text class="lab-svg__value" x="695" y="310" text-anchor="middle">s[2:0]</text>
+        <path class="lab-svg__wire" d="M770 55 H810 M770 80 H810 M770 105 H810 M770 130 H810 M770 155 H810 M770 180 H810 M770 205 H810 M770 230 H810"/>
+        <text class="lab-svg__value" x="818" y="59">y7</text>
+        <text class="lab-svg__value" x="818" y="84">y6</text>
+        <text class="lab-svg__value" x="818" y="109">y5</text>
+        <text class="lab-svg__value" x="818" y="134">y4</text>
+        <text class="lab-svg__value" x="818" y="159">y3</text>
+        <text class="lab-svg__value" x="818" y="184">y2</text>
+        <text class="lab-svg__value" x="818" y="209">y1</text>
+        <text class="lab-svg__value" x="818" y="234">y0</text>
+
+        <text class="lab-svg__note" x="24" y="300">Exactly one output follows din · every unselected output is driven to 0</text>
+      </svg>
+    </div>
+    <figcaption><strong>Figure 1.</strong> The three demultiplexer widths. The output count doubles with each additional select line, and only the selected output carries <code>din</code>; all others remain 0.</figcaption>
+  </figure>
+</section>
+
+<section class="lesson-section">
+  <h2 id="truth-table">Truth tables</h2>
+  <h3>1:2 demultiplexer</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Every data and select combination</caption>
+      <thead><tr><th scope="col">din</th><th scope="col">s</th><th scope="col">y1</th><th scope="col">y0</th><th scope="col">Selected output</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>y0</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>0</td><td>y1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>1:4 demultiplexer</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Every data and select combination</caption>
+      <thead><tr><th scope="col">din</th><th scope="col">s1</th><th scope="col">s0</th><th scope="col">y3</th><th scope="col">y2</th><th scope="col">y1</th><th scope="col">y0</th><th scope="col">Active output</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>y0</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>y1</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>y2</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>y3</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>1:8 demultiplexer</h3>
+  <div class="table-wrap">
+    <table>
+      <caption>Every data and select combination</caption>
+      <thead><tr><th scope="col">din</th><th scope="col">s2 s1 s0</th><th scope="col">y7</th><th scope="col">y6</th><th scope="col">y5</th><th scope="col">y4</th><th scope="col">y3</th><th scope="col">y2</th><th scope="col">y1</th><th scope="col">y0</th><th scope="col">Active</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>000</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>001</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>010</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>011</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>100</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>101</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>110</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>0</td><td>111</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>none</td></tr>
+        <tr><td>1</td><td>000</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>y0</td></tr>
+        <tr><td>1</td><td>001</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>y1</td></tr>
+        <tr><td>1</td><td>010</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>y2</td></tr>
+        <tr><td>1</td><td>011</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>y3</td></tr>
+        <tr><td>1</td><td>100</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>y4</td></tr>
+        <tr><td>1</td><td>101</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>y5</td></tr>
+        <tr><td>1</td><td>110</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>y6</td></tr>
+        <tr><td>1</td><td>111</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>y7</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>When <code>din = 0</code> every row is all zeros. This is the property that distinguishes the demultiplexer from a decoder: the data input controls whether any output is asserted at all.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="equations">Boolean equations</h2>
+  <h3>1:2 demultiplexer</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Output 0</span><code>y0 = din &amp; ~s</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">Output 1</span><code>y1 = din &amp; s</code></div>
+  </div>
+  <h3>1:4 demultiplexer</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Output i</span><code>y[i] = din &amp; (s == i)</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">y0 example</span><code>y[0] = din &amp; ~s1 &amp; ~s0</code></div>
+  </div>
+  <h3>1:8 demultiplexer</h3>
+  <div class="lab-equations">
+    <div class="lab-equation"><span class="lab-equation__name">Output i</span><code>y[i] = din &amp; (s == i)</code></div>
+    <div class="lab-equation"><span class="lab-equation__name">y5 example</span><code>y[5] = din &amp; s2 &amp; ~s1 &amp; s0</code></div>
+  </div>
+  <p>The equality terms are mutually exclusive, so the outputs can never both be 1 for a nonzero <code>din</code>. That one-hot property is the functional core of a demultiplexer.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="design">Verilog design code</h2>
+  <p>The 1:2 module uses two continuous assignments. The wider modules clear the whole output vector before the <code>case</code>, so every unselected bit is explicitly assigned 0.</p>
+  {{CODE:examples/labs/experiment-06/design.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="testbench">Testbench</h2>
+  <p>The testbench checks each device against a one-hot expected vector. For the wider devices the expected vector is computed by shifting a single 1 into the selected position and masking it with <code>din</code>.</p>
+  {{CODE:examples/labs/experiment-06/tb.v}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="explanation">Line-by-line explanation</h2>
+  <h3>Design</h3>
+  <ul>
+    <li><code>assign y0 = din &amp; ~s;</code> drives <code>y0</code> with the data only when the select is 0.</li>
+    <li><code>assign y1 = din &amp; s;</code> drives <code>y1</code> only when the select is 1. When <code>din = 0</code>, both outputs are 0.</li>
+    <li><code>always @*</code> makes the wider modules combinational. Every signal read inside the block is in the sensitivity set.</li>
+    <li><code>y = 4'b0000;</code> is the default assignment that clears all outputs before the <code>case</code>.</li>
+    <li><code>2'b00: y[0] = din;</code> sets only the selected bit. The other three bits keep the 0 from the clear statement.</li>
+    <li><code>default: y = 4'b0000;</code> covers unknown select values and reinforces the all-zero behaviour.</li>
+    <li><code>output reg [3:0] y</code> is a procedural variable because it is assigned inside <code>always</code>. It is still combinational hardware.</li>
+  </ul>
+  <h3>Testbench</h3>
+  <ul>
+    <li><code>{d2_y1, d2_y0}</code> concatenates the two outputs for a single comparison.</li>
+    <li><code>expected4 = din ? (4'b0001 &lt;&lt; s) : 4'b0000;</code> builds the one-hot pattern and masks it with the data input.</li>
+    <li>The same pattern is used for the 1:8 device with an eight-bit shift.</li>
+    <li><code>if (d4_y !== expected4)</code> compares the entire output vector, so a wrong unselected output is caught even when the selected output is correct.</li>
+    <li>The <code>active</code> column prints the selected index, or −1 when <code>din = 0</code>, which makes the transcript easier to read.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="commands">Compilation and simulation commands</h2>
+  {{COMMANDS:experiment-06}}
+  <p>The design contains three modules and the testbench contains one. Both files must be passed to <code>iverilog</code>; compiling only the testbench leaves the module instances unresolved.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">Actual simulator output</h2>
+  <p>This is the captured Icarus Verilog 13.0 transcript for all three devices, including the rows where <code>din = 0</code> and no output is active.</p>
+  {{OUTPUT:examples/labs/experiment-06/expected.txt}}
+  <p>The final count is <strong>28</strong> data/select combinations with <strong>0</strong> mismatches. The finish time of 28,000 ps is 28 ns.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="waveform">Waveform and timing</h2>
+  <p>Each of the 28 vectors is held for 1 ns. The waveform would show exactly one output rising when <code>din</code> is high, and all outputs staying low whenever <code>din</code> is low.</p>
+  <div class="table-wrap">
+    <table>
+      <caption>Vector allocation</caption>
+      <thead><tr><th scope="col">Device</th><th scope="col">Data values</th><th scope="col">Select values</th><th scope="col">Checks</th></tr></thead>
+      <tbody>
+        <tr><td>1:2</td><td>0, 1</td><td>0, 1</td><td>4</td></tr>
+        <tr><td>1:4</td><td>0, 1</td><td>00, 01, 10, 11</td><td>8</td></tr>
+        <tr><td>1:8</td><td>0, 1</td><td>000 through 111</td><td>16</td></tr>
+        <tr><td><strong>Total</strong></td><td></td><td></td><td><strong>28</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Because the model has no propagation delay, the selected output changes in the same simulation step as the inputs. A real device would show a small delay from data or select to output.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="result">Result</h2>
+  <div class="lab-result">
+    <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+    <div>
+      <h3>All three demultiplexers routed the data correctly in every case.</h3>
+      <p>The testbench checked <strong>28 combinations</strong> and reported <strong>0 mismatches</strong>. In every row exactly one output followed <code>din</code>, and every unselected output was 0, including the all-zero rows where <code>din = 0</code>.</p>
+    </div>
+  </div>
+  <p>The check compares the complete output vector, not only the active bit, so a stuck-at-one unselected output would have failed the test.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes and troubleshooting</h2>
+  <div class="concept-grid">
+    <article class="concept-card">
+      <h3>Leaving unselected outputs undriven</h3>
+      <p>Assigning only the selected bit without clearing the vector infers storage or produces unknown values. Clear the whole output first, as the design does.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Using OR instead of AND</h3>
+      <p>A selected output must be <code>din &amp; select_term</code>. OR would force the output high even when <code>din</code> is 0.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Reversing the select order</h3>
+      <p>Using <code>{s0, s1}</code> instead of <code>{s1, s0}</code> swaps <code>y1</code> and <code>y2</code>. The vector comparison catches it only if the testbench checks the full output.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Confusing a demultiplexer with a decoder</h3>
+      <p>A decoder asserts the selected output regardless of data. A demultiplexer gates that output with <code>din</code>, so it produces all zeros when the data input is 0.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Forgetting the <code>default</code> branch</h3>
+      <p>An uncovered select value would leave the outputs at their previous values, inferring a latch. The default restores the all-zero state.</p>
+    </article>
+    <article class="concept-card">
+      <h3>Expecting one-hot when <code>din = 0</code></h3>
+      <p>The active output is the selected one only if data is present. The transcript's −1 column records the no-data case explicitly.</p>
+    </article>
+  </div>
+</section>
+
+<section class="lesson-section">
+  <h2 id="viva">Viva questions</h2>
+  <ol class="lab-viva">
+    <li>How many select lines does a 1:16 demultiplexer need?</li>
+    <li>What is the difference between a demultiplexer and a decoder?</li>
+    <li>Write the equations for a 1:2 demultiplexer.</li>
+    <li>Why must every unselected output be driven to 0?</li>
+    <li>What happens to the outputs when <code>din = 0</code>?</li>
+    <li>Why is a <code>default</code> branch needed in the <code>case</code> version?</li>
+    <li>Can a demultiplexer be used to implement a serial-to-parallel converter?</li>
+  </ol>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>A demultiplexer routes one data input to one of 2<sup><em>n</em></sup> outputs.</li>
+    <li>1:2: <code>y0 = din &amp; ~s</code>, <code>y1 = din &amp; s</code>.</li>
+    <li>Wider devices use <code>y[i] = din &amp; (s == i)</code> or an equivalent <code>case</code>.</li>
+    <li>All unselected outputs are 0, even when <code>din = 1</code>.</li>
+    <li>28 vectors exhaust the 1:2, 1:4 and 1:8 truth tables.</li>
+    <li>A decoder without data gating is not a demultiplexer.</li>
+  </ul>
+</section>

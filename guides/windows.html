@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="index, follow">
+  <title>Windows Setup — Icarus Verilog and GTKWave | Verilog Academy</title>
+  <meta name="description" content="A verified Windows workflow for Verilog simulation: check Icarus Verilog 13.0, save a design and testbench, compile, run, read the transcript and open a VCD waveform in GTKWave 3.3.128.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Windows Setup — Icarus Verilog and GTKWave | Verilog Academy">
+  <meta property="og:description" content="A verified Windows workflow for Verilog simulation: check Icarus Verilog 13.0, save a design and testbench, compile, run, read the transcript and open a VCD waveform in GTKWave 3.3.128.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="../assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="../assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <link rel="stylesheet" href="../css/theory.css"><link rel="stylesheet" href="../css/guides.css">
+</head>
+<body class="page-guide page-guide-windows" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="../index.html">Homepage</a>
+          <a class="nav-link" href="../theory/index.html">Theory</a>
+          <a class="nav-link" href="../labs/index.html">Laboratory</a>
+          <a class="nav-link" href="../circuit-lab/index.html">Circuit Lab</a>
+          <a class="nav-link" href="../playground/index.html">Playground</a>
+          <a class="nav-link" href="../quizzes/index.html">Quizzes</a>
+          <a class="nav-link is-active" href="../guides/index.html" aria-current="page">Guides</a>
+          <a class="nav-link" href="../dashboard.html">Dashboard</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <section class="guide-hero">
+  <div class="guide-hero__atmosphere" aria-hidden="true"></div>
+  <div class="container guide-hero__grid">
+    <div class="guide-hero__copy" data-reveal>
+      <span class="eyebrow">Windows setup</span>
+      <h1 class="display">Compile it. Run it.<br><span class="gradient-text">Then look at the wave.</span></h1>
+      <p class="lede">A complete Windows workflow for the toolchain that is actually installed on this machine: Icarus Verilog 13.0, its <code>vvp</code> runtime, GTKWave 3.3.128 and Python 3.14.7. You will create a folder, save a design and testbench, compile, run, read the transcript and open a VCD waveform.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#quick-start">
+          Start the quick path
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn-secondary btn-lg" href="index.html">
+          All setup guides
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+      <div class="hero-facts theory-facts" aria-label="Verified Windows toolchain">
+        <div><strong>13.0</strong><span>Icarus Verilog</span></div>
+        <div><strong>3.3.128</strong><span>GTKWave package</span></div>
+        <div><strong>3.14.7</strong><span>Python</span></div>
+        <div><strong>43</strong><span>Verified examples</span></div>
+      </div>
+    </div>
+
+    <aside class="guide-status panel" data-reveal style="--reveal-delay: 100ms">
+      <div class="guide-status__head">
+        <span class="panel-kicker">Machine check</span>
+        <span class="badge badge-success">Verified installed</span>
+      </div>
+      <ul class="guide-status__list">
+        <li><span>Icarus compiler</span><code>C:\msys64\ucrt64\bin\iverilog.exe</code></li>
+        <li><span>Icarus runtime</span><code>C:\msys64\ucrt64\bin\vvp.exe</code></li>
+        <li><span>Waveform viewer</span><code>C:\msys64\ucrt64\bin\gtkwave.exe</code></li>
+        <li><span>Python</span><code>C:\msys64\ucrt64\bin\python.exe</code></li>
+      </ul>
+      <p class="guide-status__note">All four are on <code>PATH</code>. Vivado, Xilinx ISE, ModelSim and Verilator are <strong>not installed</strong> and are not needed for this course.</p>
+    </aside>
+  </div>
+</section>
+
+<section class="section-tight guide-body">
+  <div class="container guide-layout">
+    <aside class="guide-toc panel" aria-label="On this page">
+      <span class="panel-kicker">On this page</span>
+      <nav aria-label="Windows guide sections">
+        <a href="#quick-start">01 · Quick start</a>
+        <a href="#simulation">02 · What simulation does</a>
+        <a href="#check">03 · Check the install</a>
+        <a href="#folder">04 · Make a folder</a>
+        <a href="#files">05 · Save design and testbench</a>
+        <a href="#compile">06 · Compile</a>
+        <a href="#run">07 · Run</a>
+        <a href="#output">08 · Read the output</a>
+        <a href="#waveform">09 · Generate a waveform</a>
+        <a href="#gtkwave">10 · Open GTKWave</a>
+        <a href="#troubleshooting">11 · Troubleshooting</a>
+        <a href="#optional">12 · Optional tools</a>
+      </nav>
+      <div class="guide-toc__foot">
+        <span class="badge badge-cyan">Windows 10 / 11</span>
+        <p>Commands are shown for PowerShell. The same commands work in Windows Terminal or Command Prompt.</p>
+      </div>
+    </aside>
+
+    <div class="guide-sections">
+      <section class="guide-section" id="quick-start">
+        <span class="eyebrow">01 / Quick start</span>
+        <h2>The whole workflow in six lines.</h2>
+        <p>If the tools are already installed, this is the complete loop. The sections after it explain each line and what to do when something fails.</p>
+        <div class="guide-code">
+          <div class="guide-code__head"><span>PowerShell</span><span class="badge">Working folder</span></div>
+          <pre><code>mkdir C:\verilog-lab\and-gate
+cd C:\verilog-lab\and-gate
+notepad design.v
+notepad tb.v
+iverilog -g2001 -o and-gate.out design.v tb.v
+vvp and-gate.out</code></pre>
+        </div>
+        <ol class="guide-steps">
+          <li><strong>Create one folder per project.</strong> Keep the design, testbench, compiled image and waveform together.</li>
+          <li><strong>Save the two source files.</strong> The design describes the circuit; the testbench drives it and prints results.</li>
+          <li><strong>Compile with <code>iverilog</code>.</strong> The <code>-o</code> file is not a Windows program you double-click; it is an Icarus simulation image.</li>
+          <li><strong>Run with <code>vvp</code>.</strong> The transcript appears in the terminal. A waveform file appears only if the testbench asks for one.</li>
+        </ol>
+        <div class="guide-callout guide-callout--info">
+          <svg class="icon" aria-hidden="true"><use href="#icon-info"></use></svg>
+          <p><strong>Use the verified Playground files.</strong> Download <code>design.v</code> and <code>tb.v</code> from any of the 14 Playground projects, or copy the examples from the EC-410 laboratory. The commands in this guide use an AND gate, but the pattern is identical for every example.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="simulation">
+        <span class="eyebrow">02 / The mental model</span>
+        <h2>Three tools, three different jobs.</h2>
+        <p>New students often expect one button that “runs Verilog”. The installed toolchain splits the job into three programs, and each one has a clear responsibility.</p>
+        <div class="guide-role-grid">
+          <article class="guide-role panel">
+            <span class="guide-role__tag">Compiler</span>
+            <h3>Icarus Verilog</h3>
+            <p><code>iverilog</code> reads your <code>.v</code> files, checks syntax and module structure, and writes a simulation image. It does not display waveforms.</p>
+          </article>
+          <article class="guide-role panel">
+            <span class="guide-role__tag">Runtime</span>
+            <h3>vvp</h3>
+            <p><code>vvp</code> executes the compiled image. It runs the testbench, prints <code>$display</code> lines and writes a VCD file when <code>$dumpvars</code> is present.</p>
+          </article>
+          <article class="guide-role panel">
+            <span class="guide-role__tag">Viewer</span>
+            <h3>GTKWave</h3>
+            <p>GTKWave opens a VCD file and draws signals over time. It observes the recorded simulation; it does not compile or re-run anything.</p>
+          </article>
+        </div>
+        <p>A design module and a testbench are not the same thing. The design is the hardware description. The testbench is simulation-only code that applies inputs, waits for outputs and reports pass or fail. The testbench is normally not synthesized.</p>
+        <div class="guide-callout">
+          <svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg>
+          <p><strong>No hidden browser compiler.</strong> The Academy pages edit and download text. Compilation and simulation happen only in this local Windows toolchain, which is why the exact commands matter.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="check">
+        <span class="eyebrow">03 / Verify the install</span>
+        <h2>Confirm the commands before you debug Verilog.</h2>
+        <p>Run these checks in a fresh PowerShell window. They prove that Windows can find the programs and that the compiler and runtime versions match.</p>
+        <div class="guide-code">
+          <div class="guide-code__head"><span>PowerShell · version checks</span><span class="badge badge-success">Actual output</span></div>
+          <pre><code>PS&gt; iverilog -V
+Icarus Verilog version 13.0 (stable) (v13_0)
+
+PS&gt; vvp -V
+Icarus Verilog runtime version 13.0 (stable) (v13_0)
+
+PS&gt; where.exe iverilog
+C:\msys64\ucrt64\bin\iverilog.exe
+
+PS&gt; where.exe vvp
+C:\msys64\ucrt64\bin\vvp.exe
+
+PS&gt; where.exe gtkwave
+C:\msys64\ucrt64\bin\gtkwave.exe</code></pre>
+        </div>
+        <div class="guide-table-wrap">
+          <table class="guide-table">
+            <caption>Installed components on this machine</caption>
+            <thead>
+              <tr><th scope="col">Component</th><th scope="col">Verified version</th><th scope="col">What it is for</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Icarus Verilog</td><td>13.0 stable</td><td>Compiles Verilog-2001 sources into a simulation image.</td></tr>
+              <tr><td><code>vvp</code></td><td>13.0 stable</td><td>Runs the compiled image and produces the transcript.</td></tr>
+              <tr><td>GTKWave</td><td>3.3.128-1 (UCRT64 package)</td><td>Opens VCD files and displays waveforms.</td></tr>
+              <tr><td>Python</td><td>3.14.7</td><td>Runs the project build and verification scripts. Not needed to study Verilog.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="guide-callout guide-callout--warning">
+          <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <p><strong>GTKWave version quirk.</strong> On this UCRT64 build, <code>gtkwave --version</code> prints nothing and exits. That is not a broken install. Confirm it with <code>where.exe gtkwave</code> and with <code>pacman -Q mingw-w64-ucrt-x86_64-gtkwave</code>, which reports <code>3.3.128-1</code>.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="folder">
+        <span class="eyebrow">04 / A clean workspace</span>
+        <h2>One project, one folder.</h2>
+        <p>Keep generated files out of your source folders and out of synced cloud folders when possible. A short path such as <code>C:\verilog-lab</code> avoids spaces, permission problems and OneDrive sync locks.</p>
+        <div class="guide-tree">
+          <div class="guide-tree__head"><span>Folder layout</span></div>
+          <pre><code>C:\verilog-lab\
+└─ and-gate\
+   ├─ design.v       ← you write this
+   ├─ tb.v           ← you write this
+   ├─ and-gate.out   ← created by iverilog
+   └─ and-gate.vcd   ← created by vvp when dumping is enabled</code></pre>
+        </div>
+        <p>You can create the folder in File Explorer or in PowerShell:</p>
+        <div class="guide-code">
+          <div class="guide-code__head"><span>PowerShell</span></div>
+          <pre><code>mkdir C:\verilog-lab\and-gate
+cd C:\verilog-lab\and-gate</code></pre>
+        </div>
+        <p>Every later command assumes the terminal is already in this folder. If you open a new terminal, run the <code>cd</code> command again. A common mistake is compiling files from one folder and looking for the waveform in another.</p>
+      </section>
+
+      <section class="guide-section" id="files">
+        <span class="eyebrow">05 / Save the sources</span>
+        <h2>Two files, saved with the right extension.</h2>
+        <p>Create <code>design.v</code> and <code>tb.v</code> with Notepad or VS Code. In Notepad, choose <strong>File → Save as</strong>, set <strong>Save as type</strong> to <strong>All Files</strong>, and type the full name including <code>.v</code>. If Windows hides known file extensions, a file called <code>design.v</code> may really be <code>design.v.txt</code>.</p>
+        <div class="guide-split">
+          <div class="guide-code">
+            <div class="guide-code__head"><span>design.v</span><span class="badge">The circuit</span></div>
+            <pre><code>`default_nettype none
+`timescale 1ns / 1ps
+
+module and_gate (
+    input  wire a,
+    input  wire b,
+    output wire y
+);
+
+    assign y = a &amp; b;
+
+endmodule
+
+`default_nettype wire</code></pre>
+          </div>
+          <div class="guide-code">
+            <div class="guide-code__head"><span>tb.v</span><span class="badge">The testbench</span></div>
+            <pre><code>`default_nettype none
+`timescale 1ns / 1ps
+
+module and_gate_tb;
+    reg  a;
+    reg  b;
+    wire y;
+
+    and_gate dut (.a(a), .b(b), .y(y));
+
+    initial begin
+        $display("a b | y");
+        $display("----+--");
+        a = 0; b = 0; #1; $display("%b %b | %b", a, b, y);
+        a = 0; b = 1; #1; $display("%b %b | %b", a, b, y);
+        a = 1; b = 0; #1; $display("%b %b | %b", a, b, y);
+        a = 1; b = 1; #1; $display("%b %b | %b", a, b, y);
+        $finish;
+    end
+endmodule
+
+`default_nettype wire</code></pre>
+          </div>
+        </div>
+        <div class="guide-callout guide-callout--info">
+          <svg class="icon" aria-hidden="true"><use href="#icon-info"></use></svg>
+          <p><strong>Why the testbench has no ports.</strong> It is the top-level simulation module. It creates the <code>a</code>, <code>b</code> and <code>y</code> signals, instantiates the design as <code>dut</code>, and drives the inputs. The design module keeps the real ports.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="compile">
+        <span class="eyebrow">06 / Compile</span>
+        <h2>Translate the sources into a simulation image.</h2>
+        <div class="guide-code">
+          <div class="guide-code__head"><span>PowerShell · compile</span><span class="badge badge-success">Actual run</span></div>
+          <pre><code>PS&gt; iverilog -g2001 -o and-gate.out design.v tb.v
+PS&gt;</code></pre>
+        </div>
+        <p>No output means success. The command has four parts:</p>
+        <div class="guide-table-wrap">
+          <table class="guide-table">
+            <caption>What each part of the compile command does</caption>
+            <thead>
+              <tr><th scope="col">Part</th><th scope="col">Meaning</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>iverilog</code></td><td>The compiler executable.</td></tr>
+              <tr><td><code>-g2001</code></td><td>Use the Verilog-2001 language generation, which matches the Academy examples and their <code>input wire</code> port style.</td></tr>
+              <tr><td><code>-o and-gate.out</code></td><td>Write the simulation image to <code>and-gate.out</code> in the current folder.</td></tr>
+              <tr><td><code>design.v tb.v</code></td><td>Both source files, in one compile. Omitting <code>tb.v</code> usually leaves no top-level stimulus.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>If compilation fails, the terminal prints the file and line number. Fix the first error, then compile again. A missing semicolon or <code>endmodule</code> often produces a message that points at the following line rather than the real mistake.</p>
+      </section>
+
+      <section class="guide-section" id="run">
+        <span class="eyebrow">07 / Run</span>
+        <h2>Execute the image and capture the transcript.</h2>
+        <div class="guide-code">
+          <div class="guide-code__head"><span>PowerShell · run</span><span class="badge badge-success">Actual output</span></div>
+          <pre><code>PS&gt; vvp and-gate.out
+a b | y
+----+--
+0 0 | 0
+0 1 | 0
+1 0 | 0
+1 1 | 1
+tb.v:20: $finish called at 4000 (1ps)</code></pre>
+        </div>
+        <p>The transcript above is from a real run of the files shown in section 05, with the waveform lines removed for clarity. The final line is Icarus reporting where and when <code>$finish</code> stopped the simulation. It is normal, not an error.</p>
+        <div class="guide-callout guide-callout--warning">
+          <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <p><strong>Do not double-click the <code>.out</code> file.</strong> It is an Icarus image, not a native Windows application. Running it through <code>vvp</code> is what starts the simulation and attaches the terminal output.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="output">
+        <span class="eyebrow">08 / Read the result</span>
+        <h2>What a good transcript looks like.</h2>
+        <p>The Academy testbenches are self-checking where possible. They print a table, compare each observed value with the expected value, and finish with a summary line such as <code>PASS: 4/4 rows match</code>. That line is the evidence you need; you do not have to inspect a waveform to know whether the logic is correct.</p>
+        <div class="guide-output-grid">
+          <article class="guide-output panel">
+            <span class="badge badge-success">PASS</span>
+            <h3>Observed equals expected</h3>
+            <p>Every checked row matched. The design behaved as the testbench expected for the applied inputs.</p>
+          </article>
+          <article class="guide-output panel">
+            <span class="badge badge-warning">Mismatch</span>
+            <h3>Read the first failing row</h3>
+            <p>Compare the printed inputs with the design equation. Fix the design or the expected value, then recompile. Do not edit the transcript.</p>
+          </article>
+          <article class="guide-output panel">
+            <span class="badge badge-danger">No output</span>
+            <h3>Check the top module</h3>
+            <p>If nothing prints, the testbench may not be in the compile command, may lack <code>$display</code>, or may never reach <code>$finish</code>.</p>
+          </article>
+        </div>
+        <p>For a wider experiment, the EC-410 pages list the exact vector count and expected summary. Use the same summary string when you reproduce the run locally.</p>
+      </section>
+
+      <section class="guide-section" id="waveform">
+        <span class="eyebrow">09 / Waveforms</span>
+        <h2>Ask the simulator to record signals.</h2>
+        <p>A waveform is optional. Add two system tasks inside the testbench's <code>initial</code> block, before the stimulus, then recompile and rerun.</p>
+        <div class="guide-code">
+          <div class="guide-code__head"><span>tb.v · waveform addition</span><span class="badge">VCD dump</span></div>
+          <pre><code>initial begin
+    $dumpfile("and-gate.vcd");
+    $dumpvars(0, and_gate_tb);
+    // ... stimulus and checks ...
+    $finish;
+end</code></pre>
+        </div>
+        <p><code>$dumpfile</code> names the output file. <code>$dumpvars(0, and_gate_tb)</code> records the whole testbench hierarchy, including the <code>dut</code> instance. Rerun <code>vvp</code>; the terminal now reports the dump file:</p>
+        <div class="guide-code">
+          <div class="guide-code__head"><span>PowerShell · run with dumping</span><span class="badge badge-success">Actual output</span></div>
+          <pre><code>PS&gt; vvp and-gate.out
+VCD info: dumpfile and-gate.vcd opened for output.
+a b | y
+----+--
+0 0 | 0
+0 1 | 0
+1 0 | 0
+1 1 | 1
+tb.v:20: $finish called at 4000 (1ps)</code></pre>
+        </div>
+        <p>The new file is a text-based Value Change Dump. Its header names the timescale, the module scopes and every recorded signal:</p>
+        <div class="guide-code">
+          <div class="guide-code__head"><span>and-gate.vcd · first lines</span><span class="badge">Generated file</span></div>
+          <pre><code>$date
+    Wed Nov 25 11:12:02 2026
+$end
+$version
+    Icarus Verilog
+$end
+$timescale
+    1ps
+$end
+$scope module and_gate_tb $end
+$var wire 1 ! y $end
+$var reg 1 " a $end
+$var reg 1 # b $end
+$scope module dut $end
+$var wire 1 " a $end
+$var wire 1 # b $end
+$var wire 1 ! y $end
+$upscope $end
+$upscope $end
+$enddefinitions $end</code></pre>
+        </div>
+        <p>The short symbols (<code>!</code>, <code>"</code>, <code>#</code>) are VCD identifiers. You do not need to read them by hand; GTKWave resolves them back to <code>y</code>, <code>a</code> and <code>b</code>.</p>
+      </section>
+
+      <section class="guide-section" id="gtkwave">
+        <span class="eyebrow">10 / GTKWave</span>
+        <h2>Open the recorded wave and inspect it.</h2>
+        <div class="guide-code">
+          <div class="guide-code__head"><span>PowerShell · open waveform</span></div>
+          <pre><code>PS&gt; gtkwave and-gate.vcd</code></pre>
+        </div>
+        <ol class="guide-steps">
+          <li><strong>Find the hierarchy.</strong> In the top-left pane, expand <code>and_gate_tb</code> and its <code>dut</code> instance.</li>
+          <li><strong>Add signals.</strong> Select <code>a</code>, <code>b</code> and <code>y</code>, then drag them into the wave pane or use <strong>Insert → Signal</strong>.</li>
+          <li><strong>Fit the time axis.</strong> Use <strong>Zoom → Fit</strong> or the zoom buttons. The simulation runs to 4 ns in this example.</li>
+          <li><strong>Read a row.</strong> Place the cursor at a transition and compare the values with the truth table. The wave should agree with the printed transcript.</li>
+        </ol>
+        <div class="guide-callout">
+          <svg class="icon" aria-hidden="true"><use href="#icon-info"></use></svg>
+          <p><strong>GTKWave is a separate window.</strong> Closing it does not affect the terminal or the saved VCD. You can reopen the same file later without recompiling, as long as the file still exists.</p>
+        </div>
+        <p>If GTKWave opens with an empty wave pane, the VCD may have recorded only a scope that you have not expanded, or the testbench may have ended before any transition. Check the VCD header and the <code>$dumpvars</code> arguments.</p>
+      </section>
+
+      <section class="guide-section" id="troubleshooting">
+        <span class="eyebrow">11 / Troubleshooting</span>
+        <h2>Diagnose in the order the tools run.</h2>
+        <div class="guide-table-wrap">
+          <table class="guide-table guide-table--wide">
+            <caption>Common Windows failures and the first check</caption>
+            <thead>
+              <tr><th scope="col">Symptom</th><th scope="col">Likely cause</th><th scope="col">Fix</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>iverilog</code> is not recognized</td><td>The UCRT64 bin folder is not on <code>PATH</code>.</td><td>Use the full path <code>C:\msys64\ucrt64\bin\iverilog.exe</code>, or add that folder to <code>PATH</code> and open a new terminal.</td></tr>
+              <tr><td><code>Unknown module type: and_gate</code></td><td>The design file is missing from the compile command, or the module name does not match the instance.</td><td>Compile both <code>design.v</code> and <code>tb.v</code>; compare <code>module and_gate</code> with <code>and_gate dut (...)</code>.</td></tr>
+              <tr><td>Syntax error near a line</td><td>Missing <code>;</code>, <code>end</code>, <code>endmodule</code>, or an unclosed parenthesis.</td><td>Check the line before the reported line first. Fix one error and recompile.</td></tr>
+              <tr><td>Compiles, but prints nothing</td><td>The testbench is not the top module, has no <code>$display</code>, or never runs.</td><td>Confirm <code>tb.v</code> is in the compile command and that its <code>initial</code> block executes.</td></tr>
+              <tr><td>No <code>.vcd</code> file</td><td><code>$dumpfile</code> or <code>$dumpvars</code> is missing, or <code>vvp</code> ran in another folder.</td><td>Add both tasks, rerun <code>vvp</code> in the same folder, and look for the “dumpfile opened” line.</td></tr>
+              <tr><td>GTKWave shows no signals</td><td>The dump scope does not include the instance you are viewing, or no value changed.</td><td>Use <code>$dumpvars(0, and_gate_tb)</code>, expand the hierarchy, and check the VCD header.</td></tr>
+              <tr><td><code>gtkwave --version</code> prints nothing</td><td>This UCRT64 build does not print a version string.</td><td>Use <code>where.exe gtkwave</code> and <code>pacman -Q mingw-w64-ucrt-x86_64-gtkwave</code> instead.</td></tr>
+              <tr><td>File saved as <code>design.v.txt</code></td><td>Notepad appended <code>.txt</code>, or Explorer hides extensions.</td><td>Enable file extensions, rename the file, and compile the exact name.</td></tr>
+              <tr><td>Old results keep appearing</td><td><code>vvp</code> is running a stale <code>.out</code> image.</td><td>Delete the <code>.out</code> file, recompile, then rerun.</td></tr>
+              <tr><td>Permission or sync error writing files</td><td>The folder is protected or being synced by OneDrive.</td><td>Work in <code>C:\verilog-lab</code> and avoid spaces in paths.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="guide-section" id="optional">
+        <span class="eyebrow">12 / Optional tools</span>
+        <h2>What is installed, what is optional, what is absent.</h2>
+        <p>This course needs only Icarus Verilog, <code>vvp</code> and GTKWave. Other tools can help, but the guide does not pretend they are part of the verified setup.</p>
+        <div class="guide-table-wrap">
+          <table class="guide-table">
+            <caption>Tool status on this machine</caption>
+            <thead>
+              <tr><th scope="col">Tool</th><th scope="col">Status</th><th scope="col">Notes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Icarus Verilog + <code>vvp</code></td><td><span class="badge badge-success">Installed, verified</span></td><td>The compiler and runtime used by every Academy example.</td></tr>
+              <tr><td>GTKWave</td><td><span class="badge badge-success">Installed, verified</span></td><td>Opens VCD waveforms. Version check quirk noted above.</td></tr>
+              <tr><td>Python</td><td><span class="badge badge-success">Installed, verified</span></td><td>Runs the site build and verification scripts, not the student workflow.</td></tr>
+              <tr><td>Visual Studio Code</td><td><span class="badge badge-cyan">Installed, optional</span></td><td>Useful for editing and syntax highlighting. No extension is required.</td></tr>
+              <tr><td>Verilator</td><td><span class="badge">Not installed</span></td><td>Not used by this course. Do not substitute it for Icarus in the documented commands.</td></tr>
+              <tr><td>Vivado / Xilinx ISE</td><td><span class="badge badge-violet">Not installed</span></td><td>FPGA vendor tools are outside the current release. This guide makes no claim that they are available.</td></tr>
+              <tr><td>ModelSim</td><td><span class="badge badge-violet">Not installed</span></td><td>Not required. The verified flow uses Icarus and GTKWave.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="guide-callout guide-callout--warning">
+          <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <p><strong>Do not follow a Vivado or ISE tutorial for this course.</strong> Those tools are not installed here, and their project flow is different from the file-based Icarus commands. Use the commands in this guide so your result matches the published transcript.</p>
+        </div>
+      </section>
+
+      <section class="guide-section guide-next" id="next">
+        <div class="guide-next__panel panel">
+          <div>
+            <span class="panel-kicker">Next</span>
+            <h2>Run a real Academy example.</h2>
+            <p>Download a verified pair from the Playground, or open an EC-410 experiment and reproduce its summary. Then use the quizzes to check the concepts behind the circuit.</p>
+          </div>
+          <div class="guide-next__actions">
+            <a class="btn btn-primary" href="../playground/index.html">Open Playground</a>
+            <a class="btn btn-secondary" href="../labs/index.html">Laboratory</a>
+            <a class="btn btn-secondary" href="../quizzes/index.html">Quizzes</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="../labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="../index.html#path">Learning path</a>
+              <a class="footer-link" href="../index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="../circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="../playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="../quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="../guides/index.html">Setup guides</a>
+              <a class="footer-link" href="../index.html#approach">The approach</a>
+              <a class="footer-link" href="../styleguide.html">Design system</a>
+              <a class="footer-link" href="../styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="../index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="../index.html">Homepage<span>01</span></a>
+        <a class="mobile-nav-link" href="../theory/index.html">Theory<span>02</span></a>
+        <a class="mobile-nav-link" href="../labs/index.html">Laboratory<span>03</span></a>
+        <a class="mobile-nav-link" href="../circuit-lab/index.html">Circuit Lab<span>04</span></a>
+        <a class="mobile-nav-link" href="../playground/index.html">Playground<span>05</span></a>
+        <a class="mobile-nav-link" href="../quizzes/index.html">Quizzes<span>06</span></a>
+        <a class="mobile-nav-link is-active" href="../guides/index.html" aria-current="page">Guides<span>07</span></a>
+        <a class="mobile-nav-link" href="../dashboard.html">Dashboard<span>08</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/app.js"></script>
+  
+</body>
+</html>

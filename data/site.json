@@ -1,0 +1,382 @@
+{
+  "brand": {
+    "name": "Verilog Academy",
+    "wordmark": [
+      "VERILOG",
+      "ACADEMY"
+    ],
+    "tagline": "From digital logic to hardware design.",
+    "description": "A premium engineering education platform for Verilog HDL, digital logic, and practical hardware design."
+  },
+  "navigation": {
+    "home": [
+      {
+        "label": "Theory",
+        "href": "theory/index.html"
+      },
+      {
+        "label": "Laboratory",
+        "href": "labs/index.html"
+      },
+      {
+        "label": "Circuit Lab",
+        "href": "circuit-lab/index.html"
+      },
+      {
+        "label": "Playground",
+        "href": "playground/index.html"
+      },
+      {
+        "label": "Quizzes",
+        "href": "quizzes/index.html"
+      },
+      {
+        "label": "Guides",
+        "href": "guides/index.html"
+      },
+      {
+        "label": "Learning path",
+        "href": "index.html#path"
+      },
+      {
+        "label": "Toolchain",
+        "href": "index.html#toolchain"
+      },
+      {
+        "label": "Dashboard",
+        "href": "dashboard.html"
+      }
+    ],
+    "theory": [
+      {
+        "label": "Homepage",
+        "href": "index.html"
+      },
+      {
+        "label": "Theory",
+        "href": "theory/index.html"
+      },
+      {
+        "label": "Laboratory",
+        "href": "labs/index.html"
+      },
+      {
+        "label": "Circuit Lab",
+        "href": "circuit-lab/index.html"
+      },
+      {
+        "label": "Playground",
+        "href": "playground/index.html"
+      },
+      {
+        "label": "Quizzes",
+        "href": "quizzes/index.html"
+      },
+      {
+        "label": "Guides",
+        "href": "guides/index.html"
+      },
+      {
+        "label": "Dashboard",
+        "href": "dashboard.html"
+      }
+    ],
+    "dashboard": [
+      {
+        "label": "Homepage",
+        "href": "index.html"
+      },
+      {
+        "label": "Theory",
+        "href": "theory/index.html"
+      },
+      {
+        "label": "Laboratory",
+        "href": "labs/index.html"
+      },
+      {
+        "label": "Circuit Lab",
+        "href": "circuit-lab/index.html"
+      },
+      {
+        "label": "Playground",
+        "href": "playground/index.html"
+      },
+      {
+        "label": "Quizzes",
+        "href": "quizzes/index.html"
+      },
+      {
+        "label": "Guides",
+        "href": "guides/index.html"
+      },
+      {
+        "label": "Dashboard",
+        "href": "dashboard.html"
+      }
+    ],
+    "design": [
+      {
+        "label": "Homepage",
+        "href": "index.html"
+      },
+      {
+        "label": "Foundations",
+        "href": "styleguide.html#foundations"
+      },
+      {
+        "label": "Components",
+        "href": "styleguide.html#components"
+      },
+      {
+        "label": "Patterns",
+        "href": "styleguide.html#patterns"
+      },
+      {
+        "label": "Accessibility",
+        "href": "styleguide.html#accessibility"
+      }
+    ],
+    "site": [
+      {
+        "label": "Theory",
+        "href": "theory/index.html"
+      },
+      {
+        "label": "Laboratory",
+        "href": "labs/index.html"
+      },
+      {
+        "label": "Circuit Lab",
+        "href": "circuit-lab/index.html"
+      },
+      {
+        "label": "Playground",
+        "href": "playground/index.html"
+      },
+      {
+        "label": "Quizzes",
+        "href": "quizzes/index.html"
+      },
+      {
+        "label": "Guides",
+        "href": "guides/index.html"
+      },
+      {
+        "label": "Dashboard",
+        "href": "dashboard.html"
+      }
+    ],
+    "lab": [
+      {
+        "label": "Homepage",
+        "href": "index.html"
+      },
+      {
+        "label": "Theory",
+        "href": "theory/index.html"
+      },
+      {
+        "label": "Laboratory",
+        "href": "labs/index.html"
+      },
+      {
+        "label": "Circuit Lab",
+        "href": "circuit-lab/index.html"
+      },
+      {
+        "label": "Playground",
+        "href": "playground/index.html"
+      },
+      {
+        "label": "Quizzes",
+        "href": "quizzes/index.html"
+      },
+      {
+        "label": "Guides",
+        "href": "guides/index.html"
+      },
+      {
+        "label": "Dashboard",
+        "href": "dashboard.html"
+      }
+    ],
+    "circuit": [
+      {
+        "label": "Homepage",
+        "href": "index.html"
+      },
+      {
+        "label": "Theory",
+        "href": "theory/index.html"
+      },
+      {
+        "label": "Laboratory",
+        "href": "labs/index.html"
+      },
+      {
+        "label": "Circuit Lab",
+        "href": "circuit-lab/index.html"
+      },
+      {
+        "label": "Playground",
+        "href": "playground/index.html"
+      },
+      {
+        "label": "Quizzes",
+        "href": "quizzes/index.html"
+      },
+      {
+        "label": "Guides",
+        "href": "guides/index.html"
+      },
+      {
+        "label": "Dashboard",
+        "href": "dashboard.html"
+      }
+    ],
+    "quiz": [
+      {
+        "label": "Homepage",
+        "href": "index.html"
+      },
+      {
+        "label": "Theory",
+        "href": "theory/index.html"
+      },
+      {
+        "label": "Laboratory",
+        "href": "labs/index.html"
+      },
+      {
+        "label": "Circuit Lab",
+        "href": "circuit-lab/index.html"
+      },
+      {
+        "label": "Playground",
+        "href": "playground/index.html"
+      },
+      {
+        "label": "Quizzes",
+        "href": "quizzes/index.html"
+      },
+      {
+        "label": "Guides",
+        "href": "guides/index.html"
+      },
+      {
+        "label": "Dashboard",
+        "href": "dashboard.html"
+      }
+    ],
+    "guide": [
+      {
+        "label": "Homepage",
+        "href": "index.html"
+      },
+      {
+        "label": "Theory",
+        "href": "theory/index.html"
+      },
+      {
+        "label": "Laboratory",
+        "href": "labs/index.html"
+      },
+      {
+        "label": "Circuit Lab",
+        "href": "circuit-lab/index.html"
+      },
+      {
+        "label": "Playground",
+        "href": "playground/index.html"
+      },
+      {
+        "label": "Quizzes",
+        "href": "quizzes/index.html"
+      },
+      {
+        "label": "Guides",
+        "href": "guides/index.html"
+      },
+      {
+        "label": "Dashboard",
+        "href": "dashboard.html"
+      }
+    ]
+  },
+  "footer": {
+    "tagline": "A structured path from digital logic to verified hardware.",
+    "badge": "SBTET C-23 · ECE IV Semester",
+    "columns": [
+      {
+        "title": "Curriculum",
+        "links": [
+          {
+            "label": "EC-405 Theory",
+            "href": "theory/index.html"
+          },
+          {
+            "label": "EC-410 Practical",
+            "href": "labs/index.html"
+          },
+          {
+            "label": "Learning path",
+            "href": "index.html#path"
+          },
+          {
+            "label": "Toolchain",
+            "href": "index.html#toolchain"
+          }
+        ]
+      },
+      {
+        "title": "Platform",
+        "links": [
+          {
+            "label": "Learning dashboard",
+            "href": "dashboard.html"
+          },
+          {
+            "label": "Circuit Lab",
+            "href": "circuit-lab/index.html"
+          },
+          {
+            "label": "Verilog Playground",
+            "href": "playground/index.html"
+          },
+          {
+            "label": "Quizzes",
+            "href": "quizzes/index.html"
+          },
+          {
+            "label": "Setup guides",
+            "href": "guides/index.html"
+          },
+          {
+            "label": "The approach",
+            "href": "index.html#approach"
+          },
+          {
+            "label": "Design system",
+            "href": "styleguide.html"
+          },
+          {
+            "label": "Accessibility",
+            "href": "styleguide.html#accessibility"
+          },
+          {
+            "label": "Homepage",
+            "href": "index.html"
+          }
+        ]
+      }
+    ],
+    "note": "SBTET C-23 · ECE Fourth Semester. Progress stays in your browser."
+  },
+  "counts": {
+    "circuits": 18,
+    "playground": 14,
+    "quizzes": 46,
+    "quizCategories": 4
+  }
+}

@@ -1,0 +1,685 @@
+/* ==========================================================================
+   VERILOG ACADEMY - EC-410 Practical Laboratory
+   Landing cards, bench method, tool matrix, diagrams and experiment extras.
+   ========================================================================== */
+
+.page-lab {
+  background:
+    radial-gradient(1100px 680px at 88% -8%, var(--glow-violet), transparent 62%),
+    radial-gradient(900px 620px at 6% 2%, var(--glow-blue), transparent 60%),
+    var(--canvas);
+}
+
+.lab-aside-link {
+  margin-top: var(--space-3);
+}
+
+/* Shared text link (dashboard.css is not loaded on lab pages) ---------------- */
+.page-lab .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--cyan);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--dur) var(--ease-out);
+}
+
+.page-lab .text-link:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.page-lab .text-link .icon {
+  flex: 0 0 auto;
+}
+
+/* Bench cards ------------------------------------------------------------- */
+.lab-bench {
+  padding-top: clamp(var(--space-12), 7vw, var(--space-20));
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.lab-objectives {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 2fr);
+  gap: var(--space-6);
+  margin-bottom: var(--space-5);
+  padding: var(--space-6);
+}
+
+.lab-objectives__head h3 {
+  margin-top: var(--space-2);
+  font-size: var(--text-xl);
+  line-height: 1.25;
+}
+
+.lab-objectives__list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: 1.15rem;
+  list-style: disc;
+  color: var(--text-soft);
+}
+
+.lab-objectives__list li {
+  line-height: 1.6;
+}
+
+.lab-objectives__list li::marker {
+  color: var(--cyan);
+}
+
+.lab-card {
+  position: relative;
+  display: flex;
+  padding: var(--space-6);
+  flex-direction: column;
+  gap: var(--space-3);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out),
+    background var(--dur) var(--ease-out);
+}
+
+.lab-card:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-raised);
+  transform: translateY(-2px);
+}
+
+.lab-card:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.lab-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.lab-card__num {
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lab-card__title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-snug);
+  line-height: 1.25;
+}
+
+.lab-card__summary {
+  flex: 1;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.lab-card__foot {
+  display: flex;
+  margin-top: var(--space-2);
+  padding-top: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.lab-card__meta {
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lab-card__open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.lab-card:hover .lab-card__open,
+.lab-card:focus-visible .lab-card__open {
+  color: var(--cyan);
+}
+
+.lab-card.is-complete {
+  border-color: rgba(61, 220, 151, 0.32);
+  background:
+    linear-gradient(160deg, rgba(61, 220, 151, 0.07), transparent 55%),
+    var(--surface);
+}
+
+.lab-card.is-complete .lab-card__num {
+  color: var(--success);
+}
+
+/* Method ------------------------------------------------------------------ */
+.lab-method__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(var(--space-6), 4vw, var(--space-10));
+  align-items: start;
+}
+
+.lab-method__steps {
+  margin-top: 0;
+}
+
+.lab-command-card {
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
+}
+
+.lab-command-card__title {
+  margin: var(--space-2) 0 var(--space-3);
+  font-size: 1.1rem;
+  line-height: 1.35;
+}
+
+.lab-command-card .code-block {
+  margin: 0;
+}
+
+.lab-command-card__note {
+  margin: var(--space-3) 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.lab-command-card__note code {
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+/* Tools ------------------------------------------------------------------- */
+.lab-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.lab-tool {
+  display: flex;
+  padding: var(--space-6);
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.lab-tool__icon {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--cyan);
+}
+
+.lab-tool h3 {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.35;
+}
+
+.lab-tool p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.lab-tool p code {
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+.lab-tool__meta {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lab-tool-note {
+  margin-top: var(--space-6);
+}
+
+/* Roadmap ---------------------------------------------------------------- */
+.lab-roadmap-panel {
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
+}
+
+.lab-roadmap-panel__head {
+  display: flex;
+  padding-bottom: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.lab-roadmap-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+}
+
+.lab-roadmap-row {
+  display: flex;
+  padding: var(--space-3) var(--space-2);
+  align-items: center;
+  gap: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.lab-roadmap-row:nth-last-child(-n + 3) {
+  border-bottom: 0;
+}
+
+.lab-roadmap-num {
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+}
+
+.lab-roadmap-title {
+  flex: 1;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.lab-roadmap-meta {
+  color: var(--muted-2);
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Closing links ----------------------------------------------------------- */
+.lab-links {
+  padding-bottom: clamp(var(--space-16), 8vw, var(--space-24));
+}
+
+.lab-links__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.lab-link-card {
+  display: flex;
+  padding: clamp(var(--space-6), 4vw, var(--space-8));
+  flex-direction: column;
+  gap: var(--space-3);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
+}
+
+.lab-link-card:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-raised);
+}
+
+.lab-link-card:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.lab-link-card h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  line-height: 1.25;
+  letter-spacing: var(--tracking-snug);
+}
+
+.lab-link-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.lab-link-card .text-link {
+  margin-top: auto;
+}
+
+/* Experiment diagrams ----------------------------------------------------- */
+.lab-figure {
+  margin: var(--space-5) 0 var(--space-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.lab-figure__scroll {
+  padding: var(--space-4);
+  overflow-x: auto;
+}
+
+.lab-figure__scroll:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: -2px;
+}
+
+.lab-figure svg {
+  display: block;
+  width: 100%;
+  min-width: 560px;
+  height: auto;
+}
+
+.lab-figure figcaption {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.lab-figure figcaption strong {
+  color: var(--text-soft);
+}
+
+.lab-svg text {
+  fill: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.lab-svg .lab-svg__wire {
+  fill: none;
+  stroke: var(--text-soft);
+  stroke-width: 1.5;
+}
+
+.lab-svg .lab-svg__gate {
+  fill: var(--surface-2);
+  stroke: var(--cyan);
+  stroke-width: 1.6;
+}
+
+.lab-svg .lab-svg__bubble {
+  fill: var(--surface);
+  stroke: var(--cyan);
+  stroke-width: 1.6;
+}
+
+.lab-svg .lab-svg__block {
+  fill: var(--surface-2);
+  stroke: var(--line-strong);
+  stroke-width: 1.4;
+}
+
+.lab-svg .lab-svg__label {
+  fill: var(--muted);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+}
+
+.lab-svg .lab-svg__value {
+  fill: var(--cyan);
+}
+
+.lab-svg .lab-svg__note {
+  fill: var(--muted);
+  font-size: 11px;
+}
+
+.lab-svg .lab-svg__dot {
+  fill: var(--cyan);
+}
+
+.lab-svg .lab-svg__accent {
+  fill: var(--violet);
+}
+
+/* Equations and evidence -------------------------------------------------- */
+.lab-equations {
+  display: grid;
+  margin: var(--space-4) 0 var(--space-6);
+  gap: var(--space-2);
+}
+
+.lab-equation {
+  display: flex;
+  padding: var(--space-3) var(--space-4);
+  align-items: baseline;
+  gap: var(--space-4);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--cyan);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  flex-wrap: wrap;
+}
+
+.lab-equation__name {
+  min-width: 5.5rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lab-equation code {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.lab-result {
+  display: flex;
+  margin: var(--space-5) 0;
+  padding: var(--space-5);
+  align-items: flex-start;
+  gap: var(--space-4);
+  border: 1px solid rgba(61, 220, 151, 0.32);
+  border-radius: var(--radius-sm);
+  background: rgba(61, 220, 151, 0.07);
+}
+
+.lab-result .icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--success);
+}
+
+.lab-result h3 {
+  margin: 0 0 var(--space-2);
+  font-size: 1rem;
+}
+
+.lab-result p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.lab-result strong {
+  color: var(--text);
+}
+
+.lab-result code {
+  color: var(--success);
+}
+
+.lab-viva {
+  counter-reset: viva;
+}
+
+.lab-viva > li {
+  position: relative;
+  padding-left: 2.1rem;
+  list-style: none;
+  counter-increment: viva;
+}
+
+.lab-viva > li::before {
+  position: absolute;
+  top: 0.15rem;
+  left: 0;
+  width: 1.45rem;
+  color: var(--cyan);
+  content: counter(viva, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.05em;
+}
+
+.lab-diagram-legend {
+  display: flex;
+  margin: calc(-1 * var(--space-3)) 0 var(--space-5);
+  gap: var(--space-2) var(--space-4);
+  flex-wrap: wrap;
+}
+
+.lab-diagram-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.lab-diagram-legend span::before {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--cyan);
+  border-radius: 2px;
+  content: "";
+}
+
+/* Theme adjustments ------------------------------------------------------- */
+html[data-theme="daylight"] .page-lab {
+  background:
+    radial-gradient(1000px 600px at 90% -10%, var(--glow-violet), transparent 64%),
+    radial-gradient(820px 560px at 4% 0%, var(--glow-blue), transparent 62%),
+    var(--canvas);
+}
+
+html[data-theme="daylight"] .lab-card.is-complete {
+  background:
+    linear-gradient(160deg, rgba(4, 120, 87, 0.06), transparent 55%),
+    var(--surface);
+}
+
+html[data-theme="daylight"] .lab-result {
+  background: rgba(4, 120, 87, 0.06);
+}
+
+/* Responsive -------------------------------------------------------------- */
+@media (max-width: 980px) {
+  .lab-method__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lab-roadmap-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lab-roadmap-row:nth-last-child(-n + 3) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lab-roadmap-row:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .lab-grid,
+  .lab-tool-grid,
+  .lab-links__grid,
+  .lab-objectives {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lab-objectives {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 620px) {
+  .lab-roadmap-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lab-roadmap-row {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lab-roadmap-row:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lab-roadmap-row:last-child {
+    border-bottom: 0;
+  }
+
+  .lab-card {
+    padding: var(--space-5);
+  }
+
+  .lab-card__foot {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lab-equation {
+    gap: var(--space-1);
+    flex-direction: column;
+  }
+
+  .lab-result {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,96 @@
+<div class="lesson">
+  <header class="lesson-hero">
+    <div class="lesson-hero__atmosphere" aria-hidden="true"></div>
+    <div class="container">
+      <nav class="lesson-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">EC-405 Theory</a>
+        <span aria-hidden="true">/</span>
+        <a href="index.html#{{LESSON_UNIT_ID}}">Unit {{LESSON_UNIT_NUMBER}}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Topic {{LESSON_TOPIC_NUMBER}}</span>
+      </nav>
+
+      <div class="lesson-hero__grid">
+        <div class="lesson-hero__copy">
+          <span class="eyebrow">Unit {{LESSON_UNIT_NUMBER}} · Topic {{LESSON_TOPIC_NUMBER}}</span>
+          <h1 id="lesson-title">{{LESSON_TITLE}}</h1>
+          <p class="lede">{{LESSON_SUMMARY}}</p>
+          <div class="lesson-meta">
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-book"></use></svg> {{LESSON_MINUTES}} min read</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-code"></use></svg> Verilog-2001</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-terminal"></use></svg> Verified in Icarus 13.0</span>
+          </div>
+        </div>
+
+        <aside class="lesson-hero__card panel" aria-label="Topic progress">
+          <span class="panel-kicker">Your progress</span>
+          <p class="lesson-hero__unit">Unit {{LESSON_UNIT_NUMBER}} · <span data-lesson-unit-count>0 / {{LESSON_UNIT_TOTAL}}</span> topics</p>
+          <div class="progress" role="progressbar" aria-label="Unit {{LESSON_UNIT_NUMBER}} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-lesson-unit-bar>
+            <span class="progress-fill" data-lesson-unit-fill style="--progress: 0%"></span>
+          </div>
+          <button class="btn btn-primary lesson-toggle" type="button" data-topic-toggle aria-pressed="false" aria-describedby="lesson-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-topic-toggle-label>Mark topic complete</span>
+          </button>
+          <p class="lesson-status" data-topic-status>Reading progress is stored in this browser.</p>
+          <a class="text-link lesson-hero__dashboard" href="{{ROOT}}dashboard.html">
+            Learning dashboard
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+          </a>
+        </aside>
+      </div>
+
+      <div class="theory-alert" data-storage-alert hidden role="status">
+        <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+        <p data-storage-message></p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container lesson-layout">
+    <aside class="lesson-aside">
+      <div class="lesson-aside__card panel">
+        <span class="panel-kicker">On this page</span>
+        <nav aria-label="On this page">
+          <ol class="toc-list">
+            {{LESSON_TOC}}
+          </ol>
+        </nav>
+      </div>
+
+      <div class="lesson-aside__card lesson-aside__unit panel">
+        <span class="panel-kicker">Unit {{LESSON_UNIT_NUMBER}} · {{LESSON_UNIT_TOPICS}} topics</span>
+        <p>{{LESSON_UNIT_TITLE}}</p>
+        <a class="text-link" href="index.html#{{LESSON_UNIT_ID}}">
+          Unit overview
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+    </aside>
+
+    <article class="lesson-article" data-lesson-id="{{LESSON_ID}}">
+      {{LESSON_BODY}}
+
+      <footer class="lesson-footer">
+        <div class="lesson-finish panel">
+          <div>
+            <span class="panel-kicker">Topic {{LESSON_TOPIC_NUMBER}} · completion</span>
+            <h2>Finished this topic?</h2>
+            <p>Marking is your own record that you have studied and understood the material. It is reversible, and it updates the dashboard immediately.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-topic-toggle aria-pressed="false" aria-describedby="lesson-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-topic-toggle-label>Mark topic complete</span>
+          </button>
+        </div>
+
+        <nav class="lesson-pager" aria-label="Topic navigation">
+          {{LESSON_PREV}}
+          {{LESSON_NEXT}}
+        </nav>
+      </footer>
+    </article>
+  </div>
+</div>
+
+<script type="application/json" id="curriculum-data">{{CURRICULUM_JSON}}</script>

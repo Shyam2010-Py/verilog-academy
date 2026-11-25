@@ -1,0 +1,8 @@
+d=1010
+sel | y
+----+--
+ 00  | 0
+ 01  | 1
+ 10  | 0
+ 11  | 1
+example.v:30: $finish called at 4 (1s)

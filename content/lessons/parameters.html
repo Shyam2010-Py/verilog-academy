@@ -1,0 +1,91 @@
+<section class="lesson-section">
+  <h2 id="why-parameters">One module, many sizes</h2>
+  <p class="lesson-lead">A parameter is a constant that is fixed when a module is elaborated. It lets one module definition serve several widths, depths or modes without copying the source. A local parameter is the same idea with one extra restriction: it cannot be overridden from outside.</p>
+  <p>Parameters are not signals. They do not exist in the hardware as wires or registers; they disappear into the structure of the circuit that elaboration builds. Changing a parameter changes the circuit, not the value stored in it.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="parameter-vs-localparam">Parameter versus localparam</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Two kinds of constant</caption>
+      <thead><tr><th scope="col">Property</th><th scope="col"><code>parameter</code></th><th scope="col"><code>localparam</code></th></tr></thead>
+      <tbody>
+        <tr><td>Set at definition</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td>Overridden at instantiation</td><td>Yes</td><td>No</td></tr>
+        <tr><td>Overridden by <code>defparam</code></td><td>Yes (legacy)</td><td>No</td></tr>
+        <tr><td>Intended for</td><td>Interface choices: width, depth, mode</td><td>Internal derived values</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The naming convention matters for review. A parameter is part of the module's contract: a parent is allowed to change it. A localparam is an implementation detail. If a value must stay consistent inside the module — a derived width, a state encoding, a fixed depth — make it a localparam so no parent can break the invariant by accident.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="overrides">Three ways to override</h2>
+  <ul>
+    <li><strong>Positional:</strong> <code>width_demo #(6) u (...);</code> overrides parameters in declaration order. Compact, but fragile if the parameter list changes.</li>
+    <li><strong>Named:</strong> <code>width_demo #(.WIDTH(6)) u (...);</code> states exactly which parameter changes. This is the professional default.</li>
+    <li><strong><code>defparam</code>:</strong> <code>defparam u.WIDTH = 6;</code> overrides through a hierarchical path. It is legal Verilog-2001 but legacy, hard to trace, and poorly supported by some synthesis flows. Use the <code>#(...)</code> form in new code.</li>
+  </ul>
+  <p>Verilog-2001 allows the parameter list in the module header, before the port list: <code>module m #(parameter WIDTH = 4) (...);</code>. That keeps the contract next to the ports, where a reader will see it.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">A width parameter in action</h2>
+  <p>One module produces a repeating two-bit pattern. The number of repetitions is derived from <code>WIDTH</code>, and the output is a fixed eight bits so the effect of each override is visible in one place.</p>
+
+  {{CODE:examples/verilog/parameters/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>module width_demo #(parameter WIDTH = 4) (</code> puts the parameter in the header. A parent that says nothing gets <code>WIDTH = 4</code>.</li>
+    <li><code>localparam HALF = WIDTH / 2;</code> derives the repetition count. A parent cannot override <code>HALF</code>; it can only change <code>WIDTH</code>, and <code>HALF</code> follows.</li>
+    <li><code>assign pattern = {HALF{2'b10}};</code> replicates <code>10</code> exactly <code>HALF</code> times. With <code>WIDTH = 4</code>, <code>HALF = 2</code>, so the result is four bits; the eight-bit output is zero-extended to <code>00001010</code>.</li>
+    <li><code>width_demo u_default (.pattern(p_default));</code> uses the default width.</li>
+    <li><code>width_demo #(.WIDTH(6)) u_override (...);</code> changes the parameter by name. <code>HALF</code> becomes 3, the pattern becomes six bits, and the output is <code>00101010</code>.</li>
+    <li><code>defparam u_defparam.WIDTH = 8;</code> shows the legacy override. It changes the same parameter through the instance path; <code>HALF</code> becomes 4 and the pattern fills all eight bits.</li>
+    <li><code>u_override.WIDTH</code> is a hierarchical read of the elaborated parameter value. Simulation tools support it; not every synthesis flow does.</li>
+  </ul>
+
+  {{COMMANDS:parameters}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/parameters/expected.txt}}
+
+  <p>Read the three patterns together. The default produces two repetitions in an eight-bit field; the named override produces three; the legacy override produces four. The hierarchical read prints 6 because <code>u_override</code> was overridden by name, not by <code>defparam</code>.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="parameterised-ports">Parameterised interfaces</h2>
+  <p>Parameters become genuinely useful when port widths depend on them. A parameterised adder might declare <code>input [WIDTH-1:0] a</code> and <code>output [WIDTH:0] sum</code>; every instance then agrees on the width because the parent passes one value. Two rules keep this safe:</p>
+  <ul>
+    <li>Derive every dependent width from the same parameter, preferably through localparams. Do not repeat magic numbers in port declarations.</li>
+    <li>When a parent overrides a width, it must also size the nets it connects. A parameterised module does not resize its parent's wires.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Trying to override a localparam.</strong> It is fixed by the module. The tool will reject the override or ignore it, depending on the flow.</li>
+    <li><strong>Using positional overrides after editing the parameter list.</strong> Every instance silently shifts. Use named overrides.</li>
+    <li><strong>Using <code>defparam</code> in new RTL.</strong> It is hard to find, interacts badly with hierarchy changes, and is not accepted everywhere.</li>
+    <li><strong>Treating a parameter as a signal.</strong> It cannot be assigned in an <code>always</code> block and does not appear in a waveform.</li>
+    <li><strong>Forgetting to resize the parent's nets.</strong> A parameterised module can be instantiated with a wider port than the wire connected to it; the connection truncates.</li>
+    <li><strong>Making an internal constant a parameter.</strong> If a parent should not change it, a localparam documents that intent and prevents the mistake.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>Parameters are elaboration-time constants; they are part of the module contract and can be overridden.</li>
+    <li>Localparams are internal constants and cannot be overridden.</li>
+    <li>Prefer named overrides <code>#(.WIDTH(6))</code>; avoid positional overrides and <code>defparam</code> in new code.</li>
+    <li>Derive dependent widths from one parameter so the interface stays consistent.</li>
+    <li>Parameters do not exist as hardware signals.</li>
+  </ul>
+</section>

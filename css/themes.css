@@ -1,0 +1,141 @@
+/* ==========================================================================
+   VERILOG ACADEMY — Themes
+   Midnight is the canonical identity. Daylight is a fully considered alternate.
+   ========================================================================== */
+
+:root,
+html[data-theme="midnight"] {
+  color-scheme: dark;
+
+  --canvas: #05070d;
+  --canvas-2: #070b14;
+  --canvas-3: #0a101d;
+
+  --surface: #0b1220;
+  --surface-2: #0f172a;
+  --surface-3: #131e33;
+  --surface-glass: rgba(11, 18, 32, 0.72);
+  --surface-raised: rgba(19, 30, 51, 0.72);
+
+  --line: rgba(148, 163, 184, 0.14);
+  --line-strong: rgba(148, 163, 184, 0.26);
+  --grid-line: rgba(148, 163, 184, 0.055);
+
+  --text: #f4f7ff;
+  --text-soft: #c7d2e5;
+  --muted: #94a3b8;
+  --muted-2: #7d8ba3;
+
+  --blue: #4f8cff;
+  --blue-bright: #7eacff;
+  --cyan: #5ee7ff;
+  --cyan-dim: #2bb8d4;
+  --violet: #8b5cf6;
+  --violet-bright: #b39cff;
+  --success: #3ddc97;
+  --warning: #ffb86b;
+  --danger: #ff6b81;
+
+  --glow-blue: rgba(79, 140, 255, 0.22);
+  --glow-cyan: rgba(94, 231, 255, 0.14);
+  --glow-violet: rgba(139, 92, 246, 0.2);
+  --glow-success: rgba(61, 220, 151, 0.16);
+
+  --selection-bg: rgba(94, 231, 255, 0.24);
+  --selection-text: #ffffff;
+
+  --syntax-keyword: #7dd3fc;
+  --syntax-type: #c4b5fd;
+  --syntax-number: #fcd34d;
+  --syntax-comment: #7c8aa3;
+  --syntax-string: #86efac;
+  --syntax-system: #93c5fd;
+  --syntax-directive: #f0abfc;
+  --syntax-operator: #cbd5e1;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 16px 44px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 32px 90px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 0 1px rgba(94, 231, 255, 0.08), 0 28px 80px rgba(79, 140, 255, 0.13);
+
+  --btn-primary-text: #04101f;
+  --btn-primary-shadow: 0 10px 34px rgba(79, 140, 255, 0.24);
+  --code-bg: #070c16;
+  --code-header: #0a1221;
+  --table-head: #0d1627;
+  --table-hover: rgba(94, 231, 255, 0.055);
+  --table-active: rgba(94, 231, 255, 0.1);
+
+  --noise-opacity: 0.035;
+}
+
+html[data-theme="daylight"] {
+  color-scheme: light;
+
+  --canvas: #f4f6fb;
+  --canvas-2: #eef2f9;
+  --canvas-3: #e7edf7;
+
+  --surface: #ffffff;
+  --surface-2: #f8faff;
+  --surface-3: #eef3fc;
+  --surface-glass: rgba(255, 255, 255, 0.78);
+  --surface-raised: rgba(255, 255, 255, 0.88);
+
+  --line: rgba(15, 23, 42, 0.1);
+  --line-strong: rgba(15, 23, 42, 0.18);
+  --grid-line: rgba(15, 23, 42, 0.055);
+
+  --text: #0b1220;
+  --text-soft: #26344d;
+  --muted: #4d5d76;
+  --muted-2: #5b6b85;
+
+  --blue: #2563eb;
+  --blue-bright: #1d4ed8;
+  --cyan: #0e7490;
+  --cyan-dim: #155e75;
+  --violet: #7c3aed;
+  --violet-bright: #6d28d9;
+  --success: #047857;
+  --warning: #b45309;
+  --danger: #dc2626;
+
+  --glow-blue: rgba(37, 99, 235, 0.12);
+  --glow-cyan: rgba(8, 145, 178, 0.1);
+  --glow-violet: rgba(124, 58, 237, 0.11);
+  --glow-success: rgba(5, 150, 105, 0.1);
+
+  /* Deeper gradients keep white button text and display type legible on light. */
+  --gradient-primary: linear-gradient(135deg, #0891b2 0%, #2563eb 52%, #7c3aed 100%);
+  --gradient-text: linear-gradient(92deg, #0b1220 0%, #1d4ed8 46%, #6d28d9 100%);
+
+  --selection-bg: rgba(37, 99, 235, 0.18);
+  --selection-text: #07101f;
+
+  --syntax-keyword: #0369a1;
+  --syntax-type: #6d28d9;
+  --syntax-number: #a16207;
+  --syntax-comment: #55637a;
+  --syntax-string: #047857;
+  --syntax-system: #1d4ed8;
+  --syntax-directive: #a21caf;
+  --syntax-operator: #334155;
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.07);
+  --shadow-md: 0 16px 44px rgba(15, 23, 42, 0.09);
+  --shadow-lg: 0 32px 90px rgba(15, 23, 42, 0.12);
+  --shadow-glow: 0 0 0 1px rgba(37, 99, 235, 0.06), 0 28px 80px rgba(37, 99, 235, 0.1);
+
+  --btn-primary-text: #ffffff;
+  --btn-primary-shadow: 0 10px 34px rgba(37, 99, 235, 0.22);
+  --code-bg: #f8faff;
+  --code-header: #eef3fc;
+  --table-head: #f1f5fd;
+  --table-hover: rgba(37, 99, 235, 0.045);
+  --table-active: rgba(37, 99, 235, 0.08);
+
+  --noise-opacity: 0.02;
+}

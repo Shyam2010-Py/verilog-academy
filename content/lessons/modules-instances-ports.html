@@ -1,0 +1,102 @@
+<section class="lesson-section">
+  <h2 id="module-boundary">A module is a hardware boundary</h2>
+  <p class="lesson-lead">Every Verilog design is built from modules. A module has an interface — its ports — and a body that describes what sits behind that interface. Anything outside the module can only touch the ports. That boundary is what makes hierarchy, reuse and independent verification possible.</p>
+  <p>A module is not a function and it is not a class. It is a hardware component with a fixed interface. Each time you instantiate it, you create another copy of the hardware, with its own internal state and its own wires. Two instances of the same module are two different pieces of silicon that happen to share a definition.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="ports">Ports: direction, width and type</h2>
+  <p>Verilog-2001 allows the port list to carry the full declaration, which keeps the interface in one place:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">ANSI-style port list</span></div>
+    <div class="code-block__body"><pre><code>module block (
+    input  wire       clk,
+    input  wire [7:0] data,
+    output wire [7:0] result,
+    output reg        valid
+);</code></pre></div>
+  </div>
+  <ul>
+    <li><strong><code>input</code></strong> is driven from outside the module. Inside, an input must not be assigned.</li>
+    <li><strong><code>output</code></strong> is driven by the module. Outside, it must connect to a net.</li>
+    <li><strong><code>inout</code></strong> is bidirectional and requires tri-state behaviour and careful bus arbitration. Do not use it as a shortcut for a signal that only travels one way.</li>
+    <li><strong><code>wire</code></strong> suits outputs driven by <code>assign</code> or by an instance. <strong><code>reg</code></strong> is required when the output is assigned inside an <code>always</code> block. The choice is about how the signal is driven, not about whether a physical register exists.</li>
+  </ul>
+  <p>Widths belong in the declaration. A port declared <code>[7:0] data</code> is eight bits wide and every connection to it should be eight bits wide. Verilog will quietly truncate or zero-extend a mismatched connection at elaboration, which is one of the easiest ways to lose a bit without an error message.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="instantiation">Instances and connections</h2>
+  <p>An instance places one copy of a module inside another module:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Named and positional connection</span></div>
+    <div class="code-block__body"><pre><code>and2 u_and (.a(a), .b(b), .y(y_and));   // named
+and2 u_or  (a, b, y_or);                // positional</code></pre></div>
+  </div>
+  <p>Named connections are the professional default. They state the mapping explicitly, survive a reordering of the module's port list, and make a missing port visible during review. Positional connections are compact but fragile: insert one port in the definition and every positional instance in the project silently shifts by one.</p>
+  <p>A port may be left unconnected by omitting it from a named list, or by writing an empty connection <code>.port()</code>. An unconnected input floats to <code>z</code>, which usually propagates as <code>x</code>. That is acceptable for a deliberately unused output, rarely acceptable for an unused input.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Two leaf cells and one parent</h2>
+  <p>The example defines two independent leaf modules and a parent that instantiates both. The parent adds no logic of its own; it only wires the leaves together and exposes their results.</p>
+
+  {{CODE:examples/verilog/modules-instances-ports/design.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>module and2 (</code> and <code>module or2 (</code> are complete, self-contained definitions. Neither knows that the other exists.</li>
+    <li><code>assign y = a &amp; b;</code> and <code>assign y = a | b;</code> give each leaf one combinational equation. The output net is driven continuously.</li>
+    <li><code>module logic_pair (</code> is the parent. Its ports are the only signals visible to the next level up.</li>
+    <li><code>and2 u_and (.a(a), .b(b), .y(y_and));</code> creates one instance. <code>u_and</code> is the instance name; it must be unique inside <code>logic_pair</code>. The left-hand names are ports of <code>and2</code>; the right-hand names are nets of <code>logic_pair</code>.</li>
+    <li><code>or2 u_or (...)</code> is a second, separate instance. The two leaves do not share internal wires; they only share the parent's inputs.</li>
+    <li><code>endmodule</code> closes each definition. Modules are not nested textually; hierarchy comes from instantiation.</li>
+  </ul>
+
+  {{CODE:examples/verilog/modules-instances-ports/tb.v}}
+
+  <p>The testbench instantiates <code>logic_pair</code>, drives its inputs with <code>reg</code> variables, and observes its outputs on <code>wire</code> nets. The <code>for</code> loop walks all four input combinations, exactly as in the half-adder example.</p>
+
+  {{COMMANDS:modules-instances-ports}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/modules-instances-ports/expected.txt}}
+
+  <p>The two output columns are the AND and OR of the same inputs, which confirms that both instances received the parent's signals and that the named connections mapped to the intended ports. A swapped connection would still elaborate; only a test like this catches it.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="rules">Rules worth memorising</h2>
+  <ul>
+    <li>A module definition is a template; an instance is a copy of the hardware.</li>
+    <li>Instance names are unique within the parent scope. Hierarchical paths such as <code>dut.u_and</code> identify one specific copy.</li>
+    <li>Port directions are enforced by the language: an input cannot be assigned inside the module, and an output cannot be read as if it were an input unless it is also declared <code>inout</code> (which changes the electrical meaning).</li>
+    <li>Widths are not enforced. Connect equal widths deliberately, or use an explicit slice to show the intended truncation.</li>
+    <li>Module definition order in a file does not matter, provided every module is compiled before elaboration.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Connecting an instance output to a <code>reg</code>.</strong> The output drives a net. Declare a <code>wire</code> in the parent and observe it there.</li>
+    <li><strong>Mixing named and positional connections in one instance.</strong> Verilog-2001 does not allow the two styles to be combined in the same port list. Choose one.</li>
+    <li><strong>Leaving an input unconnected.</strong> It floats to <code>z</code>, and the leaf's outputs usually become <code>x</code>. The design may compile without complaint.</li>
+    <li><strong>Reusing an instance name.</strong> Two instances with the same name in one scope are an elaboration error.</li>
+    <li><strong>Assuming a port is a copy.</strong> A port is a connection. Driving the same net from two outputs creates contention, not a merge.</li>
+    <li><strong>Changing a port list without checking positional instances.</strong> Named connections make this a non-event; positional ones turn it into a silent bug.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>A module is an interface plus a body; an instance is one copy of that module inside a parent.</li>
+    <li>Directions: <code>input</code> is driven from outside, <code>output</code> from inside, <code>inout</code> is bidirectional and needs tri-state discipline.</li>
+    <li>Use named port connections, and keep widths equal on both sides.</li>
+    <li>Hierarchy is created by instantiation, not by textual nesting.</li>
+    <li>Unconnected inputs float; unconnected outputs are usually harmless.</li>
+  </ul>
+</section>

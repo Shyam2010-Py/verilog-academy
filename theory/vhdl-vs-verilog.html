@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="index, follow">
+  <title>VHDL vs Verilog, Features and Abstraction Levels — EC-405 Unit 1 | Verilog Academy</title>
+  <meta name="description" content="Compare the two dominant hardware description languages, then place Verilog&#x27;s modelling styles on the abstraction ladder.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="VHDL vs Verilog, Features and Abstraction Levels — EC-405 Unit 1 | Verilog Academy">
+  <meta property="og:description" content="Compare the two dominant hardware description languages, then place Verilog&#x27;s modelling styles on the abstraction ladder.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="../assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="../assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <link rel="stylesheet" href="../css/theory.css">
+</head>
+<body class="page-theory page-lesson" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="../index.html">Homepage</a>
+          <a class="nav-link is-active" href="../theory/index.html" aria-current="page">Theory</a>
+          <a class="nav-link" href="../labs/index.html">Laboratory</a>
+          <a class="nav-link" href="../circuit-lab/index.html">Circuit Lab</a>
+          <a class="nav-link" href="../playground/index.html">Playground</a>
+          <a class="nav-link" href="../quizzes/index.html">Quizzes</a>
+          <a class="nav-link" href="../guides/index.html">Guides</a>
+          <a class="nav-link" href="../dashboard.html">Dashboard</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <div class="lesson">
+  <header class="lesson-hero">
+    <div class="lesson-hero__atmosphere" aria-hidden="true"></div>
+    <div class="container">
+      <nav class="lesson-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">EC-405 Theory</a>
+        <span aria-hidden="true">/</span>
+        <a href="index.html#unit-01">Unit 1</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Topic 02</span>
+      </nav>
+
+      <div class="lesson-hero__grid">
+        <div class="lesson-hero__copy">
+          <span class="eyebrow">Unit 1 · Topic 02</span>
+          <h1 id="lesson-title">VHDL vs Verilog, Features and Abstraction Levels</h1>
+          <p class="lede">Compare the two dominant hardware description languages, then place Verilog&#x27;s modelling styles on the abstraction ladder.</p>
+          <div class="lesson-meta">
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-book"></use></svg> 5 min read</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-code"></use></svg> Verilog-2001</span>
+            <span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-terminal"></use></svg> Verified in Icarus 13.0</span>
+          </div>
+        </div>
+
+        <aside class="lesson-hero__card panel" aria-label="Topic progress">
+          <span class="panel-kicker">Your progress</span>
+          <p class="lesson-hero__unit">Unit 1 · <span data-lesson-unit-count>0 / 10</span> topics</p>
+          <div class="progress" role="progressbar" aria-label="Unit 1 progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-lesson-unit-bar>
+            <span class="progress-fill" data-lesson-unit-fill style="--progress: 0%"></span>
+          </div>
+          <button class="btn btn-primary lesson-toggle" type="button" data-topic-toggle aria-pressed="false" aria-describedby="lesson-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-topic-toggle-label>Mark topic complete</span>
+          </button>
+          <p class="lesson-status" data-topic-status>Reading progress is stored in this browser.</p>
+          <a class="text-link lesson-hero__dashboard" href="../dashboard.html">
+            Learning dashboard
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg>
+          </a>
+        </aside>
+      </div>
+
+      <div class="theory-alert" data-storage-alert hidden role="status">
+        <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+        <p data-storage-message></p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container lesson-layout">
+    <aside class="lesson-aside">
+      <div class="lesson-aside__card panel">
+        <span class="panel-kicker">On this page</span>
+        <nav aria-label="On this page">
+          <ol class="toc-list">
+            <li><a href="#two-languages"><span class="toc-num">01</span><span>Two languages, one job</span></a></li>
+            <li><a href="#side-by-side"><span class="toc-num">02</span><span>The comparison that matters</span></a></li>
+            <li><a href="#abstraction"><span class="toc-num">03</span><span>Abstraction levels inside Verilog</span></a></li>
+            <li><a href="#example"><span class="toc-num">04</span><span>The same gate in both languages</span></a></li>
+            <li><a href="#output"><span class="toc-num">05</span><span>The actual run</span></a></li>
+            <li><a href="#choosing"><span class="toc-num">06</span><span>Choosing a level, not just a language</span></a></li>
+            <li><a href="#mistakes"><span class="toc-num">07</span><span>Common mistakes</span></a></li>
+            <li><a href="#revision"><span class="toc-num">08</span><span>Revision points</span></a></li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="lesson-aside__card lesson-aside__unit panel">
+        <span class="panel-kicker">Unit 1 · 10 topics</span>
+        <p>Introduction to Verilog HDL, Language Constructs and Conventions</p>
+        <a class="text-link" href="index.html#unit-01">
+          Unit overview
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+    </aside>
+
+    <article class="lesson-article" data-lesson-id="vhdl-vs-verilog">
+      <section class="lesson-section">
+  <h2 data-index="01" id="two-languages">Two languages, one job</h2>
+  <p class="lesson-lead">Verilog and VHDL are both hardware description languages. Both describe concurrent hardware, both are standardised by the IEEE, and both can be simulated and synthesised. They differ in heritage, type discipline and the way a design is written — not in what hardware can be built.</p>
+  <p>Verilog grew out of a C-like simulation language and became the dominant language of commercial ASIC and FPGA design. VHDL grew out of Ada and is common in FPGA development, aerospace, defence and mixed-language environments where strong typing is valued. Neither language is inherently faster or smaller; synthesis results depend on the description and the library, not on the spelling.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="02" id="side-by-side">The comparison that matters</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Verilog-2001 and VHDL-93 compared</caption>
+      <thead>
+        <tr><th scope="col">Dimension</th><th scope="col">Verilog-2001</th><th scope="col">VHDL-93</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Heritage</td><td>C-like, concise</td><td>Ada-like, explicit</td></tr>
+        <tr><td>Standard</td><td>IEEE 1364-2001</td><td>IEEE 1076-1993</td></tr>
+        <tr><td>Logic values</td><td>Four: <code>0</code>, <code>1</code>, <code>x</code>, <code>z</code></td><td>Nine in <code>std_logic</code>, including drive strengths</td></tr>
+        <tr><td>Typing</td><td>Weak, with implicit width conversion</td><td>Strong, with explicit conversions</td></tr>
+        <tr><td>Structural unit</td><td><code>module</code></td><td><code>entity</code> plus <code>architecture</code></td></tr>
+        <tr><td>Procedural unit</td><td><code>always</code>, <code>initial</code></td><td><code>process</code></td></tr>
+        <tr><td>Concurrency</td><td><code>assign</code> and <code>always</code></td><td>Concurrent signal assignments and processes</td></tr>
+        <tr><td>Successor</td><td>SystemVerilog, IEEE 1800</td><td>VHDL-2008</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The table explains why beginners find Verilog quicker to start: a one-bit AND gate is one line, and widths convert implicitly. The same features become hazards at scale. VHDL forces the designer to state types and conversions, which is verbose but catches some classes of error earlier. Professional teams choose according to toolchain, legacy code and verification environment, not according to a universal "better".</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="03" id="abstraction">Abstraction levels inside Verilog</h2>
+  <p>Verilog is not one language level. The same design can be described at several levels, and the level determines what the simulator and synthesis tool can do with it.</p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h4>Switch level</h4>
+      <p>Transistors and switches: <code>nmos</code>, <code>pmos</code>, <code>cmos</code>. Used in cell models and analogue-like experiments, not in RTL.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Gate level</h4>
+      <p>Primitive gates and module instances. This is the level of a netlist produced by synthesis.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Dataflow</h4>
+      <p>Continuous assignments: <code>assign y = (a &amp; b) | c;</code>. The equations are combinational hardware.</p>
+    </div>
+    <div class="concept-card">
+      <h4>Behavioural</h4>
+      <p><code>initial</code> and <code>always</code> blocks with algorithms, conditionals and timing controls.</p>
+    </div>
+  </div>
+
+  <p><strong>RTL</strong> is the synthesizable subset of behavioural modelling in which every signal is either a register updated on a clock edge or combinational logic between registers. A behavioural block with <code>#10</code> delays is still behavioural, but it is not RTL. That distinction is the reason a design can simulate beautifully and still fail synthesis.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="04" id="example">The same gate in both languages</h2>
+  <p>Below is a two-input AND gate with a self-checking-style truth-table testbench. Everything is in one file, so one compile command produces one runnable simulation.</p>
+
+  <div class="code-block" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__dots" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span class="code-block__file">example.v</span>
+    <button class="copy-btn" type="button" aria-label="Copy example.v">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code><span class="tok-directive">`default_nettype</span> none
+<span class="tok-comment">// The same two-input AND function shown in the VHDL comparison.</span>
+<span class="tok-keyword">module</span> and2 (
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> a,
+    <span class="tok-keyword">input</span>  <span class="tok-keyword">wire</span> b,
+    <span class="tok-keyword">output</span> <span class="tok-keyword">wire</span> y
+);
+    <span class="tok-keyword">assign</span> y = a &amp; b;
+<span class="tok-keyword">endmodule</span>
+
+<span class="tok-keyword">module</span> and2_tb;
+    <span class="tok-keyword">reg</span>  a;
+    <span class="tok-keyword">reg</span>  b;
+    <span class="tok-keyword">wire</span> y;
+    <span class="tok-keyword">integer</span> i;
+
+    and2 dut (.a(a), .b(b), .y(y));
+
+    <span class="tok-keyword">initial</span> <span class="tok-keyword">begin</span>
+        <span class="tok-system">$display</span>(<span class="tok-string">&quot;a b | y&quot;</span>);
+        <span class="tok-keyword">for</span> (i = <span class="tok-number">0</span>; i &lt; <span class="tok-number">4</span>; i = i + <span class="tok-number">1</span>) <span class="tok-keyword">begin</span>
+            {a, b} = i[<span class="tok-number">1</span>:<span class="tok-number">0</span>];
+            #<span class="tok-number">1</span>;
+            <span class="tok-system">$display</span>(<span class="tok-string">&quot;%b %b | %b&quot;</span>, a, b, y);
+        <span class="tok-keyword">end</span>
+        <span class="tok-system">$finish</span>;
+    <span class="tok-keyword">end</span>
+<span class="tok-keyword">endmodule</span>
+<span class="tok-directive">`default_nettype</span> <span class="tok-keyword">wire</span>
+</code></pre>
+  </div>
+</div>
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>`default_nettype none</code> disables implicit nets. The directive is restored at the end of the file.</li>
+    <li><code>assign y = a &amp; b;</code> is a continuous assignment. The <code>&amp;</code> is bitwise AND; for one-bit operands it is the same as the logic function.</li>
+    <li>The testbench declares <code>reg</code> for the driven inputs and <code>wire</code> for the observed output. That split mirrors the direction of every connection in the design.</li>
+    <li><code>for (i = 0; i &lt; 4; i = i + 1)</code> walks the four input combinations. <code>{a, b} = i[1:0]</code> drives both inputs in one assignment.</li>
+    <li><code>#1</code> separates the stimulus from the observation. The output would settle without it, but the printed table and any waveform become unambiguous.</li>
+  </ul>
+
+  <p>For comparison, here is the same gate in VHDL. It is a language reference fragment: this course installs a Verilog simulator, not a VHDL one, so this file is not compiled or executed here.</p>
+
+  <div class="code-block code-block--snippet" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__file">and2.vhdl</span>
+    <span class="snippet-tag">language reference · not executed here</span>
+    <button class="copy-btn" type="button" aria-label="Copy and2.vhdl">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code><span class="tok-comment">// Language reference only: no VHDL toolchain is installed for this course.</span>
+<span class="tok-keyword">library</span> ieee;
+<span class="tok-keyword">use</span> ieee.std_logic_1164.all;
+
+entity and2 is
+    port (
+        a : in  std_logic;
+        b : in  std_logic;
+        y : out std_logic
+    );
+<span class="tok-keyword">end</span> entity and2;
+
+architecture dataflow of and2 is
+<span class="tok-keyword">begin</span>
+    y &lt;= a <span class="tok-keyword">and</span> b;
+<span class="tok-keyword">end</span> architecture dataflow;
+</code></pre>
+  </div>
+</div>
+
+  <p>The mapping is conceptual, not line-for-line. An <code>entity</code> plays the role of a module's interface; an <code>architecture</code> plays the role of its body; a concurrent signal assignment plays the role of <code>assign</code>. VHDL's <code>&lt;=</code> on a signal is a scheduled update, not the same operator as Verilog's non-blocking <code>&lt;=</code>. Do not translate punctuation; translate meaning.</p>
+
+  <div class="code-block code-block--commands" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__file">Terminal</span>
+    <button class="copy-btn" type="button" aria-label="Copy build commands">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code>iverilog -g2001 -o vhdl-vs-verilog.out example.v
+vvp vhdl-vs-verilog.out</code></pre>
+  </div>
+</div>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="05" id="output">The actual run</h2>
+  <p>The truth table is the definition of AND: the output is 1 only when both inputs are 1.</p>
+
+  <div class="code-block code-block--output" data-copy-root>
+  <div class="code-block__header">
+    <span class="code-block__file">Simulator output</span>
+    <span class="output-tag">actual run · Icarus 13.0</span>
+    <button class="copy-btn" type="button" aria-label="Copy simulator output">
+      <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+      <span class="copy-label">Copy</span>
+    </button>
+  </div>
+  <div class="code-block__body">
+    <pre><code>a b | y
+0 0 | 0
+0 1 | 0
+1 0 | 0
+1 1 | 1
+example.v:26: $finish called at 4 (1s)
+</code></pre>
+  </div>
+</div>
+
+  <p>As in every example in this classroom, the final <code>$finish called at ...</code> line is the simulator's own message, printed in the simulation precision (1 ps). Four iterations of <code>#1</code> leave the simulation at 4 ns, so 4 is the time value shown.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="06" id="choosing">Choosing a level, not just a language</h2>
+  <p>Most real designs mix levels deliberately:</p>
+  <ul>
+    <li><strong>RTL</strong> for the blocks you own and need to synthesise. It is readable, portable and verified by simulation.</li>
+    <li><strong>Gate level</strong> for library cells, post-synthesis simulation and small glue logic where the exact cell matters.</li>
+    <li><strong>Dataflow</strong> for short combinational equations where a truth table or boolean expression is clearer than a procedural block.</li>
+    <li><strong>Behavioural with timing</strong> for testbenches, bus functional models and cell models. This code is not the design.</li>
+  </ul>
+  <p>In Verilog the same keywords can appear at several levels, which is why "it compiles" says very little. The question to ask is always: which parts of this file are intended to become hardware?</p>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="07" id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Assuming the languages are interchangeable.</strong> Types, conversion rules and assignment semantics differ. A VHDL design translated token-by-token is usually wrong.</li>
+    <li><strong>Assuming strong typing prevents all bugs.</strong> VHDL catches some width and type errors earlier; it does not prove intent or timing.</li>
+    <li><strong>Equating behavioural with non-synthesizable.</strong> RTL is behavioural code that synthesis accepts. The presence of <code>always</code> does not make a block unsynthesizable; delays and testbench constructs do.</li>
+    <li><strong>Reading Verilog as C.</strong> Statements outside procedural blocks are concurrent descriptions, not sequential instructions.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 data-index="08" id="revision">Revision points</h2>
+  <ul>
+    <li>Verilog and VHDL are both IEEE-standard HDLs; the choice is driven by toolchain, ecosystem and team, not capability.</li>
+    <li>Verilog's four logic values are <code>0</code>, <code>1</code>, <code>x</code> and <code>z</code>; VHDL's <code>std_logic</code> has nine.</li>
+    <li>The four modelling levels are switch, gate, dataflow and behavioural; RTL is the synthesizable behavioural subset.</li>
+    <li>Simulation-only constructs do not belong in RTL, regardless of which HDL is used.</li>
+  </ul>
+</section>
+
+
+      <footer class="lesson-footer">
+        <div class="lesson-finish panel">
+          <div>
+            <span class="panel-kicker">Topic 02 · completion</span>
+            <h2>Finished this topic?</h2>
+            <p>Marking is your own record that you have studied and understood the material. It is reversible, and it updates the dashboard immediately.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-topic-toggle aria-pressed="false" aria-describedby="lesson-title" disabled>
+            <svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <span data-topic-toggle-label>Mark topic complete</span>
+          </button>
+        </div>
+
+        <nav class="lesson-pager" aria-label="Topic navigation">
+          <a class="pager-card pager-card--prev" href="vlsi-design-flow.html"><span class="pager-kicker">← Previous · Unit 1 · Topic 01</span><strong>VLSI IC Design Flow and the Role of HDL</strong></a>
+          <a class="pager-card pager-card--next" href="modules-instances-ports.html"><span class="pager-kicker">→ Next · Unit 1 · Topic 03</span><strong>Modules, Instances, Ports and Connection Rules</strong></a>
+        </nav>
+      </footer>
+    </article>
+  </div>
+</div>
+
+<script type="application/json" id="curriculum-data">{"version":1,"updated":"2026-11-24","courses":[{"id":"ec405","code":"EC-405","title":"Digital Logic Design Through Verilog HDL","kind":"Theory","periodsPerWeek":5,"totalPeriods":75,"formativeMarks":20,"summativeMarks":80,"status":"available","units":[{"id":"unit-01","number":1,"title":"Introduction to Verilog HDL, Language Constructs and Conventions","periods":20,"status":"available","topics":[{"id":"vlsi-design-flow","number":1,"title":"VLSI IC Design Flow and the Role of HDL","slug":"01-vlsi-design-flow"},{"id":"vhdl-vs-verilog","number":2,"title":"VHDL vs Verilog, Features and Abstraction Levels","slug":"02-vhdl-vs-verilog"},{"id":"modules-instances-ports","number":3,"title":"Modules, Instances, Ports and Connection Rules","slug":"03-modules-instances-ports"},{"id":"hierarchical-modelling","number":4,"title":"Hierarchical Modelling and Design Methodologies","slug":"04-hierarchical-modelling"},{"id":"lexical-conventions","number":5,"title":"Lexical Conventions and Number Specification","slug":"05-lexical-conventions"},{"id":"data-types","number":6,"title":"Data Types: Nets, Registers and Vectors","slug":"06-data-types"},{"id":"arrays-memories-strings","number":7,"title":"Arrays, Memories, Strings and Vectors vs Arrays","slug":"07-arrays-memories-strings"},{"id":"parameters","number":8,"title":"Parameters: defparam and localparam","slug":"08-parameters"},{"id":"system-tasks-directives","number":9,"title":"System Tasks and Compiler Directives","slug":"09-system-tasks-directives"},{"id":"expressions-operators","number":10,"title":"Expressions, Operands and Operators","slug":"10-expressions-operators"}]},{"id":"unit-02","number":2,"title":"Gate Level and Data Flow Modelling","periods":10,"status":"available","topics":[{"id":"gate-primitives","number":1,"title":"Gate Primitives, Symbols and Truth Tables","slug":"01-gate-primitives"},{"id":"gate-delays","number":2,"title":"Gate Instantiation and Delay Modelling","slug":"02-gate-delays"},{"id":"dataflow-modelling","number":3,"title":"Dataflow Modelling and Continuous Assignments","slug":"03-dataflow-modelling"},{"id":"adders-subtractors-comparators","number":4,"title":"Adders, Subtractors and Comparators","slug":"04-adders-subtractors-comparators"},{"id":"mux-demux-encoder-decoder","number":5,"title":"Multiplexers, Demultiplexers, Encoders and Decoders","slug":"05-mux-demux-encoder-decoder"},{"id":"alu-modelling-comparison","number":6,"title":"ALU Design and Modelling Comparison","slug":"06-alu-and-modelling-comparison"}]},{"id":"unit-03","number":3,"title":"Behavioural Modelling","periods":15,"status":"available","topics":[{"id":"initial-always","number":1,"title":"Initial and Always Procedures","slug":"01-initial-always"},{"id":"blocking-nonblocking","number":2,"title":"Blocking and Non-Blocking Assignments","slug":"02-blocking-nonblocking"},{"id":"timing-controls","number":3,"title":"Delay-Based and Event-Based Timing Controls","slug":"03-timing-controls"},{"id":"conditionals-case","number":4,"title":"Conditionals, case, casex and casez","slug":"04-conditionals-case"},{"id":"loops","number":5,"title":"Looping Statements","slug":"05-loops"},{"id":"sequential-parallel-blocks","number":6,"title":"Sequential and Parallel Blocks","slug":"06-sequential-parallel-blocks"},{"id":"udp","number":7,"title":"User-Defined Primitives","slug":"07-udp"}]},{"id":"unit-04","number":4,"title":"Modelling of Combinational and Sequential Logic Circuits","periods":15,"status":"locked","topics":[]},{"id":"unit-05","number":5,"title":"System Design Concepts","periods":15,"status":"locked","topics":[]}]},{"id":"ec410","code":"EC-410","title":"Digital Logic Design Through Verilog HDL Lab","kind":"Laboratory","periodsPerWeek":3,"totalPeriods":45,"formativeMarks":40,"summativeMarks":60,"status":"available","experiments":[{"id":"experiment-01","number":1,"title":"Implementation of Basic Logic Gates","slug":"experiment-01","status":"available"},{"id":"experiment-02","number":2,"title":"Implementation of Adders","slug":"experiment-02","status":"available"},{"id":"experiment-03","number":3,"title":"Implementation of Subtractors","slug":"experiment-03","status":"available"},{"id":"experiment-04","number":4,"title":"Implementation of 4-Bit Parallel Adder","slug":"experiment-04","status":"available"},{"id":"experiment-05","number":5,"title":"Implementation of Multiplexers","slug":"experiment-05","status":"available"},{"id":"experiment-06","number":6,"title":"Implementation of Demultiplexers","slug":"experiment-06","status":"available"},{"id":"experiment-07","number":7,"title":"Future practical","slug":"experiment-07","status":"locked"},{"id":"experiment-08","number":8,"title":"Future practical","slug":"experiment-08","status":"locked"},{"id":"experiment-09","number":9,"title":"Future practical","slug":"experiment-09","status":"locked"},{"id":"experiment-10","number":10,"title":"Future practical","slug":"experiment-10","status":"locked"},{"id":"experiment-11","number":11,"title":"Future practical","slug":"experiment-11","status":"locked"},{"id":"experiment-12","number":12,"title":"Future practical","slug":"experiment-12","status":"locked"},{"id":"experiment-13","number":13,"title":"Future practical","slug":"experiment-13","status":"locked"},{"id":"experiment-14","number":14,"title":"Future practical","slug":"experiment-14","status":"locked"},{"id":"experiment-15","number":15,"title":"Future practical","slug":"experiment-15","status":"locked"}]}],"toolchain":{"primary":"Xilinx ISE / Vivado or similar","verification":"Icarus Verilog 13.0 + GTKWave","language":"Verilog-2001"}}</script>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="../labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="../index.html#path">Learning path</a>
+              <a class="footer-link" href="../index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="../circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="../playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="../quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="../guides/index.html">Setup guides</a>
+              <a class="footer-link" href="../index.html#approach">The approach</a>
+              <a class="footer-link" href="../styleguide.html">Design system</a>
+              <a class="footer-link" href="../styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="../index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="../index.html">Homepage<span>01</span></a>
+        <a class="mobile-nav-link is-active" href="../theory/index.html" aria-current="page">Theory<span>02</span></a>
+        <a class="mobile-nav-link" href="../labs/index.html">Laboratory<span>03</span></a>
+        <a class="mobile-nav-link" href="../circuit-lab/index.html">Circuit Lab<span>04</span></a>
+        <a class="mobile-nav-link" href="../playground/index.html">Playground<span>05</span></a>
+        <a class="mobile-nav-link" href="../quizzes/index.html">Quizzes<span>06</span></a>
+        <a class="mobile-nav-link" href="../guides/index.html">Guides<span>07</span></a>
+        <a class="mobile-nav-link" href="../dashboard.html">Dashboard<span>08</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/theory.js"></script>
+</body>
+</html>

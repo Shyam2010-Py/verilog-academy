@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="va-logo-title">
+  <title id="va-logo-title">Verilog Academy monogram</title>
+  <defs>
+    <linearGradient id="va-mark-gradient" x1="8" y1="8" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5EE7FF"/>
+      <stop offset="0.48" stop-color="#4F8CFF"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <filter id="va-mark-glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect x="1.5" y="1.5" width="45" height="45" rx="12.5" fill="#0B1220" stroke="rgba(148,163,184,0.28)"/>
+  <path d="M9 8v4M15 8v4M33 8v4M39 8v4M9 36v4M15 36v4M33 36v4M39 36v4M8 9h4M8 15h4M8 33h4M8 39h4M36 9h4M36 15h4M36 33h4M36 39h4" stroke="rgba(94,231,255,0.38)" stroke-linecap="round" stroke-width="1.3"/>
+  <g fill="none" stroke="url(#va-mark-gradient)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" filter="url(#va-mark-glow)">
+    <path d="M12.5 14.5 20.8 33l7.4-15.5"/>
+    <path d="M24.8 33 32 14.5 39.2 33"/>
+    <path d="M28.8 26h6.4"/>
+  </g>
+  <g fill="#5EE7FF">
+    <circle cx="12.5" cy="14.5" r="1.7"/>
+    <circle cx="20.8" cy="33" r="1.7"/>
+    <circle cx="32" cy="14.5" r="1.7"/>
+    <circle cx="39.2" cy="33" r="1.7"/>
+  </g>
+  <circle cx="28.2" cy="18.5" r="1.15" fill="#B39CFF"/>
+</svg>

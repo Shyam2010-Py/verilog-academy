@@ -1,0 +1,82 @@
+<section class="lesson-section">
+  <h2 id="vector-or-array">A vector is not an array</h2>
+  <p class="lesson-lead">A vector is one word: several bits that belong together and are operated on as a unit. An array is a collection of words: each element has the same width, and the array is addressed by an index. In Verilog-2001 the array form you will use most is the <strong>memory</strong>, which is an array of vectors.</p>
+  <p>The distinction sounds academic until you try to assign a whole memory in one statement, pass it through a port, or read it as if it were a single wide bus. Then the language is strict in ways that vectors are not.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="memory-syntax">Declaring and addressing a memory</h2>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Vector versus memory</span></div>
+    <div class="code-block__body"><pre><code>reg [7:0] word;          // one 8-bit vector
+reg [7:0] mem [0:3];     // four 8-bit words: depth 4, width 8
+reg [7:0] mem2 [0:255];  // 256 words of 8 bits</code></pre></div>
+  </div>
+  <ul>
+    <li>The first range, <code>[7:0]</code>, is the width of each word.</li>
+    <li>The second range, <code>[0:3]</code>, is the depth: the number of words. Address 0 is valid, address 4 is not.</li>
+    <li><code>mem[2]</code> selects one word (eight bits). <code>mem[2][3]</code> selects one bit of that word. <code>mem[2][7:4]</code> selects a part of that word.</li>
+    <li>Verilog-2001 provides one unpacked dimension per array. Multi-dimensional arrays such as <code>reg [7:0] mem [0:3][0:3]</code> are a SystemVerilog feature, not Verilog-2001.</li>
+  </ul>
+  <p>A whole memory cannot be assigned in one statement, compared as one value, or passed through a port in Verilog-2001. You read and write it one word at a time, usually inside a loop or with a system task. If a design needs to move a whole memory across a module boundary, the usual solutions are to expose an address/data interface or to flatten the array into one wide vector deliberately.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="example">Four words and a string</h2>
+  <p>The example writes four bytes into a small memory, reads them back, slices one word, and stores a five-character string in a packed vector.</p>
+
+  {{CODE:examples/verilog/arrays-memories-strings/example.v}}
+
+  <h3>Line by line</h3>
+  <ul>
+    <li><code>reg [7:0] mem [0:3];</code> declares four words of eight bits. The total storage is 32 bits, but there is no single 32-bit signal named <code>mem</code>.</li>
+    <li><code>reg [8*5-1:0] label;</code> is a 40-bit vector, exactly enough for five characters. <code>8*5-1</code> evaluates to 39, so the range is <code>[39:0]</code>.</li>
+    <li><code>label = "HELLO";</code> packs the characters into the vector. The first character occupies the most significant byte, so <code>%0s</code> prints <code>HELLO</code> in the expected order.</li>
+    <li><code>for (i = 0; i &lt; 4; i = i + 1)</code> visits each address. <code>mem[i] = 8'h10 + i[7:0];</code> writes <code>0x10</code>, <code>0x11</code>, <code>0x12</code>, <code>0x13</code>. The <code>i[7:0]</code> slice keeps the expression eight bits wide; <code>i</code> itself is a 32-bit integer.</li>
+    <li><code>mem[2]</code> is <code>0x12</code>, or <code>00010010</code>. <code>mem[2][3]</code> is bit 3, which is 0. <code>mem[2][7:4]</code> is the high nibble, <code>0001</code>.</li>
+    <li><code>%h</code> prints each byte in hexadecimal, which is easier to scan than eight binary digits.</li>
+  </ul>
+
+  {{COMMANDS:arrays-memories-strings}}
+</section>
+
+<section class="lesson-section">
+  <h2 id="output">The actual run</h2>
+  {{OUTPUT:examples/verilog/arrays-memories-strings/expected.txt}}
+
+  <p>The memory contents increase by one per address, the bit and part selects match the binary value of <code>0x12</code>, and the string prints intact. Nothing here proves that synthesis will build a RAM: a four-word memory with asynchronous reads is likely to become registers, while a larger memory with a synchronous read port may become a RAM macro. That mapping is a synthesis decision, not a language rule.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="initialising">Initialising memories</h2>
+  <p>Testbenches and FPGA prototypes often need a memory preloaded with data. Verilog provides two simulation system tasks for this:</p>
+  <div class="code-block code-block--snippet" data-copy-root>
+    <div class="code-block__header"><span class="code-block__file">Simulation-only memory loading</span></div>
+    <div class="code-block__body"><pre><code>$readmemh("init.hex", mem);   // hexadecimal words
+$readmemb("init.bin", mem);   // binary words</code></pre></div>
+  </div>
+  <p>These tasks read a text file at simulation time. They are not synthesizable, and the file path is resolved by the simulator, so a design that depends on them cannot be handed to synthesis unchanged. FPGA flows usually provide a vendor-specific way to initialise block RAM from a file; ASIC flows load memory through a test interface or a ROM mask.</p>
+</section>
+
+<section class="lesson-section">
+  <h2 id="mistakes">Common mistakes</h2>
+  <ul>
+    <li><strong>Assigning the whole memory.</strong> <code>mem = 0;</code> is illegal. Write a loop, or use a system task in simulation.</li>
+    <li><strong>Treating <code>mem</code> as one wide vector.</strong> <code>mem[31:0]</code> is not the concatenation of four words; that syntax is a bit-select on a non-vector and is rejected.</li>
+    <li><strong>Confusing width and depth.</strong> In <code>reg [7:0] mem [0:3]</code>, 8 is the width and 4 is the number of words. Reversing them silently changes the hardware.</li>
+    <li><strong>Addressing out of range.</strong> <code>mem[4]</code> in a <code>[0:3]</code> memory reads <code>x</code>; writing it is ignored or produces <code>x</code> depending on the simulator. No error is guaranteed.</li>
+    <li><strong>Passing a memory through a port.</strong> Verilog-2001 does not allow it. Expose an address and data interface, or flatten the storage.</li>
+    <li><strong>Assuming a string is a string type.</strong> It is a packed vector of bytes. Operations are vector operations, and the leftmost character is the most significant byte.</li>
+  </ul>
+</section>
+
+<section class="lesson-section">
+  <h2 id="revision">Revision points</h2>
+  <ul>
+    <li>A vector is one word; a memory is an array of words with a width and a depth.</li>
+    <li><code>reg [7:0] mem [0:3]</code> means four words, eight bits each; address 0 to 3.</li>
+    <li>Verilog-2001 allows one unpacked array dimension and does not allow whole-memory assignment or memory ports.</li>
+    <li>Strings are packed vectors of bytes; <code>%s</code> prints them, leftmost character first.</li>
+    <li><code>$readmemh</code> and <code>$readmemb</code> initialise memories in simulation only.</li>
+  </ul>
+</section>

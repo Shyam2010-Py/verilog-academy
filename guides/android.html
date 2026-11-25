@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#05070D">
+  <meta name="robots" content="index, follow">
+  <title>Android Guide — Study and Edit on a Phone | Verilog Academy</title>
+  <meta name="description" content="Use Verilog Academy on Android: browse theory and laboratory pages, run the Circuit Lab, edit and download Playground files, keep local progress and export a backup. Compilation stays on the Windows PC.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Android Guide — Study and Edit on a Phone | Verilog Academy">
+  <meta property="og:description" content="Use Verilog Academy on Android: browse theory and laboratory pages, run the Circuit Lab, edit and download Playground files, keep local progress and export a backup. Compilation stays on the Windows PC.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="../assets/svg/favicon.svg">
+  <script>
+    (function () {
+      document.documentElement.classList.add("js");
+      try {
+        var stored = localStorage.getItem("va.theme");
+        document.documentElement.dataset.theme = stored === "daylight" ? "daylight" : "midnight";
+      } catch (error) {
+        document.documentElement.dataset.theme = "midnight";
+      }
+      window.setTimeout(function () {
+        if (!window.__vaReady) document.documentElement.classList.add("no-reveal");
+      }, 3000);
+    }());
+  </script>
+  <link rel="preload" href="../assets/fonts/space-grotesk-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <link rel="stylesheet" href="../css/theory.css"><link rel="stylesheet" href="../css/guides.css">
+</head>
+<body class="page-guide page-guide-android" id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-arrow-up-right" viewBox="0 0 24 24">
+    <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11v5M12 8h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24">
+    <path d="M12 3 2.8 20h18.4L12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M12 9v5M12 17h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-code" viewBox="0 0 24 24">
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24">
+    <path d="M9 3h6M10 3v5l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-circuit" viewBox="0 0 24 24">
+    <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path d="m8 5 11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24">
+    <path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10l5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24">
+    <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M6 4h12v17l-6-4-6 4V4Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-reset" viewBox="0 0 24 24">
+    <path d="M4 9a8 8 0 1 1 2 8M4 4v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24">
+    <path d="M12 17V5M7 10l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24">
+    <path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M9 9h6v6H9zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-keyboard" viewBox="0 0 24 24">
+    <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 14h.01M10 14h.01M13 14h.01M16 14h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+  </symbol>
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h5.5A3.5 3.5 0 0 0 21 8.5 9 9 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1" fill="currentColor"/>
+    <circle cx="14" cy="7" r="1" fill="currentColor"/>
+  </symbol>
+  <symbol id="icon-type" viewBox="0 0 24 24">
+    <path d="M4 6V4h16v2M12 4v16M8 20h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-spacing" viewBox="0 0 24 24">
+    <path d="M4 5h16M4 12h16M4 19h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-motion" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 4 12 2-6h7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5 9h14M12 9v5M8 21l4-7 4 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <path d="M12 3 5 6v5c0 4.6 3 8.3 7 10 4-1.7 7-5.4 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="m7 9 3 3-3 3M13 15h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24">
+    <path d="M6 3h8l4 4v14H6V3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M14 3v5h5M9 13h6M9 17h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-waveform" viewBox="0 0 24 24">
+    <path d="M3 12h3l2-6 3 12 3-9 2 3h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24">
+    <path d="M4 5h6a6 6 0 0 1 0 12H4V5ZM14 11h6M14 11a4 4 0 0 0 0 4h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24">
+    <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="page-shell">
+    <header class="site-header" id="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a class="nav-link" href="../index.html">Homepage</a>
+          <a class="nav-link" href="../theory/index.html">Theory</a>
+          <a class="nav-link" href="../labs/index.html">Laboratory</a>
+          <a class="nav-link" href="../circuit-lab/index.html">Circuit Lab</a>
+          <a class="nav-link" href="../playground/index.html">Playground</a>
+          <a class="nav-link" href="../quizzes/index.html">Quizzes</a>
+          <a class="nav-link is-active" href="../guides/index.html" aria-current="page">Guides</a>
+          <a class="nav-link" href="../dashboard.html">Dashboard</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to Daylight theme" aria-pressed="false" title="Switch to Daylight theme">
+            <svg class="icon theme-icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+            <svg class="icon theme-icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+          </button>
+          <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-main" id="main-content" tabindex="-1">
+      <section class="guide-hero">
+  <div class="guide-hero__atmosphere" aria-hidden="true"></div>
+  <div class="container guide-hero__grid">
+    <div class="guide-hero__copy" data-reveal>
+      <span class="eyebrow">Android guide</span>
+      <h1 class="display">The classroom fits.<br><span class="gradient-text">The compiler stays home.</span></h1>
+      <p class="lede">A phone is an excellent place to read theory, explore the Circuit Lab, edit a Playground project, download the files and keep local progress. It is not a place where this static site compiles Verilog. This guide is precise about that boundary.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#quick-start">
+          Start on Android
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="btn btn-secondary btn-lg" href="windows.html">
+          Windows compile guide
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+      <div class="hero-facts theory-facts" aria-label="Android scope">
+        <div><strong>23</strong><span>Theory topics</span></div>
+        <div><strong>18</strong><span>Circuit demos</span></div>
+        <div><strong>14</strong><span>Playground projects</span></div>
+        <div><strong>46</strong><span>Quiz questions</span></div>
+      </div>
+    </div>
+
+    <aside class="guide-status panel" data-reveal style="--reveal-delay: 100ms">
+      <div class="guide-status__head">
+        <span class="panel-kicker">The honest boundary</span>
+        <span class="badge badge-warning">Read and edit</span>
+      </div>
+      <ul class="guide-status__list guide-status__list--plain">
+        <li><strong>Works:</strong> browsing, navigation, Circuit Lab, Playground editing and downloads, quizzes, local progress, theme.</li>
+        <li><strong>Does not work:</strong> compiling Verilog, running <code>iverilog</code>, executing <code>vvp</code>, opening GTKWave.</li>
+        <li><strong>Not claimed:</strong> any Android Verilog compiler, Termux workflow or cloud simulation.</li>
+      </ul>
+      <p class="guide-status__note">Compilation is a Windows step in this release. Transfer the downloaded <code>.v</code> files to a PC and follow the <a class="text-link" href="windows.html">Windows guide</a>.</p>
+    </aside>
+  </div>
+</section>
+
+<section class="section-tight guide-body">
+  <div class="container guide-layout">
+    <aside class="guide-toc panel" aria-label="On this page">
+      <span class="panel-kicker">On this page</span>
+      <nav aria-label="Android guide sections">
+        <a href="#quick-start">01 · Quick start</a>
+        <a href="#works">02 · What works</a>
+        <a href="#open">03 · Open the site</a>
+        <a href="#navigate">04 · Navigate</a>
+        <a href="#study">05 · Read and mark progress</a>
+        <a href="#circuit">06 · Circuit Lab</a>
+        <a href="#playground">07 · Playground</a>
+        <a href="#quizzes">08 · Quizzes</a>
+        <a href="#storage">09 · Progress and backups</a>
+        <a href="#limits">10 · Compilation limits</a>
+        <a href="#troubleshooting">11 · Troubleshooting</a>
+      </nav>
+      <div class="guide-toc__foot">
+        <span class="badge badge-cyan">Android · Chrome</span>
+        <p>Written for Chrome on Android 10 or newer. Other browsers follow the same layout but may word downloads differently.</p>
+        <p><strong>Evidence note:</strong> the phone layout was verified in Chrome device emulation at 360–412 px. This release was not exercised on a physical Android handset.</p>
+      </div>
+    </aside>
+
+    <div class="guide-sections">
+      <section class="guide-section" id="quick-start">
+        <span class="eyebrow">01 / Quick start</span>
+        <h2>Five minutes on a phone.</h2>
+        <ol class="guide-steps">
+          <li><strong>Open the Academy</strong> from a local preview server or a hosted copy. Do not open the HTML files directly from a file manager if you need JavaScript features.</li>
+          <li><strong>Tap the menu button</strong> to reach Theory, Laboratory, Circuit Lab, Playground and Dashboard.</li>
+          <li><strong>Read a topic</strong> and tick its completion box at the end. Progress is stored in this browser.</li>
+          <li><strong>Try the Circuit Lab</strong> by tapping the input switches and watching the outputs and truth table update.</li>
+          <li><strong>Open the Playground</strong> to edit a project, copy it or download <code>design.v</code> and <code>tb.v</code> for a PC.</li>
+        </ol>
+        <div class="guide-callout guide-callout--info">
+          <svg class="icon" aria-hidden="true"><use href="#icon-info"></use></svg>
+          <p><strong>No install is required on the phone.</strong> The Academy is a static site. There is no Android app to download, no account to create and no cloud sync to enable.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="works">
+        <span class="eyebrow">02 / Scope</span>
+        <h2>What a phone can genuinely do here.</h2>
+        <div class="guide-table-wrap">
+          <table class="guide-table">
+            <caption>Android capabilities in this release</caption>
+            <thead>
+              <tr><th scope="col">Task</th><th scope="col">Android</th><th scope="col">How</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Read all 23 EC-405 topics</td><td><span class="badge badge-success">Yes</span></td><td>Theory classroom, with code blocks, tables and copy buttons.</td></tr>
+              <tr><td>Read the 6 available EC-410 experiments</td><td><span class="badge badge-success">Yes</span></td><td>Laboratory pages and their verified transcripts.</td></tr>
+              <tr><td>Use the 18 Circuit Lab demonstrations</td><td><span class="badge badge-success">Yes</span></td><td>Tap inputs; outputs, equations and truth tables update live.</td></tr>
+              <tr><td>Edit Playground files</td><td><span class="badge badge-success">Yes</span></td><td>Text editors with line numbers, tabs and local drafts.</td></tr>
+              <tr><td>Copy or download <code>.v</code> files</td><td><span class="badge badge-success">Yes</span></td><td>Copy button and download buttons; files land in the browser's Downloads.</td></tr>
+              <tr><td>Take quizzes and review attempts</td><td><span class="badge badge-success">Yes</span></td><td>Four banks, explanations after submission, local history.</td></tr>
+              <tr><td>Keep progress and export a backup</td><td><span class="badge badge-success">Yes</span></td><td>Dashboard export and validated import.</td></tr>
+              <tr><td>Compile Verilog with Icarus</td><td><span class="badge badge-danger">No</span></td><td>Icarus is not bundled and the page has no compiler.</td></tr>
+              <tr><td>View a VCD in GTKWave</td><td><span class="badge badge-danger">No</span></td><td>GTKWave is a desktop program; no waveform viewer is bundled.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="guide-section" id="open">
+        <span class="eyebrow">03 / Open the site</span>
+        <h2>Use a server, not a file path.</h2>
+        <p>The Academy is built from static files, but it uses JavaScript modules for the theme, dashboard, quizzes and Playground. Chrome blocks module imports from <code>file://</code> URLs for security reasons, so opening <code>index.html</code> directly from a phone file manager can leave those features inactive.</p>
+        <div class="guide-option-grid">
+          <article class="guide-option panel">
+            <span class="badge badge-cyan">Option A</span>
+            <h3>Preview from a PC over Wi-Fi</h3>
+            <p>Run the project's preview server on the Windows machine, find its local address and open it in the phone browser on the same network.</p>
+            <div class="guide-code guide-code--tight">
+              <pre><code>C:\msys64\ucrt64\bin\python.exe tools\serve.py</code></pre>
+            </div>
+            <p class="guide-option__note">The server prints a local URL. Use the PC's LAN address if <code>localhost</code> is not reachable from the phone.</p>
+          </article>
+          <article class="guide-option panel">
+            <span class="badge badge-violet">Option B</span>
+            <h3>A hosted copy</h3>
+            <p>When the owner publishes the site, open its HTTPS address in Chrome. The hosted copy behaves like any static website and needs no local server.</p>
+            <p class="guide-option__note">This guide does not claim that a public deployment exists. Ask the owner for the current address.</p>
+          </article>
+        </div>
+        <div class="guide-callout guide-callout--warning">
+          <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <p><strong>Do not judge the site from a file-manager preview.</strong> If the menu button, theme toggle or quizzes do nothing, the page was probably opened through <code>file://</code>. Serve it over HTTP and reload.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="navigate">
+        <span class="eyebrow">04 / Navigation</span>
+        <h2>The same site, rearranged for a thumb.</h2>
+        <p>At phone widths the desktop navigation is replaced by a menu button in the header. Tapping it opens a full-screen navigation dialog with large links and a close button.</p>
+        <ul class="guide-list">
+          <li><strong>Header:</strong> the logo returns to the homepage; the moon/sun button switches between Midnight and Daylight.</li>
+          <li><strong>Menu:</strong> Theory, Laboratory, Circuit Lab, Playground, Quizzes, Guides and Dashboard are one tap away.</li>
+          <li><strong>Back:</strong> the Android back gesture closes the menu dialog first, then follows the browser history.</li>
+          <li><strong>Anchors:</strong> in-page links such as “Choose a bank” scroll smoothly unless reduced motion is enabled.</li>
+          <li><strong>Footer:</strong> every page repeats the curriculum, platform and setup-guide links.</li>
+        </ul>
+        <div class="guide-callout">
+          <svg class="icon" aria-hidden="true"><use href="#icon-accessibility"></use></svg>
+          <p><strong>Accessibility is not desktop-only.</strong> Focus outlines, skip links, labelled controls and reduced-motion support remain active on a phone. Text can be enlarged with the browser's font-size setting.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="study">
+        <span class="eyebrow">05 / Study</span>
+        <h2>Read, copy, and mark a topic complete.</h2>
+        <p>Theory and laboratory pages use a single-column reading layout on a phone. The table of contents, code blocks and pager cards stack vertically, and wide tables scroll inside their own container instead of forcing the page sideways.</p>
+        <div class="guide-split">
+          <div class="guide-mini panel">
+            <span class="panel-kicker">Reading</span>
+            <h3>What to expect</h3>
+            <p>Section numbers, a reading-time estimate, code blocks with copy buttons and a previous/next pager at the end.</p>
+          </div>
+          <div class="guide-mini panel">
+            <span class="panel-kicker">Progress</span>
+            <h3>The completion control</h3>
+            <p>Each topic and available experiment has a checkbox. Ticking it writes to <code>va.progress</code> in this browser and updates the dashboard.</p>
+          </div>
+        </div>
+        <p>Completion is a local record, not a grade. A quiz attempt never ticks a lesson or experiment; the two systems are deliberately separate.</p>
+        <div class="guide-callout guide-callout--info">
+          <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+          <p><strong>Copying code on Android.</strong> Tap the copy button on a code block, then paste into any note or editor. If the browser blocks clipboard access, long-press the code and select it manually.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="circuit">
+        <span class="eyebrow">06 / Circuit Lab</span>
+        <h2>Tap an input. Watch the logic answer.</h2>
+        <p>The Circuit Lab is built for touch as well as pointer input. Choose one of the 18 demonstrations, then tap the input switches to toggle them between 0 and 1.</p>
+        <ol class="guide-steps">
+          <li><strong>Pick a circuit</strong> from the demonstration library — gates, adders, subtractors, multiplexers, encoders, decoders, a comparator or the clocked D flip-flop.</li>
+          <li><strong>Toggle inputs</strong> and read the output badges and Boolean equation.</li>
+          <li><strong>Check the truth table</strong> to see the full behaviour, not just the current row.</li>
+          <li><strong>Use Reset</strong> to return the circuit to its starting state before trying another pattern.</li>
+        </ol>
+        <div class="guide-callout guide-callout--warning">
+          <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <p><strong>Ideal logic, not timing.</strong> The lab evaluates Boolean values immediately. It does not model gate delays, rise times or setup/hold violations, so a correct lamp pattern is not a timing sign-off.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="playground">
+        <span class="eyebrow">07 / Playground</span>
+        <h2>Edit on the phone. Compile on the PC.</h2>
+        <p>The Playground works well on a phone for reading, small edits, copying and downloading. The editor uses a monospaced text area with a line-number gutter, horizontal scrolling for long lines, and a Tab key that inserts two spaces.</p>
+        <div class="guide-table-wrap">
+          <table class="guide-table">
+            <caption>Playground controls on Android</caption>
+            <thead>
+              <tr><th scope="col">Control</th><th scope="col">What it does</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Design / Testbench tabs</td><td>Switches between <code>design.v</code> and <code>tb.v</code> without losing either edit.</td></tr>
+              <tr><td>Copy</td><td>Copies the active file to the clipboard.</td></tr>
+              <tr><td>Download design.v</td><td>Downloads the current design text as a <code>.v</code> file.</td></tr>
+              <tr><td>Download tb.v</td><td>Downloads the current testbench text as a <code>.v</code> file.</td></tr>
+              <tr><td>Reset file / Reset both</td><td>Restores the original verified text for one file or both.</td></tr>
+              <tr><td>Clear saved drafts</td><td>Removes the local draft entries for the Playground.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Edits are saved as drafts under <code>va.playground.drafts</code> after a short pause. Drafts never mark a lesson complete and never change <code>va.progress</code>. Once either file changes, the reference transcript is labelled as belonging to the original example only; nothing is recompiled until you run Icarus locally.</p>
+        <div class="guide-callout guide-callout--warning">
+          <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+          <p><strong>Downloads are files, not runs.</strong> Android saves the <code>.v</code> files to Downloads. It does not open, compile or simulate them. Transfer both files to the Windows machine for the compile step.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="quizzes">
+        <span class="eyebrow">08 / Quizzes</span>
+        <h2>Four banks, one question at a time.</h2>
+        <p>The quiz page uses a single-question layout on a phone. The question palette becomes a horizontally scrollable strip above the Previous and Next buttons, so a twelve-question bank still fits without shrinking the text.</p>
+        <ol class="guide-steps">
+          <li><strong>Choose a bank:</strong> EC-405 Theory, EC-410 Laboratory, Circuit Lab or Playground Fundamentals.</li>
+          <li><strong>Select one option</strong> per question. Answers can be changed until you submit.</li>
+          <li><strong>Submit</strong> to see the score. Unanswered questions are marked incorrect after a confirmation step.</li>
+          <li><strong>Review</strong> the explanation for every question, then retry or open a saved attempt from the history panel.</li>
+        </ol>
+        <p>Quiz attempts are stored separately under <code>va.quizzes</code>. They do not unlock Units 4–5, mark Experiments 7–15 available, or change lesson completion.</p>
+      </section>
+
+      <section class="guide-section" id="storage">
+        <span class="eyebrow">09 / Progress and backups</span>
+        <h2>Everything local. Nothing silently synced.</h2>
+        <p>The Academy keeps four independent browser keys. Understanding them makes backups and troubleshooting much easier.</p>
+        <div class="guide-table-wrap">
+          <table class="guide-table">
+            <caption>Browser storage keys used by the Academy</caption>
+            <thead>
+              <tr><th scope="col">Key</th><th scope="col">Stores</th><th scope="col">Written by</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>va.progress</code></td><td>Completed topics and experiments, plus activity timestamps.</td><td>Lesson and laboratory completion controls.</td></tr>
+              <tr><td><code>va.quizzes</code></td><td>Quiz attempt history, answers and scores.</td><td>The quiz page.</td></tr>
+              <tr><td><code>va.playground.drafts</code></td><td>Unsaved-to-disk editor text for Playground projects.</td><td>The Playground editor.</td></tr>
+              <tr><td><code>va.theme</code></td><td>Midnight or Daylight preference.</td><td>The header theme toggle.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>To protect progress, open the dashboard and use <strong>Export JSON</strong>. The backup contains the validated progress record. <strong>Import backup</strong> checks the file before replacing anything; malformed or unsupported files are rejected rather than half-applied.</p>
+        <div class="guide-callout guide-callout--warning">
+          <svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg>
+          <p><strong>Clearing site data erases local records.</strong> “Clear browsing data”, private/incognito mode, or a browser cleanup tool can remove all four keys. Export a backup first if the progress matters.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="limits">
+        <span class="eyebrow">10 / Compilation limits</span>
+        <h2>Why the phone cannot run the simulator.</h2>
+        <p>The Academy is HTML, CSS, JavaScript and JSON. It has no server-side compiler, no WebAssembly Verilog engine and no bundled simulator. A phone browser therefore cannot turn <code>design.v</code> into a running simulation by itself.</p>
+        <div class="guide-limit-grid">
+          <article class="guide-limit panel">
+            <span class="badge badge-danger">Not available</span>
+            <h3>Icarus on Android</h3>
+            <p>Icarus Verilog is installed here as a Windows UCRT64 program. This release does not ship an Android build and does not document an unverified Termux installation.</p>
+          </article>
+          <article class="guide-limit panel">
+            <span class="badge badge-danger">Not available</span>
+            <h3>Waveform viewing</h3>
+            <p>No VCD viewer is bundled. GTKWave runs on the Windows desktop; the phone can store a VCD but not display it in this release.</p>
+          </article>
+          <article class="guide-limit panel">
+            <span class="badge badge-success">The honest workflow</span>
+            <h3>Edit here, compile there</h3>
+            <p>Use the phone for reading and small edits. Download the files, transfer them to the PC, and follow the verified Windows compile and run commands.</p>
+          </article>
+        </div>
+        <p>If a future release adds a tested Android toolchain, it will be documented with the same evidence standard as the Windows guide: exact version, exact command and a real transcript.</p>
+      </section>
+
+      <section class="guide-section" id="troubleshooting">
+        <span class="eyebrow">11 / Troubleshooting</span>
+        <h2>Phone-specific problems, plain fixes.</h2>
+        <div class="guide-table-wrap">
+          <table class="guide-table guide-table--wide">
+            <caption>Common Android issues</caption>
+            <thead>
+              <tr><th scope="col">Symptom</th><th scope="col">Likely cause</th><th scope="col">Fix</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Menu button or theme toggle does nothing</td><td>The page was opened through <code>file://</code>, so modules did not load.</td><td>Serve the site over HTTP from the PC or use the hosted copy, then reload.</td></tr>
+              <tr><td>Downloaded file is named <code>.txt</code></td><td>The browser or file manager changed the extension.</td><td>Rename it to <code>design.v</code> or <code>tb.v</code> before compiling on the PC.</td></tr>
+              <tr><td>Download does not appear</td><td>Chrome saved it silently or the notification was dismissed.</td><td>Open Chrome's Downloads, or check the device's Download folder.</td></tr>
+              <tr><td>Keyboard covers the editor</td><td>The on-screen keyboard reduces the visible viewport.</td><td>Scroll the editor into view; rotate to landscape for more width.</td></tr>
+              <tr><td>Progress disappeared</td><td>Site data was cleared, or the page is open in private mode.</td><td>Use a normal tab, avoid clearing site data, and import a dashboard backup if you have one.</td></tr>
+              <tr><td>Old page still appears after an update</td><td>The browser cached the previous files.</td><td>Reload with cache bypass, or clear the site's cached data. Progress keys are separate from the cache.</td></tr>
+              <tr><td>Quiz history is empty</td><td>No attempt has been submitted for that bank, or storage is blocked.</td><td>Submit one attempt in a normal tab. A storage warning toast means the browser refused to save.</td></tr>
+              <tr><td>Wide table pushes the page sideways</td><td>A table wider than the viewport.</td><td>Scroll the table itself horizontally; the page layout is designed to contain it.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="guide-section guide-next" id="next">
+        <div class="guide-next__panel panel">
+          <div>
+            <span class="panel-kicker">Next</span>
+            <h2>Move the files to a PC when you are ready to compile.</h2>
+            <p>The Windows guide covers the verified Icarus and GTKWave workflow, including the exact commands and a real transcript. The quizzes work on both devices.</p>
+          </div>
+          <div class="guide-next__actions">
+            <a class="btn btn-primary" href="windows.html">Windows guide</a>
+            <a class="btn btn-secondary" href="../quizzes/index.html">Quizzes</a>
+            <a class="btn btn-secondary" href="../dashboard.html">Dashboard</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+              <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+              <span class="brand-copy">
+                <span class="brand-name">VERILOG</span>
+                <span class="brand-sub">ACADEMY</span>
+              </span>
+            </a>
+            <p>A structured path from digital logic to verified hardware.</p>
+            <span class="badge badge-cyan"><span class="badge-dot"></span> SBTET C-23 · ECE IV Semester</span>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Curriculum</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../theory/index.html">EC-405 Theory</a>
+              <a class="footer-link" href="../labs/index.html">EC-410 Practical</a>
+              <a class="footer-link" href="../index.html#path">Learning path</a>
+              <a class="footer-link" href="../index.html#toolchain">Toolchain</a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <span class="footer-title">Platform</span>
+            <div class="footer-links">
+              <a class="footer-link" href="../dashboard.html">Learning dashboard</a>
+              <a class="footer-link" href="../circuit-lab/index.html">Circuit Lab</a>
+              <a class="footer-link" href="../playground/index.html">Verilog Playground</a>
+              <a class="footer-link" href="../quizzes/index.html">Quizzes</a>
+              <a class="footer-link" href="../guides/index.html">Setup guides</a>
+              <a class="footer-link" href="../index.html#approach">The approach</a>
+              <a class="footer-link" href="../styleguide.html">Design system</a>
+              <a class="footer-link" href="../styleguide.html#accessibility">Accessibility</a>
+              <a class="footer-link" href="../index.html">Homepage</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 Verilog Academy</p>
+          <p>SBTET C-23 · ECE Fourth Semester. Progress stays in your browser.</p>
+          <p>Built with HTML, CSS and vanilla JS.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-header">
+        <a class="brand" href="../index.html" aria-label="Verilog Academy home">
+          <img class="brand-mark" src="../assets/svg/logo-mark.svg" alt="" width="40" height="40">
+          <span class="brand-copy">
+            <span class="brand-name">VERILOG</span>
+            <span class="brand-sub">ACADEMY</span>
+          </span>
+        </a>
+        <button class="icon-btn" id="mobile-nav-close" type="button" aria-label="Close navigation">
+          <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile navigation">
+        <a class="mobile-nav-link" href="../index.html">Homepage<span>01</span></a>
+        <a class="mobile-nav-link" href="../theory/index.html">Theory<span>02</span></a>
+        <a class="mobile-nav-link" href="../labs/index.html">Laboratory<span>03</span></a>
+        <a class="mobile-nav-link" href="../circuit-lab/index.html">Circuit Lab<span>04</span></a>
+        <a class="mobile-nav-link" href="../playground/index.html">Playground<span>05</span></a>
+        <a class="mobile-nav-link" href="../quizzes/index.html">Quizzes<span>06</span></a>
+        <a class="mobile-nav-link is-active" href="../guides/index.html" aria-current="page">Guides<span>07</span></a>
+        <a class="mobile-nav-link" href="../dashboard.html">Dashboard<span>08</span></a>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        <span class="status-dot"></span>
+        <span>SBTET C-23 · ECE IV Semester</span>
+        <span class="mono">Local-first. No accounts.</span>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="../js/app.js"></script>
+  
+</body>
+</html>

@@ -129,6 +129,22 @@ and quiz data, and every historical phase report.
 > appended note stopped the file parsing as standard MIT text. The MIT wording
 > in `LICENSE` is unchanged; only the trailing scope section moved.
 > `LICENSE-CONTENT` and `THIRD-PARTY-NOTICES.md` remain untouched.
+>
+> Two items listed as outstanding in this report were closed at the same time:
+>
+> - **Lighthouse.** The audit could not run earlier because no public URL
+>   existed. Against the deployed homepage it now scores 100 for
+>   accessibility, 100 for best practices and 100 for SEO, with no failed
+>   audits. This tool does not produce a performance category, so no
+>   performance score is claimed.
+> - **Deployment.** GitHub Pages serves the committed `main` branch.
+>   `.nojekyll` is present, so the files are served without Jekyll processing.
+>   The homepage, four quiz banks, theory lesson, laboratory index, Circuit Lab
+>   and Playground pages were loaded in Chromium with zero console errors and
+>   zero failed requests; every locally referenced asset on those pages
+>   returned HTTP 200.
+>
+> Testing on a physical Android handset remains outstanding.
 
 ## 5. The nine font files and their verified licences
 

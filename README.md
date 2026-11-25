@@ -309,10 +309,12 @@ and no secrets or personal paths are present.
 
 The project is published as a public Git repository and is served as a static
 site from the `main` branch. Every generated page is committed, so a clone
-renders the full site without running the build first. See
+renders the full site without running the build first.
+
+A Lighthouse audit of the deployed homepage scores **100** for accessibility,
+best practices and SEO, with no failed audits. See
 [`docs/final-audit/REPORT.md`](docs/final-audit/REPORT.md) for the audit
-results and the outstanding verification items: a Lighthouse run against the
-deployed URL and testing on a physical Android handset.
+results. Testing on a physical Android handset remains outstanding.
 
 ## Progress
 

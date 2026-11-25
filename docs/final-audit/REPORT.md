@@ -123,6 +123,13 @@ browser audit.
 all Verilog sources and testbenches, all recorded transcripts, all curriculum
 and quiz data, and every historical phase report.
 
+> **Post-publication amendment (2026-11-25).** After publication, the scope
+> note that had been appended to `LICENSE` was moved into a new
+> `LICENSING.md`. GitHub's licence detector reported `NOASSERTION` because the
+> appended note stopped the file parsing as standard MIT text. The MIT wording
+> in `LICENSE` is unchanged; only the trailing scope section moved.
+> `LICENSE-CONTENT` and `THIRD-PARTY-NOTICES.md` remain untouched.
+
 ## 5. The nine font files and their verified licences
 
 Metadata was read directly from each file's embedded `name`, `head` and `OS/2`

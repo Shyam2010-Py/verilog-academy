@@ -8,9 +8,22 @@ Experiments 1–6, an 18-demo Interactive Circuit Lab, a 14-project Verilog
 Playground, 46 explained practice questions and honest Windows/Android setup
 guides. Experiments 7–15 remain locked roadmap items.
 
+## Repository and live site
+
+| | |
+|---|---|
+| Source code | <https://github.com/Shyam2010-Py/verilog-academy> |
+| Live site | <https://shyam2010-py.github.io/verilog-academy/> |
+| Releases | <https://github.com/Shyam2010-Py/verilog-academy/releases> |
+| Current release | [v1.0.0 — Foundations Release](https://github.com/Shyam2010-Py/verilog-academy/releases/tag/v1.0.0) |
+
+```powershell
+git clone https://github.com/Shyam2010-Py/verilog-academy.git
+```
+
 ## Current status
 
-**Version 1.0.0 release candidate — local audit complete, not yet published.**
+**Version 1.0.0 — released, public and live.**
 
 The site contains:
 
@@ -283,6 +296,8 @@ preview server; it does not add a runtime dependency to the site.
 | `docs/phase7/` | Phase 7 report and verification screenshots |
 | `docs/phase8/` | Phase 8 report and verification screenshots |
 | `docs/final-audit/` | Final source-hygiene and licensing audit |
+| `LICENSING.md` | Which licence applies to which material |
+| `.nojekyll` | Tells GitHub Pages to serve files as-is, without Jekyll |
 
 ## Release status
 
@@ -292,10 +307,12 @@ projects with 510 checks, and 582/582 site checks across the six audit stages.
 Local file references and anchors resolve, generated output is reproducible,
 and no secrets or personal paths are present.
 
-The project is **not published, deployed or initialised as a Git repository**.
-Publication and repository creation remain owner decisions. See
-[`docs/final-audit/REPORT.md`](docs/final-audit/REPORT.md) for results and the
-remaining pre-publication actions.
+The project is published as a public Git repository and is served as a static
+site from the `main` branch. Every generated page is committed, so a clone
+renders the full site without running the build first. See
+[`docs/final-audit/REPORT.md`](docs/final-audit/REPORT.md) for the audit
+results and the outstanding verification items: a Lighthouse run against the
+deployed URL and testing on a physical Android handset.
 
 ## Progress
 
@@ -324,6 +341,9 @@ modifies `va.progress`.
 - Icarus Verilog 13.0 for simulation evidence
 
 ## Licence
+
+[`LICENSING.md`](LICENSING.md) explains which licence covers which part of the
+repository.
 
 - Original website source code and original Verilog examples: **MIT**, see
   [`LICENSE`](LICENSE).

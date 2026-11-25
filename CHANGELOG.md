@@ -6,7 +6,8 @@ semantic versioning for its own source.
 
 ## [1.0.0] - 2026-11-25
 
-First complete local release candidate. Not published or deployed.
+First complete release. Published publicly on GitHub and served as a static
+site from the `main` branch.
 
 ### Added
 
@@ -26,6 +27,9 @@ First complete local release candidate. Not published or deployed.
 - Build, verification, preview and browser-audit tools.
 - `.gitignore`, `.gitattributes`, `.editorconfig`, contribution and security
   policies, and this changelog.
+- `LICENSING.md`, describing which licence covers which part of the repository.
+- `.nojekyll`, so GitHub Pages serves the committed files without Jekyll
+  processing.
 
 ### Changed
 
